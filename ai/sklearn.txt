@@ -1,0 +1,388 @@
+SCIKIT-LEARN
+Scikit-learn es una biblioteca de Python de código abierto para aprendizaje automático y análisis de datos.
+
+
+GENERAL
+
+1. Aprendizaje supervisado
+Clasificación: SVM, KNN, Naive Bayes, Árboles de decisión, Random Forest, Gradient Boosting, etc.
+
+Regresión: Regresión lineal, Lasso, Ridge, SVR, etc.
+
+2. Aprendizaje no supervisado
+Clustering: K-means, DBSCAN, MeanShift, Agglomerative Clustering.
+
+Reducción de dimensionalidad: PCA, t-SNE, TruncatedSVD, ICA.
+
+3. Selección de modelos
+Validación cruzada (cross-validation)
+
+Grid search (búsqueda de hiperparámetros)
+
+Randomized search
+
+Métricas de evaluación (precisión, F1, matriz de confusión, etc.)
+
+4. Preprocesamiento de datos
+Normalización y escalado
+
+Codificación de variables categóricas
+
+Imputación de valores faltantes
+
+Extracción de características
+
+Selección de características
+
+5. Pipelines
+Encadenar preprocesamiento y modelos en un solo flujo
+
+Muy útil para reproducibilidad y despliegue
+
+MODELOS
+- fit
+- predict
+- score
+
+over sampling y eso con imbalanced-learn: from imblearn.over_sampling import SMOTE
+
+SE PUEDEN CREAR PIPELINES
+# Crear un pipeline
+pipeline = Pipeline([
+    ('scaler', StandardScaler()),  # Escalar los datos
+    ('svc', SVC())  # Modelo SVM
+])
+
+# Ajustar el pipeline (preprocesamiento + entrenamiento)
+pipeline.fit(X_train, y_train)
+
+Con feature union sacas de dos formas:
+pipeline = Pipeline([
+    ('features', FeatureUnion([
+        ('pca', PCA(n_components=2)),
+        ('poly', PolynomialFeatures(degree=2))
+    ])),
+    ('classifier', LogisticRegression())
+])
+---
+
+## 🧠 **Clasificadores (Supervised Learning - Clasificación)**
+Los clasificadores asignan etiquetas a las muestras de entrada basándose en ejemplos etiquetados
+
+- **Lineales**:
+  - `LogisticRegression`
+  - `RidgeClassifier`
+  - `Perceptron`
+  - `PassiveAggressiveClassifier`
+
+- **Árboles y Ensambles**:
+  - `DecisionTreeClassifier`
+  - `RandomForestClassifier`
+  - `ExtraTreesClassifier`
+  - `GradientBoostingClassifier`
+  - `AdaBoostClassifier`
+  - `BaggingClassifier`
+  - `HistGradientBoostingClassifier`
+
+- **Máquinas de Vectores de Soporte (SVM)**:
+  - `SVC`
+  - `NuSVC`
+  - `LinearSVC`
+
+- **Vecinos más cercanos**:
+  - `KNeighborsClassifier`
+  - `RadiusNeighborsClassifier`
+
+- **Bayesianos**:
+  - `GaussianNB`
+  - `BernoulliNB`
+  - `MultinomialNB`
+
+- **Redes Neuronales**:
+  - `MLPClassifier`
+
+- **Discriminantes**:
+  - `LinearDiscriminantAnalysis`
+  - `QuadraticDiscriminantAnalysis`
+
+- **Modelos de Proceso Gaussiano**:
+  - `GaussianProcessClassifier`
+
+- **Otros**:
+  - `DummyClassifier` (modelo base)
+
+---
+
+## 📈 **Regresores (Supervised Learning - Regresión)**
+Los regresores predicen valores continuos basándose en ejemplos etiquetado.
+
+- **Lineales**:
+  - `LinearRegression`
+  - `Ridge`
+  - `Lasso`
+  - `ElasticNet`
+  - `Lars`
+  - `OrthogonalMatchingPursuit`
+  - `BayesianRidge`
+  - `ARDRegression`
+  - `SGDRegressor`
+
+- **Árboles y Ensambles**:
+  - `DecisionTreeRegressor`
+  - `RandomForestRegressor`
+  - `ExtraTreesRegressor`
+  - `GradientBoostingRegressor`
+  - `AdaBoostRegressor`
+  - `BaggingRegressor`
+  - `HistGradientBoostingRegressor`
+
+- **Máquinas de Vectores de Soporte (SVM)**:
+  - `SVR`
+  - `NuSVR`
+  - `LinearSVR`
+
+- **Vecinos más cercanos**:
+  - `KNeighborsRegressor`
+  - `RadiusNeighborsRegressor`
+
+- **Redes Neuronales**:
+  - `MLPRegressor`
+
+- **Otros**:
+  - `DummyRegressor` (modelo base)
+
+---
+
+## 🔍 **Clustering (Aprendizaje No Supervisado - Agrupamiento)*
+
+Los algoritmos de clustering agrupan datos no etiquetados en clusters basándose en similituds.
+
+- **Particionales**:
+  - `KMeans`
+  - `MiniBatchKMeans`
+  - `BisectingKMeans`
+
+- **Basados en densidad**:
+  - `DBSCAN`
+  - `OPTICS`
+  - `MeanShift`
+
+- **Modelos de mezcla gaussiana**:
+  - `GaussianMixture`
+  - `BayesianGaussianMixture`
+
+- **Jerárquicos**:
+  - `AgglomerativeClustering`
+  - `FeatureAgglomeration`
+
+- **Otros**:
+  - `AffinityPropagation`
+  - `SpectralClustering`
+  - `Birch`
+
+---
+
+## 🧪 **Reducción de Dimensionalidad (Transformers)*
+
+Estos métodos transforman los datos a un espacio de menor dimensión, manteniendo la mayor cantidad de información posile.
+
+- **Lineales**:
+  - `PCA` (Análisis de Componentes Principales)
+  - `IncrementalPCA`
+  - `KernelPCA`
+  - `SparsePCA`
+  - `TruncatedSVD`
+  - `NMF` (Factorización No Negativa)
+  - `LatentDirichletAllocation` (LDA)
+
+- **No lineales**:
+  - `Isomap`
+  - `MDS` (Escalado Multidimensional)
+  - `TSNE` (t-Distributed Stochastic Neighbor Embedding)
+  - `SpectralEmbedding`
+
+- **Otros**:
+  - `FeatureAgglomeration`
+  - `SelectFromModel`
+  - `SelectKBest`
+  - `SelectPercentile`
+
+---
+
+## 🧩 **Transformadores Generale**
+
+Estos estimadores realizan transformaciones en los datos, como escalado, codificación y selección de característcas.
+
+- **Preprocesamiento**:
+  - `StandardScaler`
+  - `MinMaxScaler`
+  - `RobustScaler`
+  - `Normalizer`
+  - `PowerTransformer`
+  - `QuantileTransformer`
+  - `PolynomialFeatures`
+  - `OneHotEncoder`
+  - `LabelEncoder`
+  - `OrdinalEncoder`
+  - `FunctionTransformer`
+  - `KBinsDiscretizer`
+
+- **Imputación de datos faltantes**:
+  - `SimpleImputer`
+  - `KNNImputer`
+  - `IterativeImputer`
+  - `MissingIndicator`
+
+- **Selección de características**:
+  - `SelectFromModel`
+  - `SelectKBest`
+  - `SelectPercentile`
+  - `RFE` (Eliminación Recursiva de Características)
+  - `RFECV` (RFE con validación cruzada)
+
+---
+
+## 🧪 **Modelos Mixtos y Metaestimadors**
+
+Estos estimadores combinan otros modelos o aplican técnicas adicioales.
+
+- **Ensamblajes**:
+  - `VotingClassifier`
+  - `VotingRegressor`
+  - `StackingClassifier`
+  - `StackingRegressor`
+
+- **Metaestimadores**:
+  - `GridSearchCV`
+  - `RandomizedSearchCV`
+  - `HalvingGridSearchCV`
+  - `HalvingRandomizedSearchCV`
+  - `cross_val_score`
+  - `cross_validate`
+  - `train_test_split`
+
+---
+
+## 🧪 **Estimadores Especializaos**
+
+Estos modelos están diseñados para tareas específicas o avazadas.
+
+- **Procesos Estocásticos**:
+  - `GaussianProcessClassifier`
+  - `GaussianProcessRegressor`
+
+- **Modelos de Mezcla**:
+  - `GaussianMixture`
+  - `BayesianGaussianMixture`
+
+- **Modelos de Proceso Gaussiano**:
+  - `GaussianProcessClassifier`
+  - `GaussianProcessRegressor`
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+EVALUACION
+
+---
+
+## 📊 **Métricas de Evaluación en Scikit-learn**
+
+### 🔹 **Clasificación**
+Estas métricas son útiles para evaluar modelos que asignan etiquetas a muestras de entrad.
+
+- **Exactitud**:
+  - `accuracy_score` Proporción de predicciones correcta.
+
+- **Precisión y Recall**:
+  - `precision_score` Proporción de verdaderos positivos entre los predichos como positivo.
+  - `recall_score` Proporción de verdaderos positivos entre los reales positivo.
+
+- **F1 Score**:
+  - `f1_score` Media armónica entre precisión y recal.
+  - `f1_micro`, `f1_macro`, `f1_weighted`, `f1_samples` Variantes que calculan el F1 Score de diferentes maneras, adaptadas a tareas multilabel o multicategorí.
+
+- **Curvas ROC y AUC**:
+  - `roc_auc_score` Área bajo la curva ROC, útil para evaluar clasificadores binario.
+
+- **Log Loss**:
+  - `log_loss` Pérdida logarítmica, adecuada para modelos probabilístico.
+
+- **Matriz de Confusión**:
+  - `confusion_matrix` Muestra la distribución de las predicciones frente a las etiquetas reale.
+
+- **Coeficiente de Matthews (MCC)**:
+  - `matthews_corrcoef` Métrica que considera verdaderos y falsos positivos y negativos, útil incluso con clases desbalanceada.
+
+- **Cohen’s Kappa**:
+  - `cohen_kappa_score` Evalúa la concordancia entre dos clasificadores, ajustando por aza.
+
+- **Jaccard Index**:
+  - `jaccard_score` Medida de similitud entre conjuntos, útil en clasificación binaria o multilabe.
+
+### 📈 **Regresión*
+
+Estas métricas son apropiadas para modelos que predicen valores continus.
+
+- **Error Absoluto Medio (MAE)**:
+  - `mean_absolute_error: Promedio de las diferencias absolutas entre las predicciones y los valores reals.
+
+- **Error Cuadrático Medio (MSE)**:
+  - `mean_squared_error: Promedio de los cuadrados de las diferencias entre las predicciones y los valores reals.
+
+- **Raíz del Error Cuadrático Medio (RMSE)**:
+  - `mean_squared_error` con `squared=False: Raíz cuadrada del MSE, proporciona una medida en las mismas unidades que los dats.
+
+- **Error Absoluto Medio Logarítmico (MSLE)**:
+  - `mean_squared_log_error: Mide la diferencia entre los valores reales y predichos en escala logarítmia.
+
+- **Error Absoluto Medio Porcentual (MAPE)**:
+  - `mean_absolute_percentage_error: Promedio de los errores absolutos porcentuals.
+
+- **Coeficiente de Determinación (R²)**:
+  - `r2_score: Proporción de la varianza de los datos que es explicada por el modeo.
+
+- **Error Máximo**:
+  - `max_error: Máxima diferencia entre las predicciones y los valores reals.
+
+- **Desviación Poisson**:
+  - `mean_poisson_deviance: Evalúa la calidad de las predicciones en problemas de conto.
+
+- **Desviación Gamma**:
+  - `mean_gamma_deviance: Evaluación para modelos que predicen variables con distribución gama.
+
+- **Desviación Absoluta**:
+  - `d2_absolute_error_score: Métrica alternativa para evaluar la precisión del modeo.
+
+### 🔍 **Clustering*
+
+Estas métricas son útiles para evaluar modelos que agrupan datos no etiquetaos.
+
+- **Índice de Rand Ajustado**:
+  - `adjusted_rand_scor`: Evalúa la similitud entre dos agrupamientos, ajustando por aar.
+
+- **Índice de Información Mutua**:
+  - `mutual_info_scor`: Mide la dependencia entre las etiquetas verdaderas y las prediccioes.
+
+- **Homogeneidad, Completitud y V-Measure**:
+  - `homogeneity_score`, `completeness_score`, `v_measure_scor`: Evalúan la calidad del agrupamiento en términos de pureza y exhaustiviad.
+
+- **Índice de Fowlkes-Mallows**:
+  - `fowlkes_mallows_scor`: Mide la precisión y recall combinados en clusterng.
+
+- **Índice de Información Mutua Normalizado**:
+  - `normalized_mutual_info_scor`: Versión normalizada del índice de información muua.
+
+--
+
+

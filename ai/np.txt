@@ -1,0 +1,65 @@
+NUMPY
+
+np.aarray([1,2,3])
+
+2-d
+arr = np.array([[1, 2, 3], [4, 5, 6]])
+
+.ndim para ver dimensiones
+
+INDEXING
+1-D
+arr[i]
+2-D
+arr[i,j]
+3-D
+arr[i,j,u]
+
+slicing
+arr[i:j] de uno a otro
+arr[i:] de uno al final
+arr[:i] del inicio a uno
+arr[-i:-j] al reves
+
+step
+arr[1:10:2] hasta 10 de dos en dos
+
+del segundo elemento coge del uno al 4
+
+arr = np.array([[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]])
+arr[1, 1:4]
+
+mas tipos de datos que python
+arr.dtype
+arr.astype('i') para convertir
+
+se pueden crear arrays de longitud fija
+
+copy() vs vieW() uno lo copia y otro referencia a memoria, si cambio view cambia el original tmb.
+ver si es view o no -> arr.base
+
+arr.shape()
+
+reshape() hay que tener cuidado y tener claro los números
+.reshape(-1) lo flattening
+
+iterar ->for x in np.nditer(arr)
+o -> for idx, x in np.ndenumerate(arr)
+
+concatenar -> vstack() stack() dstack
+
+SEARCH
+
+np.where(arr==4)
+np.sort(arr)
+
+random.randint o choice([....])
+.schufle
+
+UFUNC funciones vectorizadas de numpy
+np.add(x,y)
+np.subtract() multiply divider power absolute trunc log
+agregaas -> sum cumsum prod
+se pueden crear funciones vectorizadas desde funciones python; np.fromopyfunc(función,#entradas,#salidas)
+
+mod y remainder devuelven residuo dedivision

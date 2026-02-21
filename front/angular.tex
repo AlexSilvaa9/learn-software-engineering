@@ -1,0 +1,1185 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{inconsolata} % mejor fuente monoespaciada para código
+\usepackage{geometry}
+\geometry{margin=2cm}
+\usepackage{microtype}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=black, citecolor=black}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable, listings, theorems}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{listingsutf8}
+\usepackage{booktabs}
+\usepackage{caption}
+% Estilo y navegación del índice/ToC
+\usepackage{bookmark}
+\usepackage{tocloft}
+\usepackage{fancyhdr}
+\usepackage{parskip}
+
+% Colores de enlaces más acordes al tema
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=black, citecolor=black}
+
+% Título del índice en español
+\addto\captionsspanish{\renewcommand{\contentsname}{Índice}}
+
+% Profundidad del índice y numeración
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+
+% Estilo del índice (ToC)
+\renewcommand{\cfttoctitlefont}{\LARGE\bfseries}
+\renewcommand{\cftaftertoctitle}{\par\vspace{6pt}\hrule\vspace{10pt}}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecfont}{\bfseries}
+\renewcommand{\cftsecpagefont}{\bfseries}
+\setlength{\cftbeforesecskip}{4pt}
+\setlength{\cftbeforesubsecskip}{2pt}
+
+% Estilo de títulos
+\titleformat{\section}{\Large\bfseries\color{accent}}{\thesection}{0.6em}{}[\vspace{2pt}\titlerule]
+\titlespacing*{\section}{0pt}{2.0ex plus 1ex minus .2ex}{1ex}
+\titleformat{\subsection}{\large\bfseries\color{accent2}}{\thesubsection}{0.6em}{}
+\titlespacing*{\subsection}{0pt}{1.6ex plus .8ex minus .2ex}{0.8ex}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.6em}{}
+
+% Encabezados y pies de página
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Angular a Nivel Senior}
+\fancyhead[R]{\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{14pt}
+
+% ------------------------------------------------------
+% Paquetes básicos
+% ------------------------------------------------------
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{listingsutf8}
+\usepackage{booktabs}
+\usepackage{caption}
+\captionsetup[lstlisting]{labelfont=bf, singlelinecheck=false, margin=0pt}
+
+% Estilos visuales
+\definecolor{codebg}{HTML}{F5F7FA}
+\definecolor{codefg}{HTML}{111827}
+\definecolor{codekw}{HTML}{7C3AED}
+\definecolor{codestr}{HTML}{8B4513}
+\definecolor{codecm}{HTML}{6B7280}
+\definecolor{codeid}{HTML}{111827}
+\definecolor{accent}{HTML}{111827}
+\definecolor{accent2}{HTML}{374151}
+
+\lstdefinelanguage{TypeScript}{
+  sensitive=true,
+  morekeywords={abstract,as,asserts,any,async,await,boolean,break,case,catch,class,const,continue,debugger,declare,default,delete,do,else,enum,export,extends,false,finally,for,from,function,get,if,implements,import,in,infer,instanceof,interface,is,keyof,let,module,namespace,never,new,null,number,object,of,package,private,protected,public,readonly,require,global,return,set,string,symbol,throw,true,try,type,typeof,undefined,unique,unknown,var,void,while,yield},
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+}
+
+\lstdefinelanguage{HTML}{
+  sensitive=true,
+  morecomment=[s]{<!--}{-->},
+  morestring=[b]',
+  morestring=[b]",
+  alsoletter={<>=-},
+  morekeywords={@if,@for,@switch,@case,@default,div,span,section,article,header,footer,main,nav,button,input,form,ng-container,router-outlet},
+}
+
+\lstdefinestyle{tsstyle}{
+  language=TypeScript,
+  basicstyle=\ttfamily\small\color{codefg},
+  backgroundcolor=\color{codebg},
+  keywordstyle=\bfseries\color{codekw},
+  stringstyle=\color{codestr},
+  commentstyle=\itshape\color{codecm},
+  identifierstyle=\color{codefg},
+  numberstyle=\tiny\color{codecm},
+  numbers=left,
+  stepnumber=1,
+  numbersep=8pt,
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{black!15},
+  frameround=tttt,
+  framesep=6pt,
+  xleftmargin=2pt,
+  xrightmargin=2pt
+}
+
+\lstdefinestyle{htmlstyle}{
+  language=HTML,
+  basicstyle=\ttfamily\small\color{codefg},
+  backgroundcolor=\color{codebg},
+  keywordstyle=\color{codekw}\bfseries,
+  stringstyle=\color{codestr},
+  commentstyle=\itshape\color{codecm},
+  identifierstyle=\color{codefg},
+  numberstyle=\tiny\color{codecm},
+  numbers=left,
+  stepnumber=1,
+  numbersep=8pt,
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{black!15},
+  frameround=tttt,
+  framesep=6pt,
+  xleftmargin=2pt,
+  xrightmargin=2pt
+}
+
+% Habilitar UTF-8 en listings y mapear acentos/ellipsis para pdflatex
+\lstset{
+  inputencoding=utf8,
+  literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'\i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+           {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+           {ñ}{{\~n}}1 {Ñ}{{\~N}}1
+           {ü}{{\"u}}1 {Ü}{{\"U}}1
+           {…}{{\ldots}}1
+}
+
+\newtcolorbox{tipbox}{enhanced, breakable, colback=accent!5, colframe=accent!60!black, coltitle=black, title=Consejo Senior, attach boxed title to top left={yshift=-2mm, xshift=2mm}, boxed title style={colback=accent!20, sharp corners}}
+\newtcolorbox{warnbox}{enhanced, breakable, colback=orange!5, colframe=orange!70!black, coltitle=black, title=Evita esto, attach boxed title to top left={yshift=-2mm, xshift=2mm}, boxed title style={colback=orange!20, sharp corners}}
+\newtcolorbox{refbox}{enhanced, breakable, colback=green!5, colframe=green!60!black, coltitle=black, title=Patrón, attach boxed title to top left={yshift=-2mm, xshift=2mm}, boxed title style={colback=green!20, sharp corners}}
+
+\title{Angular a Nivel Senior: Guía Práctica y de Referencia}
+\author{Apuntes de trabajo}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introducción}
+Estos apuntes condensan prácticas, patrones y técnicas de Angular modernas (v16+), con foco en componentes standalone, reactividad con Signals, control de flujo de plantillas (@if, @for), vistas diferidas (@defer), DI con \texttt{inject()}, routing funcional y optimización de rendimiento (OnPush, zoneless, SSR + hydration). Se asume solidez en TypeScript.
+
+\begin{tipbox}
+Apunta a: simplicidad, composición, tipado estricto y límites claros entre UI, estado y efectos secundarios.
+\end{tipbox}
+
+% --- NUEVO: sección introductoria paso a paso para nivel más bajo ---
+\section{Fundamentos prácticos: de cero a tu primer componente}
+Esta sección explica Angular desde cero con ejemplos breves y lenguaje simple. Si ya tienes experiencia, salta a las siguientes secciones.
+
+\subsection{Antes de Angular: cómo funciona la web}
+\begin{itemize}[leftmargin=*]
+  \item HTML estructura el contenido (\texttt{<h1>}, \texttt{<p>}, \texttt{<button>}).
+  \item CSS da estilos (colores, tamaños, layouts).
+  \item JavaScript añade comportamiento (responder a clicks, pedir datos al servidor).
+\end{itemize}
+Angular es un framework que organiza todo esto para construir aplicaciones grandes de forma mantenible.
+
+\subsection{Qué es un componente}
+Un componente es una pieza de UI con: (1) plantilla (HTML), (2) lógica (TypeScript) y (3) estilos. Reutilizas componentes como \emph{bloques Lego}.
+
+\begin{lstlisting}[style=tsstyle, caption={Componente mínimo standalone}]
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-hello',           // etiqueta HTML que usarás
+  standalone: true,                // no necesita NgModule
+  template: `<h1>Hola Angular</h1>`
+})
+export class HelloComponent {}
+\end{lstlisting}
+
+\subsection{Data binding: conecta datos con la vista}
+\begin{itemize}[leftmargin=*]
+  \item Interpolación: muestra valores con \texttt{{\{}\{ valor \}\}}.
+  \item Property binding: \texttt{[prop]} pasa datos a atributos/propiedades.
+  \item Event binding: \texttt{(evento)} escucha acciones del usuario.
+\end{itemize}
+
+\begin{lstlisting}[style=tsstyle, caption={Estado local sencillo con Signals}]
+import { Component, signal } from '@angular/core';
+
+@Component({
+  selector: 'app-counter',
+  standalone: true,
+  template: `
+    <h2>Contador: {{ count() }}</h2>
+    <button (click)="inc()">+1</button>
+    <button (click)="reset()" [disabled]="count() === 0">Reset</button>
+  `
+})
+export class CounterComponent {
+  count = signal(0);              // estado local
+  inc() { this.count.update(c => c + 1); }
+  reset() { this.count.set(0); }
+}
+\end{lstlisting}
+
+\subsection{Control de flujo en la plantilla}
+Muestra/oculta y repite elementos sin lógica compleja en TS.
+\begin{lstlisting}[style=htmlstyle, caption={@if y @for con trackBy básico}]
+<h3>Tareas</h3>
+@if (todos().length === 0) {
+  <p>No hay tareas</p>
+} @else {
+  <ul>
+    @for (t of todos(); track t.id) {
+      <li>{{ t.title }}</li>
+    }
+  </ul>
+}
+\end{lstlisting}
+
+\subsection{Servicios e inyección de dependencias (DI)}
+Un servicio encapsula lógica reutilizable (por ejemplo, hablar con una API). Angular te lo “inyecta” donde lo necesites.
+\begin{lstlisting}[style=tsstyle, caption={Servicio sencillo e inyección con inject()}]
+import { Injectable, inject, Component } from '@angular/core';
+
+@Injectable({ providedIn: 'root' })
+export class GreeterService {
+  greet(name: string) { return `Hola, ${name}!`; }
+}
+
+@Component({ selector: 'app-greeter', standalone: true, template: `<p>{{ msg }}</p>` })
+export class GreeterComponent {
+  private greeter = inject(GreeterService);
+  msg = this.greeter.greet('Mundo');
+}
+\end{lstlisting}
+
+\subsection{HTTP básico}
+\begin{lstlisting}[style=tsstyle, caption={Pedir datos con HttpClient (GET)}]
+import { HttpClient } from '@angular/common/http';
+import { inject, Component, signal } from '@angular/core';
+
+@Component({ selector: 'app-users', standalone: true, template: `
+  <button (click)="load()">Cargar</button>
+  <ul>@for (u of users(); track u.id) { <li>{{ u.name }}</li> }</ul>
+` })
+export class UsersComponent {
+  private http = inject(HttpClient);
+  users = signal<ReadonlyArray<{id:number; name:string}>>([]);
+  load() {
+    this.http.get<{id:number; name:string}[]>('https://jsonplaceholder.typicode.com/users')
+      .subscribe(xs => this.users.set(xs));
+  }
+}
+\end{lstlisting}
+
+\subsection{Routing básico}
+Define rutas (URL \textrightarrow{} componente) y navega entre pantallas.
+\begin{lstlisting}[style=tsstyle, caption={Rutas mínimas con loadComponent}]
+import { Routes } from '@angular/router';
+
+export const routes: Routes = [
+  { path: '', loadComponent: () => import('./home.component').then(m => m.HomeComponent) },
+  { path: 'about', loadComponent: () => import('./about.component').then(m => m.AboutComponent) },
+  { path: '**', redirectTo: '' }
+];
+\end{lstlisting}
+
+\begin{tipbox}
+Sigue este orden para aprender: componentes \textrightarrow{} data binding \textrightarrow{} servicios/DI \textrightarrow{} HTTP \textrightarrow{} routing. Cuando lo domines, vuelve a la sección de \textbf{Signals}, \textbf{@defer} y \textbf{OnPush} para optimizar.
+\end{tipbox}
+
+% --- FIN nuevo bloque de fundamentos ---
+
+% --- NUEVO: Glosario ultra básico ---
+\section{Glosario ultra básico (palabras difíciles, explicado simple)}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Arranque (bootstrap)}: “encender” la app. En Angular se hace en \texttt{main.ts} con \texttt{bootstrapApplication(AppComponent, { providers: [...] })}. No tiene relación con \textbf{Bootstrap} (framework de CSS).
+  \item \textbf{Componente}: pieza de la pantalla con su HTML (plantilla) y lógica (TypeScript). Piensa en bloques de Lego.
+  \item \textbf{Plantilla (template)}: el HTML que renderiza el componente. Puede contener expresiones como \texttt{{\{\{ titulo \}\}}} y control de flujo \texttt{@if/@for}.
+  \item \textbf{Estado}: datos que cambian con el tiempo (contador, lista). Con \textbf{Signals} se guarda con \texttt{signal()} y se deriva con \texttt{computed()}.
+  \item \textbf{Servicio (service)}: clase para lógica reutilizable (hablar con API, cache). No dibuja UI.
+  \item \textbf{Inyección de dependencias (DI)}: Angular te “entrega” servicios donde los pides con \texttt{inject(MiServicio)}.
+  \item \textbf{Provider}: declaración que dice “para este token, usa esta implementación/valor”. Sirve para registrar servicios/configuraciones.
+  \item \textbf{Ruta (route)/Router}: relación URL \textrightarrow{} componente. Permite navegar entre pantallas sin recargar la página.
+  \item \textbf{HttpClient}: utilidad para hacer \texttt{GET/POST/...} a APIs.
+  \item \textbf{Interceptor}: pieza que envuelve cada petición HTTP (añadir token, reintentos, cache).
+  \item \textbf{Guard}: función que decide si se puede entrar a una ruta (por ejemplo, si hay sesión).
+  \item \textbf{Resolver}: trae datos antes de cargar una ruta.
+  \item \textbf{Standalone}: componentes/servicios que no necesitan \texttt{NgModule}. Es el estilo moderno por defecto.
+  \item \textbf{@if / @for}: nuevo control de flujo en plantillas. Más claro que \texttt{*ngIf/*ngFor} clásicos.
+  \item \textbf{Lazy loading}: cargar características (código) sólo cuando se navega a ellas. Mejora el arranque.
+  \item \textbf{SSR (Server-Side Rendering)}: renderizar HTML en el servidor para entregar contenido rápido y amigable a buscadores.
+  \item \textbf{Hydration}: al llegar al navegador, Angular conecta eventos sobre el HTML ya renderizado por SSR.
+  \item \textbf{Detección de cambios (OnPush)}: estrategia para renderizar menos y más rápido. No mutar objetos “en sitio”.
+  \item \textbf{Zone.js / Zoneless}: mecanismo clásico para saber cuándo actualizar la UI (Zone.js). En “zoneless”, tú controlas con Signals y eventos.
+  \item \textbf{Observable (RxJS)}: flujo de valores en el tiempo (como un radio). Útil para peticiones, eventos, websockets.
+  \item \textbf{NgRx/Store}: patrón para estado global complejo y trazable (acciones, reducers, selectors).
+  \item \textbf{Build/Bundle}: proceso de empaquetar todo el código para producción (minificado, dividido en chunks).
+\end{itemize}
+
+\begin{warnbox}
+\textbf{Bootstrap (arranque)} \neq \textbf{Bootstrap (CSS)}. Aquí “bootstrap” significa “iniciar la app”.
+\end{warnbox}
+
+% --- NUEVO: Tutorial guiado ---
+\section{Tutorial guiado: de “Hola” a una mini app de tareas}
+Meta: pasar de un \emph{hola} a una lista de tareas simple usando los conceptos clave, sin trucos.
+
+\subsection{Paso 1: Componente raíz simple}
+Crea un componente standalone con un título y un párrafo. Revisa el ejemplo de \texttt{HelloComponent} en Fundamentos.
+
+\subsection{Paso 2: Estado local con Signals}
+Agrega un contador con \texttt{signal(0)}, un botón que incrementa y otro que resetea. Ya tienes un dato que cambia y se refleja en la vista.
+
+\subsection{Paso 3: Lista de tareas (estado compuesto)}
+Define un tipo \texttt{Todo} y guarda una lista en \texttt{signal<ReadonlyArray<Todo>>([])}. Añade funciones \texttt{add(title)}, \texttt{toggle(id)} y \texttt{remove(id)} usando copias (no mutaciones).
+
+\begin{lstlisting}[style=tsstyle, caption={Mini store local de Tareas con Signals}]
+export type Todo = Readonly<{ id: string; title: string; done: boolean }>; 
+
+export class TodosComponent {
+  readonly todos = signal<ReadonlyArray<Todo>>([]);
+  readonly remaining = computed(() => this.todos().filter(t => !t.done).length);
+
+  add(title: string) {
+    const todo: Todo = { id: crypto.randomUUID(), title, done: false };
+    this.todos.update(list => [todo, ...list]);
+  }
+  toggle(id: string) {
+    this.todos.update(list => list.map(t => t.id === id ? { ...t, done: !t.done } : t));
+  }
+  remove(id: string) {
+    this.todos.update(list => list.filter(t => t.id !== id));
+  }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=htmlstyle, caption={Plantilla de tareas con @for y @if}]
+<h2>Tareas (pendientes: {{ remaining() }})</h2>
+<input #i placeholder="Nueva tarea"/>
+<button (click)="add(i.value); i.value=''">Añadir</button>
+
+@if (todos().length === 0) { <p>No hay tareas</p> } @else {
+  <ul>
+    @for (t of todos(); track t.id) {
+      <li>
+        <label>
+          <input type="checkbox" [checked]="t.done" (change)="toggle(t.id)"/>
+          <span [class.done]="t.done">{{ t.title }}</span>
+        </label>
+        <button (click)="remove(t.id)">×</button>
+      </li>
+    }
+  </ul>
+}
+\end{lstlisting}
+
+\subsection{Paso 4: Separar lógica en un servicio}
+Mueve la gestión de tareas a un \texttt{TodosService} y \texttt{inject()} ese servicio en tu componente. Beneficio: testeable y reutilizable.
+
+\subsection{Paso 5: HTTP cuando haga falta}
+Sustituye los datos locales por una llamada con \texttt{HttpClient}. Usa \texttt{switchMap} para búsquedas y maneja errores con \texttt{catchError}. No recargues la vista manualmente: las señales u observables lo harán.
+
+\subsection{Paso 6: Routing para varias pantallas}
+Crea rutas simples: inicio (lista) y detalle (tarea). Usa \texttt{loadComponent} y, si necesitas datos previos, un \texttt{ResolveFn}.
+
+\begin{tipbox}
+Construye siempre en pasos pequeños: primero UI, luego estado local, después servicios, y finalmente HTTP y routing. Así entenderás cada pieza sin abrumarte.
+\end{tipbox}
+
+% --- FIN nuevo tutorial guiado ---
+
+\section{Ecosistema Angular actual}
+\paragraph{Qué significa y por qué importa}
+Angular moderno simplifica la creación de apps grandes: los componentes \emph{standalone} eliminan la fricción de módulos, el nuevo control de flujo (@if/@for) hace las plantillas más legibles, y \textbf{Signals} ofrecen un modelo de estado simple y predecible. \textbf{@defer} y el \emph{lazy loading} reducen el tiempo de carga inicial, mientras que SSR + \emph{hydration} mejoran SEO y rendimiento percibido.
+
+\paragraph{En la práctica}
+Piensa en una app como páginas (rutas) compuestas por componentes. Cada componente tiene estado local (Signals), puede pedir datos (HttpClient) y reacciona a eventos de usuario. Divide tu app por \textbf{features} (dominios) y carga lo que hace falta cuando hace falta.
+
+\begin{itemize}[leftmargin=*]
+  \item Standalone por defecto: adiós a \texttt{NgModule} en apps nuevas; se configura con providers y \texttt{bootstrapApplication}.
+  \item Nuevo control de flujo: \texttt{@if}, \texttt{@for}, \texttt{@switch}.
+  \item Reactividad con \textbf{Signals}: \texttt{signal}, \texttt{computed}, \texttt{effect}.
+  \item \textbf{@defer}: fragmentos de plantilla diferidos por condición, interacción u ociosidad.
+  \item Builder esbuild y servidor rápido; SSR + \emph{hydration} estable.
+  \item Formularios tipados; \texttt{takeUntilDestroyed} para limpieza de suscripciones.
+\end{itemize}
+
+\begin{warnbox}
+Evita mezclar demasiada lógica en plantillas. Mueve cálculos a \texttt{computed()} o a servicios, y reutiliza componentes para mantener la UI simple.
+\end{warnbox}
+
+\section{TypeScript para Angular (rápido y efectivo)}
+\paragraph{Qué aprenderás aquí}
+Modelar datos y contratos claros para que el compilador te ayude: tipos de dominio, DTOs, utilitarios y técnicas de \emph{narrowing} en eventos y HTTP.
+
+\paragraph{Por qué \texttt{type} sobre \texttt{interface}}
+\texttt{type} compone mejor (uniones/intersecciones). Usa \texttt{interface} cuando necesites \emph{declaration merging} o describir clases públicas.
+
+\paragraph{Narrowing efectivo}
+Evita \texttt{any}. Usa \texttt{typeof}/\texttt{in}/\texttt{instanceof} para guiar al compilador cuando tratas con \texttt{unknown} o eventos del DOM.
+
+\begin{lstlisting}[style=tsstyle, caption={Narrowing en handlers y datos HTTP}]
+function onInput(e: Event) {
+  const el = e.target as HTMLInputElement; // narrowing seguro
+  const value = el.value.trim();
+}
+
+http.get<unknown>('/api/user').subscribe(x => {
+  if (isUser(x)) { setUser(x); } else { showError(); }
+});
+\end{lstlisting}
+
+\begin{itemize}[leftmargin=*]
+  \item Preferir \texttt{type} sobre \texttt{interface} salvo necesidad de declaración de fusión.
+  \item Domina utilitarios: \texttt{Partial}, \texttt{Required}, \texttt{Pick}, \texttt{Omit}, \texttt{Record}, \texttt{ReturnType}.
+  \item \textbf{Narrowing} con \texttt{in}, \texttt{typeof}, \texttt{instanceof}. Nunca uses \texttt{any}.
+\end{itemize}
+
+\begin{tipbox}
+Crea tipos para IDs, DTOs y estado de UI. Te ahorrará bugs y te dará autocompletado útil.
+\end{tipbox}
+
+\section{Arquitectura y organización}
+\paragraph{Cómo organizar un proyecto}
+Organiza por \textbf{features} (dominios), no por tipos de archivo. Cada feature contiene sus componentes, servicios y rutas. \texttt{shared/} para UI reutilizable y \texttt{core/} para servicios globales (auth, http). Con \textbf{standalone}, la mayoría de piezas no requieren \texttt{NgModule}.
+
+\subsection{Standalone y bootstrap}
+\paragraph{Arranque en 3 pasos}
+1) \texttt{bootstrapApplication(AppComponent)}. 2) Registra \texttt{providers} globales (router, HttpClient, Material, etc.). 3) Añade interceptores/estrategias como funciones puras.
+
+\begin{lstlisting}[style=tsstyle, caption={Arranque con standalone y providers raíz}]
+// main.ts
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
+import { AppComponent } from './app/app.component';
+import { routes } from './app/app.routes';
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideRouter(routes),
+    provideHttpClient(
+      withInterceptors([authInterceptor, loggingInterceptor])
+    ),
+  ]
+});
+\end{lstlisting}
+
+\subsection{Inyección de dependencias avanzada}
+\paragraph{Qué problema resuelve}
+Compartir lógica (auth, cache, configuración) sin acoplar componentes a implementaciones concretas. Con \texttt{inject()} puedes obtener servicios también fuera de constructores (guards, interceptores, funciones).
+
+\paragraph{Scopes útiles}
+\texttt{providedIn: 'root'} = singleton global. \texttt{providedIn: 'any'} = una instancia por inyector (útil en \emph{lazy}). \texttt{providers: [...]} en un componente = instancias por vista (evita fugas entre rutas).
+
+\begin{lstlisting}[style=tsstyle, caption={Tokens, scopes y inject()}, label={lst:di}]
+// tokens.ts
+import { InjectionToken, inject, DestroyRef } from '@angular/core';
+
+export type ApiConfig = Readonly<{ baseUrl: string; timeoutMs: number }>; 
+export const API_CONFIG = new InjectionToken<ApiConfig>('API_CONFIG');
+
+export function useAbortable<T>(subscribe: (signal: AbortSignal) => Promise<T>) {
+  const destroyRef = inject(DestroyRef);
+  const ac = new AbortController();
+  destroyRef.onDestroy(() => ac.abort());
+  return subscribe(ac.signal);
+}
+\end{lstlisting}
+
+\begin{warnbox}
+No acoples componentes a servicios concretos: usa \texttt{InjectionToken} para configuraciones y facilita los tests.
+\end{warnbox}
+
+\section{Componentes profesionales}
+\paragraph{Cómo pensar un componente}
+Un componente debería: (1) recibir datos por \texttt{input()} y emitir acciones por \texttt{output()}, (2) gestionar sólo estado de UI local con Signals, (3) delegar I/O a servicios.
+
+\subsection{Inputs/Outputs, Signals y Change Detection}
+\paragraph{Qué hace cada pieza}
+- \textbf{Inputs/Outputs}: API pública del componente. \texttt{input<number>(1)} tipa y da valor por defecto. \texttt{output<number}()> emite eventos tipados.
+- \textbf{Signals}: \texttt{signal} = estado, \texttt{computed} = derivado, \texttt{effect} = efectos secundarios (persistencia, analytics).
+- \textbf{OnPush}: evita renders innecesarios; cambia la vista cuando cambian inputs, signals o hay eventos.
+
+\begin{lstlisting}[style=tsstyle, caption={Componente con Signals, OnPush y efecto de sincronización}]
+import { Component, signal, computed, effect, input, output } from '@angular/core';
+
+@Component({
+  selector: 'app-counter',
+  standalone: true,
+  templateUrl: './counter.html',
+  changeDetection: 0 // ChangeDetectionStrategy.OnPush
+})
+export class CounterComponent {
+  step = input<number>(1);     // nuevo input con tipado fuerte
+  changed = output<number>();  // nuevo output funcional
+
+  count = signal(0);
+  doubled = computed(() => this.count() * 2);
+
+  constructor() {
+    effect(() => {
+      const c = this.count();
+      // sincroniza con almacenamiento, analytics, etc.
+      localStorage.setItem('count', String(c));
+    });
+  }
+
+  inc() {
+    this.count.update(c => c + this.step());
+    this.changed.emit(this.count());
+  }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=htmlstyle, caption={Plantilla moderna con @if/@for y @defer}]
+<div class="panel">
+  <h2>Contador: {{ count() }} (x2: {{ doubled() }})</h2>
+
+  @if (count() === 0) {
+    <p>Empieza a contar</p>
+  } @else {
+    <p>Llevas {{ count() }} clicks</p>
+  }
+
+  <button (click)="inc()">+{{ step() }}</button>
+
+  @defer (on idle; prefetch on viewport) {
+    <lazy-stats [value]="count()"/>
+  } @placeholder {
+    <p>Cargando estadísticas…</p>
+  }
+</div>
+\end{lstlisting}
+
+\begin{warnbox}
+No mutar arrays/objetos en sitio. Usa \texttt{update} con copias (\texttt{[...prev, nuevo]}) para mantener OnPush eficiente.
+\end{warnbox}
+
+\subsection{Proyección, referencias y hooks}
+\paragraph{Cuándo usar content projection}
+Cuando un componente \emph{contenedor} (card, modal) debe renderizar contenido arbitrario del padre. Usa \texttt{ng-content} o \texttt{@ContentChild} para plantillas.
+
+\begin{lstlisting}[style=tsstyle, caption={Content projection y limpieza reactiva}]
+import { Component, ContentChild, TemplateRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { interval } from 'rxjs';
+
+@Component({ selector: 'app-card', standalone: true, templateUrl: './card.html' })
+export class CardComponent {
+  @ContentChild(TemplateRef) bodyTpl?: TemplateRef<unknown>;
+
+  ngOnInit() {
+    interval(1000)
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => console.log('tick'));
+  }
+}
+\end{lstlisting}
+
+\section{Formularios tipados y validaciones}
+\paragraph{Elegir estrategia}
+- \textbf{Reactive Forms}: más predecibles, testables y tipables. Preferidos en apps medianas/grandes.
+- \textbf{Template-driven}: válidos para formularios muy simples.
+
+\paragraph{Mostrar errores de forma accesible}
+Lee \texttt{touched}/\texttt{dirty} para decidir cuándo mostrar errores. Añade \texttt{aria-invalid} y \texttt{aria-describedby}.
+
+\subsection{Reactive Forms}
+\begin{lstlisting}[style=tsstyle, caption={FormGroup tipado y validadores personalizados}]
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, Validators, NonNullableFormBuilder } from '@angular/forms';
+
+interface ProfileForm {
+  name: FormControl<string>;
+  email: FormControl<string>;
+}
+
+@Component({ selector: 'app-profile', standalone: true, templateUrl: './profile.html' })
+export class ProfileComponent {
+  readonly form = new FormGroup<ProfileForm>({
+    name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    email: new FormControl('', { nonNullable: true, validators: [Validators.email] })
+  });
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=tsstyle, caption={Validador asíncrono con cache y cancelación}]
+import { AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/forms';
+import { timer, map, switchMap, of } from 'rxjs';
+
+export function emailTaken(check: (email: string) => Promise<boolean>): AsyncValidatorFn {
+  return (ctrl: AbstractControl) => {
+    const email = ctrl.value as string;
+    if (!email) return of(null);
+    return timer(300).pipe( // debounce
+      switchMap(() => check(email)),
+      map(isTaken => (isTaken ? { emailTaken: true } as ValidationErrors : null))
+    );
+  };
+}
+\end{lstlisting}
+
+\section{Routing funcional, lazy y resolución de datos}
+\paragraph{Ideas clave}
+Rutas como datos (\texttt{Routes}); \texttt{loadComponent}/\texttt{loadChildren} para \emph{lazy}; Guards controlan acceso; Resolvers traen datos antes de entrar; usa \texttt{data} para metadatos y \texttt{ActivatedRoute} para leer params.
+
+\begin{lstlisting}[style=tsstyle, caption={Definición de rutas standalone con guards funcionales}]
+// app.routes.ts
+import { Routes, provideRouter, CanActivateFn, ResolveFn } from '@angular/router';
+import { inject } from '@angular/core';
+import { AuthService } from './auth.service';
+
+const canActivateAuth: CanActivateFn = () => inject(AuthService).isLoggedIn();
+const resolveUser: ResolveFn<User> = () => inject(AuthService).loadCurrentUser();
+
+export const routes: Routes = [
+  { path: '', loadComponent: () => import('./home.component').then(m => m.HomeComponent) },
+  { path: 'admin', canActivate: [canActivateAuth],
+    loadChildren: () => import('./admin/routes').then(m => m.ADMIN_ROUTES),
+    resolve: { user: resolveUser }
+  },
+  { path: '**', redirectTo: '' }
+];
+\end{lstlisting}
+
+\begin{tipbox}
+Evita lógica de negocio en guards/resolvers. Delega en servicios y mantén funciones puras y testeables.
+\end{tipbox}
+
+\section{HTTP profesional: interceptores, errores, caché}
+\paragraph{Patrones esenciales}
+- Interceptor de \textbf{auth}: añade token y reacciona a 401 (logout/refresh).
+- \textbf{Retry con backoff}: reintenta fallos transitorios sin saturar el servidor.
+- \textbf{Caché}: para GET idempotentes en listas/constantes.
+
+\begin{lstlisting}[style=tsstyle, caption={Interceptor de auth y reintento exponencial}]
+import { HttpInterceptorFn, HttpRequest, HttpHandlerFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { catchError, retry, timer, mergeMap, throwError } from 'rxjs';
+
+export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
+  const token = inject(TokenService).get();
+  const cloned = token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` }}) : req;
+  return next(cloned).pipe(
+    retry({ count: 2, delay: (e, i) => timer(2 ** i * 200) }),
+    catchError(err => {
+      if (err.status === 401) inject(AuthService).logout();
+      return throwError(() => err);
+    })
+  );
+};
+\end{lstlisting}
+
+\begin{lstlisting}[style=tsstyle, caption={Interceptor de caché simple por URL y método}]
+const cache = new Map<string, unknown>();
+export const cacheInterceptor: HttpInterceptorFn = (req, next) => {
+  if (req.method !== 'GET') return next(req);
+  const key = req.urlWithParams;
+  if (cache.has(key)) return of(new HttpResponse({ status: 200, body: cache.get(key) })).pipe(delay(0));
+  return next(req).pipe(tap((event) => {
+    if (event instanceof HttpResponse) cache.set(key, event.body);
+  }));
+};
+\end{lstlisting}
+
+\begin{warnbox}
+No caches peticiones mutantes (POST/PUT/DELETE) y recuerda invalidar caché tras cambios.
+\end{warnbox}
+
+\section{Estado: RxJS, Signals y NgRx}
+\paragraph{Cuándo usar cada uno}
+- \textbf{Signals}: estado local de un componente o pequeñas vistas.
+- \textbf{RxJS}: flujos asíncronos (eventos, websockets, composición de peticiones) y \emph{streams} compartidos.
+- \textbf{NgRx}: estado global complejo, múltiples actores, time-travel/debugging, reglas de negocio compartidas.
+
+\subsection{RxJS en componentes}
+\paragraph{Elegir operador correctamente}
+\texttt{switchMap} cancela lo anterior (búsqueda), \texttt{concatMap} ordena (cola), \texttt{mergeMap} paraleliza (orden no importa), \texttt{exhaustMap} evita dobles envíos.
+
+\begin{lstlisting}[style=tsstyle, caption={Elección correcta entre mergeMap/switchMap/concatMap/exhaustMap}]
+// Regla mental:
+// - switchMap: cancelar lo anterior (búsqueda incremental)
+// - concatMap: en cola (operaciones ordenadas)
+// - mergeMap: en paralelo (cuando el orden no importa)
+// - exhaustMap: ignora hasta terminar (evita doble submit)
+\end{lstlisting}
+
+\subsection{Signals para estado local}
+\paragraph{Regla práctica}
+Deriva todo lo calculable con \texttt{computed} y mantén \texttt{signal} como fuente de verdad mínima.
+
+\begin{lstlisting}[style=tsstyle, caption={Composición de estado con signal/computed/effect}]
+export class TodosStore {
+  readonly todos = signal<ReadonlyArray<Todo>>([]);
+  readonly query = signal('');
+  readonly filtered = computed(() => this.todos().filter(t => t.title.includes(this.query())));
+  add(title: string) { this.todos.update(arr => [...arr, { id: crypto.randomUUID(), title, done: false }]); }
+}
+\end{lstlisting}
+
+\subsection{NgRx moderno}
+\paragraph{Estructura mental}
+Acciones describen \emph{qué pasó}, reducers calculan \emph{nuevo estado}, selectors exponen \emph{lecturas eficientes}. Efectos coordinan I/O.
+
+\begin{lstlisting}[style=tsstyle, caption={Slice con createFeature y efectos tipados}]
+import { createActionGroup, props, createFeature, createReducer, on, createSelector } from '@ngrx/store';
+
+export const UsersActions = createActionGroup({ source: 'Users', events: {
+  'Load': props<void>(),
+  'Loaded Success': props<{ users: User[] }>(),
+  'Loaded Failure': props<{ error: unknown }>(),
+}});
+
+export type UsersState = Readonly<{ users: User[]; loading: boolean; error?: unknown }>; 
+const initialState: UsersState = { users: [], loading: false };
+
+export const usersFeature = createFeature({
+  name: 'users',
+  reducer: createReducer(initialState,
+    on(UsersActions.load, (s) => ({ ...s, loading: true })),
+    on(UsersActions.loadedSuccess, (s, { users }) => ({ ...s, loading: false, users })),
+    on(UsersActions.loadedFailure, (s, { error }) => ({ ...s, loading: false, error })),
+  )
+});
+
+export const { name, reducer, selectUsers, selectLoading } = usersFeature;
+\end{lstlisting}
+
+\section{Rendimiento y escalabilidad}
+\paragraph{Qué optimizar primero}
+- Cambia a \textbf{OnPush}, usa \texttt{trackBy} y evita trabajo pesado en plantillas.
+- Divide rutas y usa \texttt{@defer} para cargar tarde lo no crítico.
+- Considera \emph{zoneless} cuando controles el flujo con Signals y eventos propios.
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{OnPush} + inmutabilidad + \texttt{trackBy} en \texttt{@for}.
+  \item Evita pipes pesados en plantilla; prefiera \texttt{computed} o pre-cálculo.
+  \item Divide rutas y usa \texttt{@defer} para no bloquear TTI.
+  \item Considera \textbf{zoneless}: \texttt{bootstrapApplication(App, { providers: [provideZoneChangeDetection({ eventCoalescing: true, runCoalescing: true })] })} o \texttt{ngZone: 'noop'} y dispara CD manual con Signals.
+  \item \textbf{SSR + Hydration}: mejora SEO y LCP.
+\end{itemize}
+
+\begin{lstlisting}[style=tsstyle, caption={Lista grande con @for y trackBy}]
+// template
+@for (item of items(); track item.id) {
+  <app-row [item]="item"/>
+}
+\end{lstlisting}
+
+\section{SSR, Hydration y despliegue}
+\paragraph{Cómo encajan}
+SSR renderiza HTML en el servidor para entregar contenido rápido y rastreable. En cliente, \emph{hydration} conecta eventos sin re-render completo. Protege el uso de APIs del navegador con \texttt{isPlatformBrowser}.
+
+\begin{itemize}[leftmargin=*]
+  \item Genera SSR: \texttt{ng add @nguniversal/express-engine}
+  \item Verifica rutas \emph{lazy} y uso de APIs del browser en \texttt{isPlatformBrowser}.
+  \item Habilita hidración con \texttt{provideClientHydration()} en el bootstrap.
+\end{itemize}
+
+\begin{lstlisting}[style=tsstyle, caption={Bootstrap con Hydration}]
+import { provideClientHydration } from '@angular/platform-browser';
+bootstrapApplication(AppComponent, { providers: [ provideClientHydration() ] });
+\end{lstlisting}
+
+\section{Testing eficaz}
+\paragraph{Estrategia mínima}
+- Unit: componentes standalone con TestBed, servicios con dobles de prueba.
+- Integración: prueba flujo entre componentes/servicios.
+- E2E: escenarios críticos (login, compra). Usa \emph{data-testid} y retrys.
+
+\begin{lstlisting}[style=tsstyle, caption={Prueba de componente standalone}]
+import { TestBed } from '@angular/core/testing';
+import { AppComponent } from './app.component';
+
+describe('AppComponent', () => {
+  it('renderiza título', async () => {
+    await TestBed.configureTestingModule({ imports: [AppComponent] }).compileComponents();
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('h1').textContent).toContain('Hola');
+  });
+});
+\end{lstlisting}
+
+\section{Accesibilidad, i18n y seguridad}
+\paragraph{Buenas prácticas inmediatas}
+Añade roles/ARIA, gestiona el foco tras diálogos y navegación, evita \texttt{[innerHTML]} sin sanitizar, marca cadenas con \texttt{$localize} para traducción.
+
+\begin{itemize}[leftmargin=*]
+  \item Usa roles/ARIA, focus management y \texttt{cdkTrapFocus}.
+  \item i18n con \texttt{@angular/localize}; evita concatenaciones dinámicas.
+  \item Sanear HTML: \texttt{DomSanitizer}; evita \texttt{bypassSecurityTrustXxx} salvo casos justificados.
+\end{itemize}
+
+\section{Herramientas y calidad}
+\paragraph{Cómo empezar}
+Activa ESLint con \texttt{angular-eslint}, configura Prettier y añade un pipeline de CI con build y tests. Analiza bundles antes de desplegar.
+
+\begin{itemize}[leftmargin=*]
+  \item ESLint con reglas \emph{angular-eslint}; \texttt{no-implicit-any}, \texttt{no-floating-promises}.
+  \item Prettier y formateo consistente.
+  \item Analiza bundles: \texttt{ng build --configuration production --stats-json} + \texttt{source-map-explorer}.
+  \item Monorepo: considera Nx para escalabilidad.
+\end{itemize}
+
+\section{Patrones y anti-patrones}
+\begin{refbox}
+Patrones: Presentational/Container, Facade para estado, Smart HTTP Service, Component Store para vistas complejas, Signals para estado local.
+\end{refbox}
+
+\begin{warnbox}
+Anti-patrones: servicios \emph{god}, mutaciones silenciosas, suscribir en servicios sin exponer Observables, abusar de \texttt{any}, lógica de negocio en plantillas.
+\end{warnbox}
+
+\section{Checklist de revisión senior}
+\begin{enumerate}[leftmargin=*]
+  \item Tipado estricto activado; sin \texttt{any}/\texttt{@ts-ignore}.
+  \item OnPush y trackBy en listas.
+  \item División de rutas y \texttt{@defer} aplicado.
+  \item Interceptores para auth/errores; reintentos y \emph{backoff}.
+  \item Limpieza con \texttt{takeUntilDestroyed}; cero fugas.
+  \item Accesibilidad validada y \texttt{aria-*} correcto.
+  \item Tests unitarios y de integración para piezas críticas.
+\end{enumerate}
+
+% ------------------------------------------------------
+% Ruta de aprendizaje y refuerzo de fundamentos
+% ------------------------------------------------------
+\section{Ruta de aprendizaje a experto (temario por niveles)}
+Esta ruta está pensada para construir bases sólidas, dominar el framework y entender sus internals. Muchas secciones enlazan con contenidos previos del documento.
+
+\subsection{1. Fundamentos del ecosistema Angular}
+\begin{itemize}[leftmargin=*]
+  \item SPA: una única carga de documento, navegación cliente, estado en memoria, API vía HTTP/WS.
+  \item Angular vs React vs Vue: Angular es un \emph{framework} completo (router, DI, formularios, i18n); React y Vue son \emph{libraries} que se amplían con ecosistema.
+  \item TypeScript base: tipos, genéricos, union/intersection, narrowing, decoradores, módulos ES.
+  \item Node/npm: scripts, semver, workspaces, \texttt{npx}.
+  \item Modularidad y arquitectura: separación por \textbf{feature}, \textbf{core}, \textbf{shared}; patrones Presentational/Container.
+\end{itemize}
+
+\subsection{2. Estructura básica de un proyecto}
+\begin{itemize}[leftmargin=*]
+  \item CLI: crear, generar artefactos, \texttt{ng generate}, \texttt{ng build}, \texttt{ng test}.
+  \item Carpetas: \texttt{src/app}, \texttt{assets}, \texttt{environments}. En apps modernas, \textbf{standalone} reemplaza \texttt{NgModule}.
+  \item Componentes: \texttt{@Component}, plantilla, estilos, ciclo de vida.
+\end{itemize}
+
+\subsection{3. Templates y data binding}
+\begin{itemize}[leftmargin=*]
+  \item Interpolación, property/event binding, two-way con \texttt{[(ngModel)]} (formularios de plantilla).
+  \item Directivas estructurales y control de flujo moderno: \texttt{@if}, \texttt{@for}, \texttt{@switch}.
+  \item Directivas de atributo: \texttt{[class]}, \texttt{[style]}, \texttt{[ngClass]}, \texttt{[ngStyle]}.
+\end{itemize}
+
+\subsection{4. Comunicación entre componentes}
+\begin{itemize}[leftmargin=*]
+  \item \texttt{@Input()} y \texttt{@Output()} o APIs \texttt{input()/output()}.
+  \item \texttt{ViewChild}/\texttt{ContentChild}/\texttt{ViewChildren}.
+  \item Servicios compartidos como canal de eventos/estado.
+\end{itemize}
+
+\subsection{5. Servicios e inyección de dependencias}
+\begin{itemize}[leftmargin=*]
+  \item \texttt{@Injectable}, \texttt{providedIn}, \textbf{scope} raíz vs componente.
+  \item Jerarquía de inyectores, \texttt{inject()} y \texttt{InjectionToken} (ver Listado~\ref{lst:di}).
+\end{itemize}
+
+\subsection{6. Ruteo y navegación}
+\begin{itemize}[leftmargin=*]
+  \item Definición de \texttt{Routes}, navegación, parámetros, rutas hijas.
+  \item Lazy loading con \texttt{loadComponent}/\texttt{loadChildren}. Guards y resolvers.
+\end{itemize}
+
+\subsection{7. Formularios}
+\begin{itemize}[leftmargin=*]
+  \item Template-driven y Reactive Forms; validaciones sincronas/asincronas; estados touched/dirty/pristine.
+  \item Mensajería de errores amigable y accesible.
+\end{itemize}
+
+\subsection{8. Observables y RxJS}
+\begin{itemize}[leftmargin=*]
+  \item Observables, suscripción, cancelación; operadores clave (\texttt{map}, \texttt{filter}, \texttt{switchMap}, \texttt{catchError}).
+  \item \texttt{Subject}/\texttt{BehaviorSubject}/\texttt{ReplaySubject}; composición y \texttt{shareReplay}.
+\end{itemize}
+
+\subsection{9. HTTP Client}
+\begin{itemize}[leftmargin=*]
+  \item \texttt{HttpClient}: \texttt{get/post/put/delete}, cabeceras, parámetros, \texttt{observe} vs \texttt{responseType}.
+  \item Interceptores, manejo de errores, JWT y refresh tokens.
+\end{itemize}
+
+\subsection{10. Arquitectura avanzada}
+\begin{itemize}[leftmargin=*]
+  \item División por dominio: feature folders, \texttt{Core} y \texttt{Shared}. Facades y servicios HTTP delgados.
+  \item Smart vs Dumb Components; \textbf{Signals} para estado local, NgRx/Component Store para vistas complejas.
+\end{itemize}
+
+\subsection{11. Gestión de estado}
+\begin{itemize}[leftmargin=*]
+  \item NgRx: \emph{actions, reducers, selectors, effects}. Alternativa \textbf{Signals} (Angular 16+), ver secciones previas.
+\end{itemize}
+
+\subsection{12. Rendimiento y optimización}
+\begin{itemize}[leftmargin=*]
+  \item \texttt{OnPush}, inmutabilidad, \texttt{trackBy}, \texttt{@defer}, zoneless, SSR + hydration.
+\end{itemize}
+
+\subsection{13. Testing}
+\begin{itemize}[leftmargin=*]
+  \item Unit con TestBed; mocks y espías; pruebas de servicios/pipes/directivas.
+  \item E2E: \textbf{Cypress/Playwright} (Protractor está deprecado).
+\end{itemize}
+
+\subsection{14. Despliegue y DevOps}
+\begin{itemize}[leftmargin=*]
+  \item \texttt{ng build --configuration production}, entornos, variables, \texttt{docker} y CDNs.
+  \item CI/CD con GitHub Actions (build, test, deploy).
+\end{itemize}
+
+\subsection{15. Ecosistema avanzado}
+\begin{itemize}[leftmargin=*]
+  \item Angular Material y CDK, Animaciones, Directivas/Pipes personalizadas, Angular Elements, WebSockets.
+\end{itemize}
+
+\subsection{16. Buenas prácticas}
+\begin{itemize}[leftmargin=*]
+  \item Convenciones, reutilización, arquitectura limpia, documentación, \texttt{eslint} y \texttt{prettier}.
+\end{itemize}
+
+% ------------------------------------------------------
+% TypeScript avanzado
+% ------------------------------------------------------
+\section{TypeScript avanzado y tipado estricto en Angular}
+\subsection{Tipos condicionales, utilitarios y ``type-level programming''}
+\begin{lstlisting}[style=tsstyle, caption={Condicionales, infer y mapeados útiles}]
+// Type guard para APIs estrictas
+export function isUser(x: unknown): x is User {
+  return !!x && typeof x === 'object' && 'id' in (x as any) && 'email' in (x as any);
+}
+
+// Condicional con infer: extraer payload de una Action NgRx
+export type Action = { type: string; payload?: unknown };
+export type PayloadOf<A extends Action> = A extends { payload: infer P } ? P : never;
+
+// Mapeados para construir formularios tipados desde un modelo
+export type Formify<T> = { [K in keyof T]-?: FormControl<T[K]> };
+
+type UserModel = { name: string; age: number };
+export type UserForm = FormGroup<Formify<UserModel>>;
+\end{lstlisting}
+
+\subsection{Decoradores y metadatos}
+\begin{itemize}[leftmargin=*]
+  \item En Angular moderno, los decoradores se usan a nivel \emph{estático}; el compilador genera metadatos internos de Ivy en tiempo de compilación (AOT/Ivy), por lo que no se requiere \texttt{reflect-metadata} en producción.
+  \item Evita usar decoradores de clase personalizados en runtime; prefiere funciones puras y \texttt{InjectionToken} para configuración.
+\end{itemize}
+
+\subsection{Chequeo de tipos en plantillas}
+\begin{itemize}[leftmargin=*]
+  \item El \emph{Template Type Checker} valida expresiones en HTML (strictTemplates). Actívalo siempre.
+  \item Usa \texttt{as const}, narrowings y \texttt{readonly} para ayudar al compilador.
+\end{itemize}
+
+\begin{lstlisting}[style=tsstyle, caption={Tokens tipados y configuración segura}]
+export interface FeatureFlags { readonly enableBeta: boolean; }
+export const FEATURE_FLAGS = new InjectionToken<FeatureFlags>('FEATURE_FLAGS');
+
+bootstrapApplication(AppComponent, { providers: [
+  { provide: FEATURE_FLAGS, useValue: { enableBeta: true } satisfies FeatureFlags }
+]});
+\end{lstlisting}
+
+% ------------------------------------------------------
+% Internals: cómo funciona Angular por debajo
+% ------------------------------------------------------
+\section{Angular por debajo del capó (internals esenciales)}
+\subsection{Change Detection: de Zone.js a Signals}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Zone.js}: parchea eventos/microtareas; tras eventos HTTP/DOM, marca vistas para comprobar. \texttt{OnPush} limita la propagación a inputs cambiados y eventos.
+  \item \textbf{Zoneless + Signals}: los \emph{signals} mantienen un grafo de dependencias; \texttt{computed} recalcula cuando cambian sus fuentes y las vistas leen señales con \emph{auto-dirty-check} eficiente.
+  \item APIs útiles: \texttt{markDirty}, \texttt{ChangeDetectorRef.detectChanges()}, \texttt{runOutsideAngular} para evitar trabajo extra.
+\end{itemize}
+
+\subsection{Inyección de dependencias en Ivy}
+\begin{itemize}[leftmargin=*]
+  \item Cada componente/directiva se asocia a vistas internas (\emph{LView/TView}). La resolución de \texttt{inject()} sube por el \emph{árbol de inyectores} hasta encontrar un proveedor o delega al inyector raíz.
+  \item \texttt{providedIn: 'any'} crea un singleton por inyector; \texttt{providers: [...]} en componentes crea instancias por vista.
+\end{itemize}
+
+\subsection{Compilación de plantillas (Ivy Instructions)}
+\begin{itemize}[leftmargin=*]
+  \item La plantilla se transforma a instrucciones como instrucciones de creación/actualización separadas, optimizando el trabajo en cada ciclo de CD.
+  \item El control de flujo \texttt{@if/@for} compila a bloques eficientes con \emph{block synthesis} y \emph{dom diffing} mínimo.
+\end{itemize}
+
+\begin{lstlisting}[style=tsstyle, caption={Esquema simplificado de plantilla compilada}]
+// Pseudocódigo: create/update
+function Template(rf: RenderFlags, ctx: Ctx) {
+  if (rf & 1) { /* create phase */
+    // elementStart('h1');
+    // text();
+    // elementEnd();
+  }
+  if (rf & 2) { /* update phase */
+    // textInterpolate(ctx.title);
+  }
+}
+\end{lstlisting}
+
+\subsection{Hydration y SSR}
+\begin{itemize}[leftmargin=*]
+  \item SSR genera HTML inicial; en cliente, Angular \emph{hidrata}: empareja nodos y adjunta listeners sin re-render completo.
+  \item Evita usar APIs de navegador durante SSR; protege con \texttt{isPlatformBrowser}.
+\end{itemize}
+
+\subsection{Builder y empaquetado}
+\begin{itemize}[leftmargin=*]
+  \item El builder actual usa \textbf{esbuild} para velocidad; \emph{treeshaking}, \emph{code-splitting}, CSS inlining y optimización de imágenes.
+  \item Habilita \texttt{optimization}, \texttt{budgets} y \texttt{stats-json} para auditar tamaño.
+\end{itemize}
+
+% ------------------------------------------------------
+% Plan de estudio sugerido
+% ------------------------------------------------------
+\section{Plan de estudio recomendado (6 semanas)}
+\begin{enumerate}[leftmargin=*]
+  \item Semana 1: Fundamentos TS, CLI, estructura y componentes. Labs: 3 componentes + comunicación básica.
+  \item Semana 2: Templates, control de flujo moderno, formularios template-driven y Reactive básicos.
+  \item Semana 3: HTTP, interceptores, RxJS esencial (switchMap, error handling), arquitectura por features.
+  \item Semana 4: Estado con Signals y NgRx intro; performance (OnPush, trackBy); routing avanzado y lazy.
+  \item Semana 5: SSR + hydration, zoneless, accesibilidad e i18n, animaciones y Material/CDK.
+  \item Semana 6: Testing unitario y E2E, seguridad (JWT/CSRF), CI/CD y despliegue; auditoría de bundles.
+\end{enumerate}
+
+\begin{tipbox}
+Estudia construyendo. Define un mini-producto (lista de tareas con auth + SSR) e incrementa complejidad cada semana aplicando los conceptos.
+\end{tipbox}
+
+% ------------------------------------------------------
+% Ecosistema avanzado Angular: Material, CDK, Animaciones, PWA, i18n, WS
+% ------------------------------------------------------
+\section{Material, CDK y diseño de UI}
+\subsection{Angular Material (standalone)}
+\begin{lstlisting}[style=tsstyle, caption={Uso de Material en standalone}]
+import { Component } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
+@Component({
+  selector: 'app-toolbar',
+  standalone: true,
+  imports: [MatButtonModule, MatIconModule],
+  template: `
+    <button mat-raised-button color="primary"><mat-icon>save</mat-icon> Guardar</button>
+  `
+})
+export class ToolbarComponent {}
+\end{lstlisting}
+
+\subsection{CDK Overlay y Portal}
+\begin{lstlisting}[style=tsstyle, caption={Overlay básico con CDK}]
+import { Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
+
+const overlayRef: OverlayRef = inject(Overlay).create();
+overlayRef.attach(new ComponentPortal(MyPopupComponent));
+\end{lstlisting}
+
+\section{Animaciones}
+\begin{lstlisting}[style=tsstyle, caption={Trigger con estados y transiciones}]
+import { trigger, state, style, transition, animate } from '@angular/animations';
+
+@Component({
+  // ...
+  animations: [
+    trigger('fade', [
+      state('in', style({ opacity: 1 })),
+      transition(':enter', [ style({ opacity: 0 }), animate('200ms ease-out') ]),
+      transition(':leave', [ animate('150ms ease-in', style({ opacity: 0 })) ])
+    ])
+  ]
+})
+export class Panel {}
+\end{lstlisting}
+
+\section{PWA y Service Worker}
+\begin{itemize}[leftmargin=*]
+  \item Añade PWA: \texttt{ng add @angular/pwa}. Configura \texttt{ngsw-config.json} y \texttt{provideServiceWorker()}.
+\end{itemize}
+\begin{lstlisting}[style=tsstyle, caption={Bootstrap con Service Worker}]
+import { provideServiceWorker } from '@angular/service-worker';
+bootstrapApplication(AppComponent, {
+  providers: [ provideServiceWorker('ngsw-worker.js', { enabled: true }) ]
+});
+\end{lstlisting}
+
+\section{i18n y localización}
+\begin{lstlisting}[style=tsstyle, caption={Marcado con \$localize y runtime i18n}]
+const title = $localize`Hola, ${name}:bienvenido!`;
+\end{lstlisting}
+\begin{itemize}[leftmargin=*]
+  \item Extrae mensajes: \texttt{ng extract-i18n} y compila con \texttt{@angular/localize}.
+\end{itemize}
+
+\section{WebSockets y tiempo real}
+\begin{lstlisting}[style=tsstyle, caption={Servicio con WebSocketSubject}]
+import { webSocket } from 'rxjs/webSocket';
+@Injectable({ providedIn: 'root' })
+export class WsService {
+  private socket$ = webSocket<string>('wss://example.com/ws');
+  messages$ = this.socket$.asObservable();
+  send(msg: string) { this.socket$.next(msg); }
+}
+\end{lstlisting}
+
+\section{Web Workers}
+\begin{lstlisting}[style=tsstyle, caption={Creación y comunicación con Worker}]
+const worker = new Worker(new URL('./heavy.worker', import.meta.url));
+worker.postMessage({ task: 'calc' });
+worker.onmessage = (e) => console.log(e.data);
+\end{lstlisting}
+
+\section{Seguridad en el navegador}
+\begin{itemize}[leftmargin=*]
+  \item XSS: el binding Angular es seguro por defecto; \texttt{[innerHTML]} requiere sanitización. Evita \texttt{bypassSecurityTrustXxx} salvo casos controlados.
+  \item CSP: usa nonces/hashes y evita \texttt{unsafe-inline}. Verifica 3rd-party scripts.
+\end{itemize}
+
+\section{Estrategias de precarga y performance de rutas}
+\begin{lstlisting}[style=tsstyle, caption={PreloadAllModules y precarga personalizada}]
+import { withPreloading, PreloadAllModules } from '@angular/router';
+provideRouter(routes, withPreloading(PreloadAllModules));
+\end{lstlisting}
+
+\begin{lstlisting}[style=tsstyle, caption={Precarga condicional por data}]
+export const routes: Routes = [
+  { path: 'admin', loadChildren: () => import('./admin/routes').then(m => m.ADMIN_ROUTES), data: { preload: true } }
+];
+
+@Injectable({ providedIn: 'root' })
+export class DataPreloadingStrategy implements PreloadingStrategy {
+  preload(route: Route, load: () => Observable<unknown>) {
+    return route.data?.['preload'] ? load() : of(null);
+  }
+}
+\end{lstlisting}
+
+% ------------------------------------------------------
+% Monorepo y DX
+% ------------------------------------------------------
+\section{Monorepo y DX}
+\begin{itemize}[leftmargin=*]
+  \item Nx: \emph{generators}, \emph{executors}, caché distribuida, grafo de dependencias.
+  \item Auditoría: \texttt{ng build --stats-json} + \texttt{source-map-explorer}.
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,1004 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+
+\geometry{margin=2.5cm}
+
+% Configuración de listings para código
+\lstset{
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    rulecolor=\color{black!30},
+    breaklines=true,
+    commentstyle=\color{green!60!black},
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    showstringspaces=false,
+    captionpos=b
+}
+
+% Configuración de headers y footers
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Guía Git para Desarrolladores Java}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{De SVN a Git - Transición Completa}
+
+\title{{\Huge \textbf{Git para Desarrolladores Java}} \\ 
+       {\Large Transición desde SVN con Ejemplos Prácticos}}
+\author{Guía Completa para Desarrolladores con 1 año de experiencia}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Introducción: ¿Por qué cambiar de SVN a Git?}
+
+Como desarrollador Java con experiencia en SVN, ya tienes una base sólida en control de versiones. Git te ofrecerá nuevas capacidades que transformarán tu flujo de trabajo:
+
+\subsection{Principales diferencias}
+\begin{itemize}
+    \item \textbf{Distribución}: Cada clon es un repositorio completo
+    \item \textbf{Ramas}: Extremadamente ligeras y rápidas
+    \item \textbf{Offline}: Puedes trabajar sin conexión al servidor
+    \item \textbf{Staging Area}: Área intermedia para preparar commits
+    \item \textbf{Historia}: Historial completo en tu máquina local
+\end{itemize}
+
+\subsection{Comparación SVN vs Git}
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Aspecto} & \textbf{SVN} & \textbf{Git} \\
+\hline
+Arquitectura & Centralizada & Distribuida \\
+Ramas & Costosas (carpetas) & Ligeras (punteros) \\
+Commits & Directos al servidor & Locales + Push \\
+Trabajo offline & Limitado & Completo \\
+Velocidad & Depende de red & Muy rápido \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Conceptos Fundamentales}
+
+\subsection{Los Tres Estados de Git}
+\begin{enumerate}
+    \item \textbf{Working Directory}: Archivos en tu directorio de trabajo
+    \item \textbf{Staging Area}: Archivos preparados para commit
+    \item \textbf{Repository}: Historial de commits confirmados
+\end{enumerate}
+
+\begin{lstlisting}[caption=Flujo básico de estados]
+# Working Directory -> Staging Area
+git add archivo.java
+
+# Staging Area -> Repository
+git commit -m "Mensaje del commit"
+
+# Repository -> Servidor remoto
+git push origin main
+\end{lstlisting}
+
+\subsection{Ramas en Git}
+A diferencia de SVN donde las ramas son carpetas costosas, en Git son simplemente punteros ligeros.
+
+\begin{lstlisting}[caption=Manejo básico de ramas]
+# Crear nueva rama
+git branch feature/nueva-funcionalidad
+
+# Cambiar a la rama
+git checkout feature/nueva-funcionalidad
+
+# Crear y cambiar en un comando
+git checkout -b feature/otra-funcionalidad
+
+# Listar ramas
+git branch
+
+# Fusionar rama
+git checkout main
+git merge feature/nueva-funcionalidad
+\end{lstlisting}
+
+\section{Instalación y Configuración Inicial}
+
+\subsection{Configuración básica}
+\begin{lstlisting}[caption=Configuración inicial de Git]
+# Configurar identidad
+git config --global user.name "Tu Nombre"
+git config --global user.email "tu.email@empresa.com"
+
+# Configurar editor
+git config --global core.editor "code --wait"
+
+# Ver configuración
+git config --list
+\end{lstlisting}
+
+\subsection{Configuración específica para Java}
+\begin{lstlisting}[caption=Configuraciones útiles para desarrollo Java]
+# Ignorar archivos compilados por defecto
+git config --global core.excludesfile ~/.gitignore_global
+
+# Configurar diff para archivos Java
+git config --global diff.tool vscode
+
+# Configurar merge tool
+git config --global merge.tool vscode
+\end{lstlisting}
+
+\section{Comandos Esenciales con Ejemplos}
+
+\subsection{Inicialización y Clonado}
+\begin{lstlisting}[caption=Crear y clonar repositorios]
+# Inicializar repositorio nuevo
+git init mi-proyecto-java
+
+# Clonar repositorio existente
+git clone https://github.com/usuario/proyecto-java.git
+
+# Clonar con nombre específico
+git clone https://github.com/usuario/proyecto.git mi-proyecto
+\end{lstlisting}
+
+\subsection{Seguimiento de Archivos}
+\begin{lstlisting}[caption=Gestión de archivos]
+# Ver estado de archivos
+git status
+
+# Agregar archivos específicos
+git add src/main/java/com/empresa/MiClase.java
+
+# Agregar todos los archivos Java
+git add "*.java"
+
+# Agregar todo
+git add .
+
+# Ver diferencias
+git diff
+git diff --staged
+\end{lstlisting}
+
+\subsection{Commits}
+\begin{lstlisting}[caption=Creación de commits]
+# Commit básico
+git commit -m "Implementar validación de usuario"
+
+# Commit con descripción detallada
+git commit -m "Implementar validación de usuario
+
+- Agregar clase ValidadorUsuario
+- Implementar validación de email
+- Agregar tests unitarios
+- Actualizar documentación"
+
+# Commit que incluye modificaciones
+git commit -a -m "Corregir bug en login"
+\end{lstlisting}
+
+\section{Flujos de Trabajo Comunes}
+
+\subsection{Git Flow para Equipos Java}
+\begin{lstlisting}[caption=Flujo típico en proyecto Java]
+# 1. Actualizar rama principal
+git checkout main
+git pull origin main
+
+# 2. Crear rama para nueva funcionalidad
+git checkout -b feature/JIRA-123-validacion-usuarios
+
+# 3. Desarrollar y hacer commits
+# ... modificar archivos ...
+git add .
+git commit -m "JIRA-123: Implementar validación básica"
+
+# 4. Subir rama al servidor
+git push -u origin feature/JIRA-123-validacion-usuarios
+
+# 5. Crear Pull Request en la plataforma
+# 6. Después de aprobación, fusionar
+git checkout main
+git pull origin main
+git branch -d feature/JIRA-123-validacion-usuarios
+\end{lstlisting}
+
+\subsection{Hotfixes}
+\begin{lstlisting}[caption=Manejo de correcciones urgentes]
+# Crear rama de hotfix desde main
+git checkout main
+git pull origin main
+git checkout -b hotfix/correccion-critica-login
+
+# Hacer la corrección
+# ... modificar archivos ...
+git add .
+git commit -m "Hotfix: Corregir NPE en login"
+
+# Subir y fusionar urgentemente
+git push -u origin hotfix/correccion-critica-login
+# Crear PR urgente para revisión rápida
+\end{lstlisting}
+
+\section{Archivos .gitignore para Proyectos Java}
+
+\subsection{Contenido típico de .gitignore}
+\begin{lstlisting}[caption=.gitignore para proyectos Java]
+# Archivos compilados
+*.class
+*.jar
+*.war
+*.ear
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse
+.metadata
+.classpath
+.project
+.settings/
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+
+# Gradle
+.gradle/
+build/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Spring Boot
+application-local.properties
+application-dev.properties
+\end{lstlisting}
+
+\section{Resolución de Conflictos}
+
+\subsection{Conflictos de Merge}
+\begin{lstlisting}[caption=Resolver conflictos paso a paso]
+# 1. Intentar merge
+git merge feature/nueva-funcionalidad
+
+# Si hay conflictos, Git mostrará:
+# Auto-merging src/main/java/com/empresa/Usuario.java
+# CONFLICT (content): Merge conflict in Usuario.java
+
+# 2. Ver archivos con conflictos
+git status
+
+# 3. Editar archivos manualmente
+# Buscar marcadores <<<<<<< ======= >>>>>>>
+
+# 4. Marcar como resueltos
+git add src/main/java/com/empresa/Usuario.java
+
+# 5. Completar merge
+git commit -m "Resolver conflicto en clase Usuario"
+\end{lstlisting}
+
+\section{Comandos Avanzados Útiles}
+
+\subsection{Historial y Navegación}
+\begin{lstlisting}[caption=Explorar historial]
+# Ver historial
+git log --oneline --graph --all
+
+# Ver cambios en archivo específico
+git log -p src/main/java/com/empresa/Usuario.java
+
+# Buscar en historial
+git log --grep="JIRA-123"
+
+# Ver quién modificó cada línea
+git blame src/main/java/com/empresa/Usuario.java
+\end{lstlisting}
+
+\subsection{Deshacer Cambios}
+\begin{lstlisting}[caption=Deshacer diferentes tipos de cambios]
+# Descartar cambios no confirmados
+git checkout -- archivo.java
+
+# Deshacer staging
+git reset HEAD archivo.java
+
+# Deshacer último commit (mantener cambios)
+git reset --soft HEAD~1
+
+# Deshacer último commit (descartar cambios)
+git reset --hard HEAD~1
+
+# Revertir commit público
+git revert abc123def
+\end{lstlisting}
+
+\section{Integración con IDEs Java}
+
+\subsection{IntelliJ IDEA}
+\begin{itemize}
+    \item \textbf{VCS Menu}: Acceso completo a operaciones Git
+    \item \textbf{Git Tool Window}: Vista del historial y ramas
+    \item \textbf{Commit Tool Window}: Staging y commits visuales
+    \item \textbf{Merge Conflicts}: Herramienta visual de resolución
+\end{itemize}
+
+\subsection{Eclipse}
+\begin{itemize}
+    \item \textbf{EGit Plugin}: Integración completa con Git
+    \item \textbf{Git Repositories View}: Gestión de repositorios
+    \item \textbf{Git Staging View}: Control del staging area
+    \item \textbf{History View}: Exploración del historial
+\end{itemize}
+
+\section{Mejores Prácticas para Equipos Java}
+
+\subsection{Convenciones de Commits}
+\begin{lstlisting}[caption=Formato de mensajes de commit]
+# Formato: tipo(scope): descripción
+
+feat(auth): implementar validación JWT
+fix(login): corregir NPE en validación
+docs(api): actualizar documentación REST
+test(user): agregar tests de integración
+refactor(db): optimizar consultas de usuario
+\end{lstlisting}
+
+\subsection{Estructura de Ramas}
+\begin{itemize}
+    \item \textbf{main/master}: Código de producción
+    \item \textbf{develop}: Integración de funcionalidades
+    \item \textbf{feature/*}: Nuevas funcionalidades
+    \item \textbf{hotfix/*}: Correcciones urgentes
+    \item \textbf{release/*}: Preparación de versiones
+\end{itemize}
+
+\section{Migración desde SVN}
+
+\subsection{Preparación}
+\begin{lstlisting}[caption=Pasos para migrar desde SVN]
+# 1. Crear archivo de mapeo de usuarios
+echo "usuario_svn = Nombre Completo <email@empresa.com>" > users.txt
+
+# 2. Clonar repositorio SVN
+git svn clone --authors-file=users.txt \
+  http://svn.empresa.com/repo/proyecto \
+  --trunk=trunk --branches=branches --tags=tags
+
+# 3. Convertir ramas y tags
+cd proyecto
+git for-each-ref refs/remotes/origin | cut -d/ -f3- | \
+  grep -v '^tags/' | while read branchname; do
+    git branch "$branchname" "refs/remotes/origin/$branchname"
+    git branch -r -d "origin/$branchname"
+done
+
+# 4. Crear repositorio Git remoto
+git remote add origin https://github.com/empresa/proyecto.git
+git push -u origin main
+\end{lstlisting}
+
+\section{Herramientas Complementarias}
+
+\subsection{GUI Tools}
+\begin{itemize}
+    \item \textbf{SourceTree}: GUI gratuita multiplataforma
+    \item \textbf{GitKraken}: GUI moderna con funciones avanzadas
+    \item \textbf{GitHub Desktop}: Simple para repositorios GitHub
+    \item \textbf{TortoiseGit}: Integración con Windows Explorer
+\end{itemize}
+
+\subsection{Plataformas de Hosting}
+\begin{itemize}
+    \item \textbf{GitHub}: Más popular, gran ecosistema
+    \item \textbf{GitLab}: CI/CD integrado, versión self-hosted
+    \item \textbf{Bitbucket}: Integración con Atlassian (Jira)
+    \item \textbf{Azure DevOps}: Integración con Microsoft Stack
+\end{itemize}
+
+\section{Troubleshooting Común}
+
+\subsection{Problemas Frecuentes}
+\begin{lstlisting}[caption=Soluciones a problemas comunes]
+# Problema: "fatal: refusing to merge unrelated histories"
+git pull origin main --allow-unrelated-histories
+
+# Problema: Archivos grandes accidentalmente agregados
+git filter-branch --force --index-filter \
+  'git rm --cached --ignore-unmatch archivo-grande.jar' \
+  --prune-empty --tag-name-filter cat -- --all
+
+# Problema: Cambiar mensaje del último commit
+git commit --amend -m "Nuevo mensaje"
+
+# Problema: Olvidé agregar archivo al último commit
+git add archivo-olvidado.java
+git commit --amend --no-edit
+\end{lstlisting}
+
+\section{Ejercicios Prácticos}
+
+\subsection{Ejercicio 1: Flujo Básico}
+\begin{enumerate}
+    \item Crear repositorio para proyecto Java
+    \item Configurar .gitignore apropiado
+    \item Crear estructura Maven/Gradle básica
+    \item Hacer commits incrementales
+    \item Crear y fusionar rama de funcionalidad
+\end{enumerate}
+
+\subsection{Ejercicio 2: Colaboración}
+\begin{enumerate}
+    \item Simular conflicto de merge
+    \item Practicar resolución manual
+    \item Usar herramientas visuales del IDE
+    \item Crear Pull Request
+    \item Revisar código de compañero
+\end{enumerate}
+
+\section{Referencias y Recursos}
+
+\subsection{Documentación Oficial}
+\begin{itemize}
+    \item Pro Git Book: \url{https://git-scm.com/book}
+    \item Git Reference: \url{https://git-scm.com/docs}
+    \item GitHub Guides: \url{https://guides.github.com/}
+\end{itemize}
+
+\subsection{Cursos y Tutoriales}
+\begin{itemize}
+    \item Atlassian Git Tutorial: \url{https://www.atlassian.com/git/tutorials}
+    \item Learn Git Branching: \url{https://learngitbranching.js.org/}
+    \item GitHub Learning Lab: \url{https://lab.github.com/}
+\end{itemize}
+
+\section{Conclusiones}
+
+La transición de SVN a Git puede parecer compleja inicialmente, pero las ventajas son significativas:
+
+\begin{itemize}
+    \item \textbf{Velocidad}: Operaciones locales instantáneas
+    \item \textbf{Flexibilidad}: Ramas ligeras y múltiples flujos de trabajo
+    \item \textbf{Distribución}: Cada desarrollador tiene historial completo
+    \item \textbf{Integración}: Mejor soporte en IDEs modernos
+    \item \textbf{Ecosistema}: Herramientas y servicios abundantes
+\end{itemize}
+
+Con práctica constante y los ejemplos de esta guía, dominarás Git rápidamente y mejorarás significativamente tu productividad como desarrollador Java.
+
+\section{Fundamentos Profundos de Git}
+
+\subsection{Arquitectura Interna de Git}
+Git no es solo un sistema de control de versiones, es un sistema de archivos dirigido por contenido con una interfaz VCS.
+
+\subsubsection{El Modelo de Datos}
+\begin{lstlisting}[caption=Estructura interna de objetos Git]
+# Git almacena 4 tipos de objetos:
+
+# 1. BLOB (Binary Large Object) - Contenido de archivos
+# SHA-1: da39a3ee5e6b4b0d3255bfef95601890afd80709 (archivo vacío)
+
+# 2. TREE - Estructura de directorios  
+# Contiene referencias a blobs y otros trees
+
+# 3. COMMIT - Instantánea del proyecto
+# Referencia a tree + metadatos (autor, fecha, mensaje)
+
+# 4. TAG - Referencia a commit con metadata adicional
+\end{lstlisting}
+
+\subsubsection{Hash SHA-1 y Integridad}
+\begin{lstlisting}[caption=Verificación de integridad con SHA-1]
+# Cada objeto Git tiene un hash SHA-1 único
+# Basado en el contenido, garantiza integridad
+
+# Ejemplo de hash de commit
+git log --oneline
+# a1b2c3d Mensaje del commit
+
+# Ver el objeto completo
+git cat-file -p a1b2c3d
+# tree 4b825dc642cb6eb9a060e54bf8d69288fbee4904
+# author Juan Pérez <juan@empresa.com> 1700000000 +0200
+# committer Juan Pérez <juan@empresa.com> 1700000000 +0200
+# 
+# Mensaje del commit
+\end{lstlisting}
+
+\subsection{El Área de Preparación (Staging Area) en Detalle}
+\begin{lstlisting}[caption=Manipulación avanzada del staging area]
+# Ver contenido del índice
+git ls-files --stage
+
+# Añadir partes específicas de un archivo
+git add -p archivo.java
+
+# Añadir líneas específicas interactivamente
+git add -i
+
+# Resetear archivo del staging área
+git reset HEAD archivo.java
+
+# Ver diferencias entre working dir, staging y repository
+git diff                    # working vs staging
+git diff --staged          # staging vs repository  
+git diff HEAD              # working vs repository
+\end{lstlisting}
+
+\section{Comandos Avanzados y Técnicas Expertas}
+
+\subsection{Manipulación Avanzada del Historial}
+
+\subsubsection{Git Rebase - Reescribir Historia}
+\begin{lstlisting}[caption=Rebase interactivo y avanzado]
+# Rebase interactivo para limpiar commits
+git rebase -i HEAD~3
+
+# Opciones disponibles en rebase interactivo:
+# pick   = usar commit tal como está
+# reword = usar commit pero editar mensaje
+# edit   = usar commit pero parar para enmendar
+# squash = usar commit pero fusionar con el anterior
+# fixup  = como squash pero descartar mensaje
+# drop   = remover commit
+
+# Rebase con estrategia específica
+git rebase -X theirs feature-branch
+
+# Rebase preservando merges
+git rebase --rebase-merges main
+
+# Continuar rebase después de resolver conflictos
+git rebase --continue
+
+# Abortar rebase
+git rebase --abort
+\end{lstlisting}
+
+\subsubsection{Git Cherry-pick Avanzado}
+\begin{lstlisting}[caption=Cherry-pick con opciones avanzadas]
+# Cherry-pick múltiples commits
+git cherry-pick commit1 commit2 commit3
+
+# Cherry-pick rango de commits
+git cherry-pick start-commit..end-commit
+
+# Cherry-pick sin hacer commit automático
+git cherry-pick -n commit-hash
+
+# Cherry-pick editando el mensaje
+git cherry-pick -e commit-hash
+
+# Cherry-pick firmando el commit
+git cherry-pick -S commit-hash
+\end{lstlisting}
+
+\subsection{Búsqueda y Depuración Avanzada}
+
+\subsubsection{Git Bisect - Búsqueda Binaria de Bugs}
+\begin{lstlisting}[caption=Encontrar bugs con bisect]
+# Iniciar bisect
+git bisect start
+
+# Marcar commit actual como malo
+git bisect bad
+
+# Marcar commit conocido bueno
+git bisect good v1.0.0
+
+# Git automáticamente selecciona commit del medio
+# Probar y marcar como bueno o malo
+git bisect good  # si funciona
+git bisect bad   # si tiene el bug
+
+# Automatizar con script
+git bisect run test-script.sh
+
+# Finalizar bisect
+git bisect reset
+\end{lstlisting}
+
+\subsubsection{Git Grep Avanzado}
+\begin{lstlisting}[caption=Búsqueda avanzada en historial]
+# Buscar en todo el repositorio
+git grep -n "patrón"
+
+# Buscar en commits específicos
+git grep "patrón" commit-hash
+
+# Buscar con regex
+git grep -E "patrón|otro-patrón"
+
+# Buscar considerando contexto
+git grep -A 3 -B 3 "patrón"
+
+# Buscar en archivos específicos
+git grep "patrón" -- "*.java"
+
+# Buscar ignorando case
+git grep -i "patrón"
+
+# Contar ocurrencias
+git grep -c "patrón"
+\end{lstlisting}
+
+\subsection{Configuración Avanzada de Git}
+
+\subsubsection{Configuraciones de Performance}
+\begin{lstlisting}[caption=Optimizaciones de rendimiento]
+# Configurar compresión
+git config --global pack.compression 9
+
+# Configurar ventana de delta
+git config --global pack.window 250
+
+# Habilitar preload index
+git config --global core.preloadindex true
+
+# Configurar parallel index
+git config --global core.untrackedCache true
+
+# Configurar fsmonitor (para repositorios grandes)
+git config --global core.fsmonitor true
+
+# Configurar split-index
+git config --global core.splitIndex true
+\end{lstlisting}
+
+\subsubsection{Hooks Avanzados}
+\begin{lstlisting}[caption=Scripts de automatización con hooks]
+# Pre-commit hook para validar código Java
+#!/bin/bash
+# .git/hooks/pre-commit
+
+# Ejecutar checkstyle
+mvn checkstyle:check
+if [ $? -ne 0 ]; then
+    echo "Checkstyle falló. Corrige los errores antes del commit."
+    exit 1
+fi
+
+# Ejecutar tests unitarios
+mvn test
+if [ $? -ne 0 ]; then
+    echo "Tests fallan. Corrige antes del commit."
+    exit 1
+fi
+
+# Pre-push hook para validar branch
+#!/bin/bash
+# .git/hooks/pre-push
+
+protected_branch='main'
+current_branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
+
+if [ $current_branch = $protected_branch ]; then
+    echo "Push directo a $protected_branch no permitido."
+    exit 1
+fi
+\end{lstlisting}
+
+\section{Técnicas de Colaboración Avanzadas}
+
+\subsection{Estrategias de Merge Avanzadas}
+\begin{lstlisting}[caption=Estrategias de merge personalizadas]
+# Merge con estrategia específica
+git merge -X ours feature-branch     # En conflicto, preferir nuestra versión
+git merge -X theirs feature-branch   # En conflicto, preferir su versión
+
+# Merge ignorando whitespace
+git merge -X ignore-space-change feature-branch
+
+# Merge con estrategia personalizada
+git merge -s recursive -X patience feature-branch
+
+# Merge octopus (múltiples branches)
+git merge branch1 branch2 branch3
+
+# Crear merge commit sin fast-forward
+git merge --no-ff feature-branch
+
+# Merge sin commit automático
+git merge --no-commit feature-branch
+\end{lstlisting}
+
+\subsection{Gestión Avanzada de Ramas}
+\begin{lstlisting}[caption=Operaciones complejas con ramas]
+# Ver ramas merged/no-merged
+git branch --merged main
+git branch --no-merged main
+
+# Eliminar ramas remotas huérfanas
+git remote prune origin
+
+# Renombrar rama actual
+git branch -m nuevo-nombre
+
+# Copiar rama
+git branch nueva-rama rama-existente
+
+# Crear rama desde commit específico
+git branch nueva-rama commit-hash
+
+# Seguir rama remota
+git branch --set-upstream-to=origin/feature-branch
+
+# Ver información detallada de ramas
+git branch -vv
+\end{lstlisting}
+
+\section{Git para Proyectos Empresariales Java}
+
+\subsection{Monorepos y Submódulos}
+\begin{lstlisting}[caption=Gestión de proyectos grandes]
+# Añadir submódulo
+git submodule add https://github.com/empresa/libreria.git libs/libreria
+
+# Clonar con submódulos
+git clone --recurse-submodules proyecto.git
+
+# Actualizar submódulos
+git submodule update --remote
+
+# Inicializar submódulos después de clon
+git submodule init
+git submodule update
+
+# Trabajar dentro de submódulo
+cd libs/libreria
+git checkout master
+# hacer cambios
+git commit -am "Actualizar librería"
+
+# Actualizar referencia en proyecto principal
+cd ../..
+git add libs/libreria
+git commit -m "Actualizar submódulo librería"
+\end{lstlisting}
+
+\subsection{Git Worktree - Múltiples Working Directories}
+\begin{lstlisting}[caption=Trabajar en múltiples ramas simultáneamente]
+# Crear worktree adicional
+git worktree add ../hotfix-workspace hotfix/critical-bug
+
+# Listar worktrees
+git worktree list
+
+# Trabajar en paralelo
+cd ../hotfix-workspace
+# hacer cambios de hotfix
+
+# En workspace principal seguir con feature
+# hacer cambios de feature
+
+# Eliminar worktree
+git worktree remove ../hotfix-workspace
+\end{lstlisting}
+
+\section{Técnicas de Debugging Avanzadas}
+
+\subsection{Git Reflog - Historial de Referencias}
+\begin{lstlisting}[caption=Recuperar commits perdidos]
+# Ver historial de HEAD
+git reflog
+
+# Ver reflog de rama específica
+git reflog show feature-branch
+
+# Recuperar commit "perdido"
+git checkout commit-hash-from-reflog
+git branch recovered-branch
+
+# Limpiar reflog (cuidado!)
+git reflog expire --expire=30.days refs/heads/main
+git gc --prune=30.days.ago
+\end{lstlisting}
+
+\subsection{Git Stash Avanzado}
+\begin{lstlisting}[caption=Gestión avanzada de stash]
+# Stash con mensaje
+git stash push -m "WIP: implementando feature X"
+
+# Stash incluyendo archivos no rastreados
+git stash -u
+
+# Stash archivos específicos
+git stash push path/to/file.java
+
+# Ver contenido de stash
+git stash show -p stash@{0}
+
+# Aplicar stash sin eliminarlo
+git stash apply stash@{0}
+
+# Crear rama desde stash
+git stash branch nueva-rama stash@{0}
+
+# Limpiar stash
+git stash clear
+\end{lstlisting}
+
+\section{Optimización y Performance}
+
+\subsection{Git LFS para Archivos Grandes}
+\begin{lstlisting}[caption=Gestión de archivos grandes]
+# Instalar Git LFS
+git lfs install
+
+# Trackear archivos por extensión
+git lfs track "*.jar"
+git lfs track "*.war"
+
+# Trackear archivos por path
+git lfs track "docs/assets/*"
+
+# Ver archivos trackeados
+git lfs track
+
+# Migrar archivos existentes
+git lfs migrate import --include="*.jar"
+
+# Ver información de LFS
+git lfs ls-files
+git lfs status
+\end{lstlisting}
+
+\subsection{Mantenimiento del Repositorio}
+\begin{lstlisting}[caption=Optimización y limpieza]
+# Garbage collection manual
+git gc --aggressive --prune=now
+
+# Verificar integridad
+git fsck --full
+
+# Ver estadísticas del repositorio
+git count-objects -v
+
+# Limpiar referencias remotas
+git remote prune origin
+
+# Repack para optimizar
+git repack -a -d --depth=250 --window=250
+
+# Limpiar archivos no rastreados
+git clean -fdx
+\end{lstlisting}
+
+\section{Integración con Herramientas Java}
+
+\subsection{Maven y Git}
+\begin{lstlisting}[caption=Integración con Maven]
+# Plugin de release de Maven con Git
+mvn release:prepare release:perform
+
+# Configuración en pom.xml
+<scm>
+    <connection>scm:git:git://github.com/empresa/proyecto.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/empresa/proyecto.git</developerConnection>
+    <url>https://github.com/empresa/proyecto</url>
+</scm>
+
+# Git ignore específico para Maven
+echo "target/" >> .gitignore
+echo "*.releaseBackup" >> .gitignore
+echo "release.properties" >> .gitignore
+\end{lstlisting}
+
+\subsection{Gradle y Git}
+\begin{lstlisting}[caption=Integración con Gradle]
+# Plugin de release para Gradle
+plugins {
+    id 'net.researchgate.release' version '2.8.1'
+}
+
+# Configurar versión desde Git
+version = getVersionFromGit()
+
+def getVersionFromGit() {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--tags', '--always'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+\end{lstlisting}
+
+\section{Scripts y Automatización Avanzada}
+
+\subsection{Scripts de Git Personalizados}
+\begin{lstlisting}[caption=Aliases y scripts avanzados]
+# Configurar aliases avanzados
+git config --global alias.cleanup-branches '!git branch --merged main | grep -v "main\|develop" | xargs -n 1 git branch -d'
+
+git config --global alias.find-merge '!sh -c '\''merge=$(git rev-list $1..HEAD --ancestry-path | tail -1) && git show $merge'\'' -'
+
+git config --global alias.contributors 'shortlog -sn --all --no-merges'
+
+git config --global alias.changelog 'log --oneline --decorate --graph --since="1 week ago"'
+
+# Script para crear feature branch
+#!/bin/bash
+# git-new-feature
+FEATURE_NAME=$1
+if [ -z "$FEATURE_NAME" ]; then
+    echo "Uso: git new-feature nombre-feature"
+    exit 1
+fi
+
+git checkout develop
+git pull origin develop
+git checkout -b feature/$FEATURE_NAME
+git push -u origin feature/$FEATURE_NAME
+\end{lstlisting}
+
+\section{Casos de Uso Avanzados Específicos}
+
+\subsection{Migración Compleja desde SVN}
+\begin{lstlisting}[caption=Migración avanzada con preservación de historia]
+# Crear mapeo completo de usuarios
+svn log -q | awk -F '|' '/^r/ {gsub(/ /, "", $2); sub(" $", "", $2); print $2" = "$2" <"$2"@empresa.com>"}' | sort -u > authors-transform.txt
+
+# Migración con todas las ramas y tags
+git svn clone --stdlayout --authors-file=authors-transform.txt \
+    --prefix=svn/ http://svn.empresa.com/repo/proyecto
+
+# Convertir tags SVN a tags Git reales
+for t in $(git for-each-ref --format='%(refname:short)' refs/remotes/svn/tags); do
+    git tag ${t/svn\/tags\//} $t
+    git branch -r -d $t
+done
+
+# Limpiar referencias SVN
+git for-each-ref --format='delete %(refname)' refs/remotes/svn | git update-ref --stdin
+git remote rm svn 2>/dev/null
+\end{lstlisting}
+
+\subsection{Deployment con Git}
+\begin{lstlisting}[caption=Estrategias de deployment]
+# Git deployment con hooks
+#!/bin/bash
+# post-receive hook en servidor
+
+# Checkout automático al recibir push
+cd /var/www/aplicacion
+git --git-dir=/var/repo/proyecto.git --work-tree=/var/www/aplicacion checkout -f
+
+# Ejecutar build
+mvn clean package -DskipTests
+
+# Reiniciar servicio
+systemctl restart aplicacion.service
+
+echo "Deployment completado exitosamente"
+\end{lstlisting}
+
+Con esta extensión profunda, ahora tienes una comprensión completa de Git desde sus fundamentos internos hasta las técnicas más avanzadas para proyectos empresariales Java.
+
+\end{document}

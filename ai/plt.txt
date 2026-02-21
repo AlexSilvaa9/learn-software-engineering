@@ -1,0 +1,95 @@
+MATPLOTLIB 
+https://matplotlib.org/cheatsheets/
+
+ En Matplotlib, cada gráfico se representa dentro de una "figura". Puedes personalizar los gráficos creando instancias de Figure y luego añadiendo "ejes" dentro de ellas
+
+fig, ax = plt.subplots()
+ax.plot(x, y)
+plt.show()
+
+TIPOS DE GRAFICOS: 
+plt.plot líneas
+plt.bar barras
+plt.scatter dispersion
+.hist histograma
+.pie pastel
+
+
+ESTILOS
+dentro de plot puedes cambia: color linestyle marker
+
+xlabel ylabel title legend
+plt.grid(True)
+
+
+SUBGRAFICOS COMO MATLAB
+fig, axs = plt.subplots(2, 2)  # Crear una cuadrícula 2x2 de gráficos
+
+# Primer gráfico
+axs[0, 0].plot(x, y)
+
+# Segundo gráfico
+axs[0, 1].bar(categories, values)
+
+# Tercer gráfico
+axs[1, 0].scatter(x, y)
+
+# Cuarto gráfico
+axs[1, 1].hist(data)
+
+plt.tight_layout()  # Ajustar los espacios entre los subgráficos
+plt.show()
+
+GUARDAR
+plt.savefig('nombre')
+
+
+ANIMACIONES Y 3D
+
+
+
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Datos para el gráfico 3D
+x = np.linspace(-5, 5, 100)
+y = np.linspace(-5, 5, 100)
+x, y = np.meshgrid(x, y)
+z = np.sin(np.sqrt(x**2 + y**2))
+
+# Gráfico de superficie
+ax.plot_surface(x, y, z, cmap='viridis')
+
+
+
+from matplotlib.animation import FuncAnimation
+
+x = [1, 2, 3, 4, 5]
+y = [1, 4, 9, 16, 25]
+
+fig, ax = plt.subplots()
+line, = ax.plot(x, y)
+
+def update(frame):
+    y_new = [i + frame for i in y]
+    line.set_ydata(y_new)
+    return line,
+
+ani = FuncAnimation(fig, update, frames=10, blit=True)
+
+
+COMO FUNCIONA
+Matplotlib se basa en una estructura jerárquica de objetos que representan gráficos y sus componentes. Los elementos clave son:
+
+Figura (Figure): Es el contenedor principal. Representa toda la ventana o el lienzo donde se colocan los gráficos.
+
+Ejes (Axes): Son las áreas dentro de la figura donde se dibujan los gráficos. Un gráfico puede tener múltiples ejes (por ejemplo, gráficos en subpaneles).
+
+Objetos gráficos: Son los elementos dentro de los ejes, como líneas, puntos, barras, etc.
+
+
+plt.plot(x, y1, label="Serie 1", color='blue')
+plt.plot(x, y2, label="Serie 2", color='red')

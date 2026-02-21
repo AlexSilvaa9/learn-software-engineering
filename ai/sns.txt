@@ -1,0 +1,45 @@
+SEABORN
+https://github.com/jramshur/Coding-Cheat-Sheets/blob/master/Python%20for%20Data%20Science%20-%20Cheat%20Sheet%20-%20Seaborn.pdf
+Seaborn es una biblioteca muy popular para la visualización de datos en Python, construida sobre Matplotlib
+
+Está diseñada para trabajar bien con pandas, por lo que es ideal para crear visualizaciones de datos almacenados en DataFrames
+
+TIPOS DE PLOT
+sns.scatterplot(x="total_bill", y="tip", data=tips)
+sns.lineplot(x="size", y="total_bill", data=tips)
+sns.barplot(x="day", y="total_bill", data=tips)
+sns.histplot(tips['total_bill'], kde=True)  # Histograma con densidad
+sns.boxplot(x="day", y="total_bill", data=tips)
+sns.violinplot(x="day", y="total_bill", data=tips)
+sns.pairplot(tips)
+
+# Crear una matriz de correlación
+corr = tips.corr()
+
+# Mostrar un mapa de calor
+sns.heatmap(corr, annot=True, cmap="coolwarm")
+
+g = sns.FacetGrid(tips, col="time", row="sex")  # Crear una cuadrícula de gráficos
+g.map(sns.scatterplot, "total_bill", "tip")  # Graficar en cada celda
+
+sns.regplot(x="total_bill", y="tip", data=tips)
+
+PALETA DE COLORES
+sns.set_palette("muted")  # Establecer una paleta de colores 'deep', 'muted', 'pastel', 'dark', 'colorblind'
+
+ESTILO (MAS GENERAL
+sns.set_style("whitegrid")  # Fondo blanco con cuadrícula
+"darkgrid": Fondo oscuro con cuadrícula
+
+"whitegrid": Fondo blanco con cuadrícula
+
+"dark": Fondo oscuro sin cuadrícula
+
+"white": Fondo blanco sin cuadrícula
+
+LO DEMAS ES CON MATPLOTLIB
+sns.scatterplot(x="total_bill", y="tip", data=tips)
+plt.title("Relación entre la factura total y la propina")
+plt.xlabel("Factura Total")
+plt.ylabel("Propina")
+plt.show()

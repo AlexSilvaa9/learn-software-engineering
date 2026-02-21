@@ -1,0 +1,2983 @@
+\documentclass[12pt,a4paper]{report}
+
+% Packages for enhanced formatting and functionality
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tcolorbox}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{fontawesome5}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Page geometry
+\geometry{
+    left=2.5cm,
+    right=2.5cm,
+    top=3cm,
+    bottom=3cm,
+    headheight=15pt
+}
+
+% Color definitions
+\definecolor{awsorange}{RGB}{255,153,0}
+\definecolor{awsblue}{RGB}{35,47,62}
+\definecolor{lightgray}{RGB}{245,245,245}
+\definecolor{darkgray}{RGB}{128,128,128}
+\definecolor{successgreen}{RGB}{40,167,69}
+\definecolor{warningyellow}{RGB}{255,193,7}
+\definecolor{dangerred}{RGB}{220,53,69}
+
+% Custom boxes for different types of content
+\newtcolorbox{awsbox}[1][]{
+    colback=awsorange!10,
+    colframe=awsorange,
+    boxrule=2pt,
+    arc=5pt,
+    title={#1},
+    fonttitle=\bfseries\color{white},
+    coltitle=white,
+    colbacktitle=awsorange
+}
+
+\newtcolorbox{conceptbox}[1][]{
+    colback=awsblue!10,
+    colframe=awsblue,
+    boxrule=2pt,
+    arc=5pt,
+    title={#1},
+    fonttitle=\bfseries\color{white},
+    coltitle=white,
+    colbacktitle=awsblue
+}
+
+\newtcolorbox{warningbox}[1][]{
+    colback=warningyellow!10,
+    colframe=warningyellow,
+    boxrule=2pt,
+    arc=5pt,
+    title={#1},
+    fonttitle=\bfseries,
+    coltitle=black,
+    colbacktitle=warningyellow
+}
+
+\newtcolorbox{tipbox}[1][]{
+    colback=successgreen!10,
+    colframe=successgreen,
+    boxrule=2pt,
+    arc=5pt,
+    title={#1},
+    fonttitle=\bfseries\color{white},
+    coltitle=white,
+    colbacktitle=successgreen
+}
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+
+% Left header: AWS icon + document type
+\fancyhead[L]{\textcolor{awsblue}{\faAws} \textcolor{awsblue}{\textbf{AWS SSA}} }
+
+% Center header: Current chapter name
+\fancyhead[C]{\textcolor{awsorange}{\small\leftmark}}
+
+% Right header: Technical level indicator
+\fancyhead[R]{ }
+
+% Footer setup
+\fancyfoot[L]{\textcolor{darkgray}{\textbf{Technical Deep Dive}} \textcolor{dangerred}{\faExclamationTriangle}}
+\fancyfoot[C]{\textcolor{awsblue}{\textbf{\thepage}}}
+\fancyfoot[R]{\textcolor{darkgray}{\small Solutions Architect Associate \textbar\ \faCode}}
+
+% Custom rule color and thickness
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{0.5pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{awsorange}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrule}{\hbox to\headwidth{\color{awsblue}\leaders\hrule height \footrulewidth\hfill}}
+
+% Title formatting
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries\color{awsblue}}
+{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+
+\titleformat{\section}
+{\normalfont\Large\bfseries\color{awsblue}}
+{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\normalfont\large\bfseries\color{awsorange}}
+{\thesubsection}{1em}{}
+
+% Hyperlink setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=awsblue,
+    urlcolor=awsorange,
+    citecolor=awsblue,
+    pdfborder={0 0 0},
+    pdftitle={AWS Solutions Architect Associate - Guía de Estudio},
+    pdfauthor={Alex},
+    pdfsubject={AWS Certification Study Guide}
+}
+
+% Custom commands
+\newcommand{\awsservice}[1]{\textcolor{awsorange}{\textbf{#1}}}
+\newcommand{\important}[1]{\textcolor{dangerred}{\textbf{#1}}}
+\newcommand{\vcheckmark}{\textcolor{successgreen}{\faCheck}}
+\newcommand{\crossmark}{\textcolor{dangerred}{\faTimes}}
+\newcommand{\warning}{\textcolor{warningyellow}{\faExclamationTriangle}}
+
+\begin{document}
+
+% Title page
+\begin{titlepage}
+    \centering
+    \vspace*{1.5cm}
+    
+    % AWS Logo and main title
+    {\Huge \textcolor{awsorange}{\faAws}}
+    
+    \vspace{0.5cm}
+    
+    {\huge\bfseries\color{awsblue} AWS Solutions Architect Associate}
+    
+    \vspace{0.8cm}
+    
+    {\Large\color{awsorange} Technical Deep Dive Notes}
+    
+    \vspace{0.3cm}
+    
+    {\large\color{darkgray} Apuntes Técnicos Avanzados}
+    
+    \vspace{1.5cm}
+    
+    % Technical badges
+    \begin{center}
+        \begin{tcolorbox}[width=0.8\textwidth, colback=lightgray!30, colframe=awsblue, arc=10pt, boxrule=2pt]
+        \centering
+        {\color{dangerred}\faExclamationTriangle} \textbf{Advanced Content} {\color{dangerred}\faExclamationTriangle}
+        
+        \vspace{0.3cm}
+        
+        {\small 
+        \textcolor{awsblue}{\faCog} \textit{Deep Architecture Patterns} \textbar\ 
+        \textcolor{awsorange}{\faCode} \textit{Complex Scenarios} \textbar\ 
+        \textcolor{successgreen}{\faCheck} \textit{Production Ready}
+        }
+        \end{tcolorbox}
+    \end{center}
+    
+    \vspace{1cm}
+    
+    % Content description
+    \begin{center}
+        \begin{minipage}{0.7\textwidth}
+            \centering
+            \textit{Contenido especializado con configuraciones avanzadas, patrones de arquitectura complejos, y escenarios de troubleshooting para el examen AWS Solutions Architect Associate}
+        \end{minipage}
+    \end{center}
+    
+    \vspace{1.5cm}
+    
+    % Technical specs
+    {\small 
+    \textcolor{darkgray}{
+    \faCalendar\ \today\ \textbar\ 
+    \faFile\ Technical Reference \textbar\ 
+    \faCheck\ Certification Prep
+    }
+    }
+    
+    \vfill
+    
+    % Footer with version and compilation info
+    {\footnotesize 
+    \textcolor{awsblue}{Version 1.0} \textbar\ 
+    \textcolor{darkgray}{Compilado con \LaTeX} \textbar\ 
+    \textcolor{awsorange}{\faAws\ AWS Certified}
+    }
+\end{titlepage}
+
+% Table of contents
+\tableofcontents
+\newpage
+
+% Introduction
+\chapter*{Introducción}
+\addcontentsline{toc}{chapter}{Introducción}
+
+\begin{awsbox}[Apuntes Técnicos Avanzados AWS SSA]
+Estos apuntes están diseñados para profesionales que buscan un entendimiento \textbf{profundo y técnico} de AWS para el examen Solutions Architect Associate.
+
+\textbf{Enfoque}: Configuraciones avanzadas, patrones complejos, troubleshooting y casos edge que aparecen en el examen real.
+\end{awsbox}
+
+\begin{conceptbox}[Nivel de Contenido]
+\begin{itemize}
+    \item \textcolor{dangerred}{\faExclamationTriangle} \textbf{Advanced}: Configuraciones no obvias y restricciones específicas
+    \item \textcolor{awsorange}{\faCode} \textbf{Production-Ready}: Patrones de arquitectura reales
+    \item \textcolor{awsblue}{\faCog} \textbf{Deep Dive}: Comparativas técnicas detalladas
+    \item \textcolor{successgreen}{\faCheck} \textbf{Troubleshooting}: Resolución de problemas complejos
+\end{itemize}
+\end{conceptbox}
+
+\begin{tipbox}[Cómo usar estos apuntes]
+\begin{enumerate}
+    \item \textbf{Pre-requisito}: Conocimiento básico de servicios AWS
+    \item \textbf{Enfoque}: Casos complicados y preguntas difíciles del examen
+    \item \textbf{Práctica}: Laboratorios hands-on con configuraciones avanzadas
+    \item \textbf{Revisión}: Sección de preguntas difíciles para repaso final
+\end{enumerate}
+\end{tipbox}
+
+\begin{warningbox}[Advertencia]
+Este contenido asume experiencia previa con AWS. Para conceptos básicos, consulta la documentación oficial de AWS primero.
+\end{warningbox}
+
+\newpage
+
+% Chapter 1: Computing Services
+\chapter{Servicios de Cómputo}
+
+\section{Amazon EKS (Elastic Kubernetes Service)}
+
+\begin{conceptbox}[Control Plane - Plano de Control]
+El Control Plane de EKS es \important{gestionado 100\% por AWS}. No lo administras tú.
+\end{conceptbox}
+
+\subsection{Componentes del Control Plane}
+
+\begin{itemize}[leftmargin=2cm]
+    \item \textbf{etcd}: Almacenamiento de estado del clúster
+    \item \textbf{kube-apiserver}: Interfaz principal del clúster
+    \item \textbf{kube-scheduler}: Programador de pods
+    \item \textbf{controller-manager}: Gestor de controladores
+\end{itemize}
+
+\begin{awsbox}[Características Clave]
+\begin{itemize}
+    \item \vcheckmark\ Alta disponibilidad en múltiples zonas de disponibilidad
+    \item \vcheckmark\ Escala automáticamente según la carga del clúster
+    \item \vcheckmark\ Punto de acceso público o privado (configurable)
+    \item \important{Facturación}: Tarifa fija por hora por clúster activo
+\end{itemize}
+\end{awsbox}
+
+\subsection{Tipos de Nodos de Trabajo (Worker Nodes)}
+
+\begin{enumerate}
+    \item \textbf{Managed Node Groups (EC2)}
+    \begin{itemize}
+        \item Nodos EC2 gestionados por EKS
+        \item Integración con Auto Scaling Groups
+        \item Control sobre tipo de instancia, AMI, EBS
+        \item Soporte para On-Demand y Spot instances
+    \end{itemize}
+    
+    \item \textbf{Self-managed Nodes}
+    \begin{itemize}
+        \item Nodos EC2 administrados por ti
+        \item Responsabilidad completa: actualizaciones, escalado, AMIs
+        \item Mayor flexibilidad, mayor mantenimiento
+    \end{itemize}
+    
+    \item \textbf{Fargate (Serverless)}
+    \begin{itemize}
+        \item AWS ejecuta pods en contenedores aislados
+        \item Sin configuración de nodos
+        \item Sin escalado manual
+    \end{itemize}
+\end{enumerate}
+
+\section{Comparación ECS vs EKS}
+
+\begin{center}
+\begin{longtable}{|p{4cm}|p{5cm}|p{4cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Característica} & \cellcolor{awsblue!20}\textbf{EKS} & \cellcolor{awsblue!20}\textbf{ECS} \\
+\hline
+Motor de orquestación & Kubernetes (estándar abierto) & Propietario de AWS \\
+\hline
+Portabilidad & \vcheckmark\ Alta & \crossmark\ Baja (sólo AWS) \\
+\hline
+Curva de aprendizaje & Más compleja & Más sencilla \\
+\hline
+Flexibilidad & \vcheckmark\ Alta & Más limitado \\
+\hline
+Gestión del plano de control & AWS gestiona & Totalmente gestionado \\
+\hline
+Tipos de cómputo & EC2, Fargate & EC2, Fargate \\
+\hline
+Integración ecosistema K8s & \vcheckmark\ Total & \crossmark\ Nula \\
+\hline
+\cellcolor{successgreen!20}\textbf{Uso recomendado} & Kubernetes, portabilidad & Simplicidad y 100\% AWS \\
+\hline
+\end{longtable}
+\end{center}
+
+\section{Políticas de Escalado}
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{3cm}|p{3cm}|p{2cm}|p{2cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Tipo} & \cellcolor{awsblue!20}\textbf{¿Qué hace?} & \cellcolor{awsblue!20}\textbf{¿Cuándo usarlo?} & \cellcolor{awsblue!20}\textbf{Ventajas} & \cellcolor{awsblue!20}\textbf{Limitaciones} \\
+\hline
+Manual Scaling & Cambio manual & Entornos pequeños & Simple & No se adapta \\
+\hline
+Scheduled & Escala programado & Cargas predecibles & Predecible & No reactivo \\
+\hline
+Step Scaling & Escalado en pasos & Control fino & Flexible & Complejo \\
+\hline
+\cellcolor{successgreen!20}Target Tracking & Mantiene métrica objetivo & \important{Recomendado} & Automático & Convergencia lenta \\
+\hline
+Dynamic & Métricas personalizadas & Métricas insuficientes & Muy preciso & Más configuración \\
+\hline
+\end{longtable}
+\end{center}
+
+\section{Amazon EC2 - Guía de Instancias}
+
+\begin{conceptbox}[Guía rápida de instancias EC2 (AWS SAA)]
+Esta sección proporciona una referencia completa de los tipos de instancia EC2 más importantes para el examen.
+\end{conceptbox}
+
+\subsection{Estructura del nombre de instancia}
+
+\textbf{Ejemplo}: \texttt{m5n.2xlarge}
+
+\begin{itemize}
+    \item \textbf{m} → familia (tipo de instancia: compute, memory, etc.)
+    \item \textbf{5} → generación (más alto = más nuevo y eficiente)
+    \item \textbf{n} → sufijo (características extra: network, graviton, storage...)
+    \item \textbf{2xlarge} → tamaño (más vCPU/RAM dentro de la misma familia)
+\end{itemize}
+
+\subsection{Familias principales de instancias}
+
+\begin{center}
+\begin{longtable}{|p{2cm}|p{3cm}|p{4.5cm}|p{4cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Familia} & \cellcolor{awsblue!20}\textbf{Significado} & \cellcolor{awsblue!20}\textbf{Casos de uso} & \cellcolor{awsblue!20}\textbf{Restricciones} \\
+\hline
+\cellcolor{successgreen!20}\textbf{T (T2/T3/T4g)} & Burstable (CPU con créditos) & Apps pequeñas, web con tráfico intermitente, dev/test & Si se acaban créditos CPU → throttling \\
+\hline
+\cellcolor{successgreen!20}\textbf{M (M4/M5/M6g/M7i)} & Uso general (balanced) & Apps empresariales, servidores de apps, bases de datos medianas & Ni el más barato ni el más especializado \\
+\hline
+C (C4/C5/C6g/C7g) & Compute Optimized & Web servers de alto rendimiento, juegos online, procesamiento batch & Menos memoria \\
+\hline
+R (R4/R5/R6g) & Memory Optimized & DB in-memory (Redis, Memcached), big data, analítica & Más caras \\
+\hline
+X (X1/X2) & Extra Memory & SAP HANA, grandes DB in-memory & Muy caras \\
+\hline
+Z1d & High frequency CPU & Workloads HPC, finanzas, simulaciones & Niche \\
+\hline
+U-series (u-6tb1.metal) & Ultra memory & SAP HANA, super DBs & Solo bare metal \\
+\hline
+I (I3/I4i) & Storage optimized (IOPS) & NoSQL DB, caching, low-latency storage & Disco efímero (instance store) \\
+\hline
+D (D2/D3) & Dense storage & Data warehousing, Hadoop, archivos & Storage local, no EBS-only \\
+\hline
+H (H1) & High throughput storage & Big Data, streaming & Disco efímero \\
+\hline
+P (P2/P3/P4) & GPU HPC & Deep learning training, HPC científico & Muy caros, drivers CUDA \\
+\hline
+G (G3/G4/G5) & GPU gráficos & Renderizado, VDI, streaming gaming & Optimizado para gráficos, no DL pesado \\
+\hline
+F (F1) & FPGA & Custom acceleration & Complejo de programar \\
+\hline
+Inf (Inf1/Inf2) & Inferentia & Inference ML barato & Solo IA \\
+\hline
+Trn (Trn1) & Trainium & Entrenamiento DL & Nueva generación, especializado \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{Generaciones de hardware}
+
+\begin{awsbox}[Evolución por generaciones]
+El número (ej. m5, c6g) indica la generación de hardware.
+
+\textbf{A mayor número} → CPUs más modernas, mejor precio/rendimiento.
+
+\textbf{Ejemplo}:
+\begin{itemize}
+    \item m4 → Intel más antiguo
+    \item m5 → Intel más moderno
+    \item m6g → Graviton2 (ARM)
+    \item m7i → Intel de última gen
+\end{itemize}
+\end{awsbox}
+
+\subsection{Sufijos comunes}
+
+\begin{center}
+\begin{longtable}{|p{2cm}|p{8cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Sufijo} & \cellcolor{awsblue!20}\textbf{Significado} \\
+\hline
+a & AMD CPUs \\
+\hline
+\cellcolor{successgreen!20}g & Graviton (ARM, más barato/eficiente) \\
+\hline
+n & Network optimizado (más ancho de banda) \\
+\hline
+d & Instance store (NVMe local, dense storage) \\
+\hline
+e & Extra storage o memoria extendida \\
+\hline
+i & Intel (a veces explícito) \\
+\hline
+metal & Bare metal (acceso directo al host físico) \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{Tamaños (subfamilias)}
+
+\begin{tipbox}[Escala de tamaños]
+\begin{itemize}
+    \item \textbf{nano} → el más pequeño (ej. t3.nano)
+    \item micro, small, medium, large
+    \item xlarge, 2xlarge, 4xlarge, 8xlarge... hasta 32xlarge
+    \item \important{Cada salto → aproximadamente dobla vCPUs y RAM}
+\end{itemize}
+\end{tipbox}
+
+\section{AWS Lambda}
+
+\begin{awsbox}[Especificaciones Técnicas]
+\begin{center}
+\begin{longtable}{|p{4cm}|p{8cm}|}
+\hline
+\cellcolor{awsorange!20}\textbf{Característica} & \cellcolor{awsorange!20}\textbf{Detalles técnicos} \\
+\hline
+Lenguajes soportados & Python, Node.js, Java, Go, .NET, Ruby \\
+\hline
+Tamaño máximo código & 50 MB (zip), 250 MB (descomprimido) \\
+\hline
+Timeout máximo & \important{15 minutos} por invocación \\
+\hline
+Memoria asignable & 128 MB a 10,240 MB \\
+\hline
+CPU asignada & Proporcional a memoria \\
+\hline
+Ephemeral storage & /tmp hasta 512 MB (ampliable a 10 GB) \\
+\hline
+Concurrent executions & Límite regional (default: 1,000) \\
+\hline
+\end{longtable}
+\end{center}
+\end{awsbox}
+
+\begin{conceptbox}[Conceptos Clave]
+\begin{itemize}
+    \item \textbf{Cold Start}: Primera invocación arranca entorno (más lenta)
+    \item \textbf{Warm Start}: Lambda activa, respuesta rápida
+    \item \textbf{Provisioned Concurrency}: Reduce cold starts
+    \item \textbf{Lambda Qualifiers}: Versiones específicas o aliases
+    \item \textbf{Throttle Option}: Límites de ejecuciones simultáneas
+\end{itemize}
+\end{conceptbox}
+
+\section{AWS Elastic Beanstalk}
+
+\subsection{Componentes Principales}
+
+\begin{enumerate}
+    \item \textbf{Application}: Contenedor lógico para versiones y entornos
+    \item \textbf{Environment}: Entorno aislado (EC2 + Auto Scaling + LB)
+    \item \textbf{Application Version}: Paquete de código en S3
+    \item \textbf{Environment Configuration}: Parámetros configurables como tipo de instancia, escalado, variables de entorno y health checks.
+    \item \textbf{Platform}: El runtime y stack base donde corre la app (Node.js, Java, Docker)
+    \item \textbf{Configuration Files}: Archivos YAML (.ebextensions) como instalación de paquetes y scripts de inicio. Se incluyen en el código fuente.
+    \item \textbf{Monitoring}: Estados Green/Yellow/Red
+\end{enumerate}
+
+\section{Elastic Load Balancer (ELB)}
+
+\begin{conceptbox}[Certificados en HTTPS]
+\textbf{Función principal}: El certificado de servidor en ELB permite:
+\begin{itemize}
+    \item \textbf{Terminar} la conexión cifrada del cliente
+    \item \textbf{Descifrar} el tráfico HTTPS
+    \item \textbf{Reenviar} el tráfico a los recursos del target group
+\end{itemize}
+\end{conceptbox}
+
+\begin{awsbox}[Tipos de Load Balancer]
+\begin{itemize}
+    \item \textbf{Application Load Balancer (ALB)}: HTTP/HTTPS, Layer 7
+    \item \textbf{Network Load Balancer (NLB)}: TCP/UDP, Layer 4, ultra-performance
+    \item \textbf{Gateway Load Balancer (GWLB)}: Layer 3, firewalls y appliances
+    \item \textbf{Classic Load Balancer}: Legacy, Layer 4/7
+\end{itemize}
+\end{awsbox}
+
+\newpage
+
+\chapter{Servicios de Almacenamiento}
+
+\section{Amazon S3}
+
+\subsection{Logging y Monitoreo}
+
+\begin{conceptbox}[Object-Level Logging]
+\begin{itemize}
+    \item Registra operaciones: GetObject, PutObject, DeleteObject
+    \item Se habilita con \awsservice{CloudTrail data events}
+    \item \important{No} con logs estándar
+\end{itemize}
+\end{conceptbox}
+
+\begin{awsbox}[Requester Pays]
+En este modo:
+\begin{itemize}
+    \item El \important{cliente paga} por descarga y solicitudes
+    \item No el propietario del bucket
+    \item Útil para buckets públicos con datos grandes
+    \item Requiere header: \texttt{x-amz-request-payer: requester}
+\end{itemize}
+\end{awsbox}
+
+\begin{tipbox}[Server Access Logging]
+\begin{itemize}
+    \item Registra solicitudes a nivel de bucket
+    \item Logs guardados en otro bucket S3
+    \item Incluye: IP, user-agent, errores, etc.
+    \item Más general y barato que object-level logging
+\end{itemize}
+\end{tipbox}
+
+\newpage
+
+\chapter{Servicios de Base de Datos}
+
+\section{RDS Proxy}
+
+\begin{conceptbox}[Propósito]
+RDS Proxy mejora:
+\begin{itemize}
+    \item \textbf{Escalabilidad}: Pool de conexiones
+    \item \textbf{Disponibilidad}: Gestión de failover
+    \item \textbf{Seguridad}: Autenticación centralizada
+    \item \textbf{Rendimiento}: Reduce carga en BD
+\end{itemize}
+\end{conceptbox}
+
+\section{DynamoDB Accelerator (DAX)}
+
+\subsection{Componentes}
+
+\begin{enumerate}
+    \item \textbf{DAX Cluster}: Grupo de instancias en memoria (hasta 10 nodos)
+    \item \textbf{DAX Nodes}: Nodo líder (escrituras) + réplicas (lecturas)
+    \item \textbf{Client SDK}: \important{Requiere SDK compatible con DAX}
+\end{enumerate}
+
+\section{Read Replicas vs Secondary DB}
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{4cm}|p{5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Tipo} & \cellcolor{awsblue!20}\textbf{Read Replica} & \cellcolor{awsblue!20}\textbf{Secondary DB} \\
+\hline
+Acceso & \vcheckmark\ Solo lectura & \crossmark\ No se puede leer \\
+\hline
+Escalado & \vcheckmark\ Horizontal & \crossmark\ Solo HA \\
+\hline
+Failover & \warning\ Manual & \vcheckmark\ Automático \\
+\hline
+Replicación & Asincrónica & Sincrónica \\
+\hline
+Endpoint & Diferente & \vcheckmark\ Mismo \\
+\hline
+\end{longtable}
+\end{center}
+
+\begin{warningbox}[Importante]
+\important{Tener Read Replicas $\neq$ Ser un clúster}
+\end{warningbox}
+
+\section{Motores de Base de Datos - Comparación Completa}
+
+\begin{center}
+\begin{longtable}{|p{2.5cm}|p{1.5cm}|p{2cm}|p{2cm}|p{2.5cm}|p{2cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Motor} & \cellcolor{awsblue!20}\textbf{Cluster} & \cellcolor{awsblue!20}\textbf{Multi-AZ} & \cellcolor{awsblue!20}\textbf{Read Replicas} & \cellcolor{awsblue!20}\textbf{Writer+Readers} & \cellcolor{awsblue!20}\textbf{Global} \\
+\hline
+\cellcolor{successgreen!20}\textbf{Aurora MySQL/PostgreSQL} & \vcheckmark\ Sí & \vcheckmark\ Integrado & \vcheckmark\ Hasta 15 & \vcheckmark\ 1 writer + 15 readers & \vcheckmark\ Global DB \\
+\hline
+RDS MySQL/PostgreSQL & \crossmark\ No & \vcheckmark\ Con standby & \vcheckmark\ Asincrónicas & \crossmark\ Solo manuales & \crossmark\ Manual \\
+\hline
+RDS MariaDB & \crossmark\ No & \vcheckmark\ Con standby & \vcheckmark\ Sí & \crossmark\ No & \crossmark\ No \\
+\hline
+RDS SQL Server & \crossmark\ No & \vcheckmark\ AlwaysOn & \crossmark\ No & \crossmark\ No & \crossmark\ No \\
+\hline
+RDS Oracle & \crossmark\ No & \vcheckmark\ Data Guard & \vcheckmark\ Con licencia & \crossmark\ No & \vcheckmark\ Con Data Guard \\
+\hline
+\cellcolor{successgreen!20}\textbf{DynamoDB} & \vcheckmark\ Interno & \vcheckmark\ Nativo & \crossmark\ No aplica & \vcheckmark\ Multi-master & \vcheckmark\ Global Tables \\
+\hline
+DocumentDB & \vcheckmark\ Sí & \vcheckmark\ Multi-AZ & \vcheckmark\ Hasta 15 & \vcheckmark\ 1 writer + readers & \crossmark\ Una región \\
+\hline
+Keyspaces & \vcheckmark\ Sí & \vcheckmark\ Nativo & \vcheckmark\ Distribuida & \vcheckmark\ Multi-writer & \vcheckmark\ Global \\
+\hline
+\end{longtable}
+\end{center}
+
+\section{Amazon Aurora - Detalles Técnicos}
+
+\begin{awsbox}[Aurora Características Clave]
+\begin{itemize}
+    \item \textbf{Clúster}: 1 writer + hasta 15 readers
+    \item \textbf{Almacenamiento}: Compartido y replicado (6 copias en 3 AZs)
+    \item \textbf{Multi-AZ}: Integrado por diseño
+    \item \textbf{Failover}: Rápido entre nodos del clúster
+    \item \textbf{Aurora Global Database}: Replicación entre regiones
+\end{itemize}
+\end{awsbox}
+
+\newpage
+
+\chapter{Alta Disponibilidad}
+
+\section{Estrategias de Recuperación ante Desastres}
+
+\begin{center}
+\begin{longtable}{|p{2.5cm}|p{2cm}|p{2cm}|p{2cm}|p{4cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Estrategia} & \cellcolor{awsblue!20}\textbf{RTO} & \cellcolor{awsblue!20}\textbf{RPO} & \cellcolor{awsblue!20}\textbf{Costo} & \cellcolor{awsblue!20}\textbf{Descripción} \\
+\hline
+Backup \& Restore & Horas+ & Horas & \textdollar\ Bajo & Respaldos regulares \\
+\hline
+Pilot Light & < 1 hora & Minutos & \textdollar\textdollar\ Moderado & Infraestructura mínima \\
+\hline
+Warm Standby & Minutos & Seg-Min & \textdollar\textdollar\textdollar\ Alto & Réplica a escala reducida \\
+\hline
+\cellcolor{successgreen!20}Multi-Site & Segundos & \textasciitilde\ Cero & \textdollar\textdollar\textdollar\textdollar\ Muy Alto & Infraestructura completa \\
+\hline
+\end{longtable}
+\end{center}
+
+\section{DynamoDB - Alta Disponibilidad}
+
+\begin{awsbox}[Características HA Nativas]
+\begin{itemize}
+    \item \textbf{Alta Disponibilidad}: Replicación automática en 3 AZs
+    \item \textbf{On-Demand Backup}: Respaldos sin impacto en rendimiento
+    \item \textbf{Point-in-Time Recovery}: Restauración últimos 35 días
+    \item \textbf{Global Tables}: Replicación multi-región activa-activa
+    \item \textbf{Auto Scaling}: Ajuste automático de capacidad
+\end{itemize}
+\end{awsbox}
+
+\section{RDS - Alta Disponibilidad}
+
+\begin{conceptbox}[Características HA]
+\begin{itemize}
+    \item \textbf{Multi-AZ}: Réplica sincrónica, failover automático
+    \item \textbf{Read Replicas}: Réplicas asincrónicas, escalado lectura
+    \item \textbf{Backups automáticos}: Hasta 35 días
+    \item \textbf{Point-in-Time Recovery}: Restauración a segundo específico
+    \item \textbf{Manual Snapshots}: Respaldos indefinidos
+    \item \textbf{Cross-Region Replicas}: Réplicas entre regiones
+\end{itemize}
+\end{conceptbox}
+
+\newpage
+
+\chapter{Servicios de Desacoplamiento y Big Data}
+
+\section{Servicios de Desacoplamiento}
+
+\begin{center}
+\begin{longtable}{|p{2.5cm}|p{2cm}|p{4cm}|p{4cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Servicio} & \cellcolor{awsblue!20}\textbf{Tipo} & \cellcolor{awsblue!20}\textbf{Componentes clave} & \cellcolor{awsblue!20}\textbf{Casos de uso} \\
+\hline
+\awsservice{SNS} & Pub/Sub & Topics, Subscriptions & Notificaciones, fan-out \\
+\hline
+\awsservice{SQS} & Queue & Standard/FIFO, DLQ & Procesamiento desacoplado \\
+\hline
+\awsservice{Kinesis} & Streaming & Shards, Producers & Tiempo real, IoT \\
+\hline
+\awsservice{Step Functions} & Orchestration & State Machines & Workflows \\
+\hline
+\awsservice{EventBridge} & Event Bus & Buses, Rules & Integración apps \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{Patrones de Integración Comunes}
+
+\begin{tipbox}[Fan-out SNS]
+\textbf{Patrón}: App → SNS topic → múltiples SQS/Lambda
+
+\textbf{Ventaja}: Desacopla y permite procesamiento paralelo
+\end{tipbox}
+
+\begin{conceptbox}[SQS: Standard vs FIFO]
+\begin{center}
+\begin{longtable}{|p{3cm}|p{5cm}|p{5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Modo} & \cellcolor{awsblue!20}\textbf{Standard Queue} & \cellcolor{awsblue!20}\textbf{FIFO Queue} \\
+\hline
+Throughput & Prácticamente ilimitado & 300 mensajes/s (sin batching) \\
+\hline
+Entrega & Al menos una vez (duplicados) & Exactamente una vez \\
+\hline
+Orden & No garantizado & \vcheckmark\ FIFO estricto \\
+\hline
+Casos de uso & Alta escala, orden no crítico & Procesamiento financiero, orden crítico \\
+\hline
+\end{longtable}
+\end{center}
+\end{conceptbox}
+
+\section{Big Data - MSK y EMR}
+
+\begin{center}
+\begin{longtable}{|p{2cm}|p{3cm}|p{7cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Servicio} & \cellcolor{awsblue!20}\textbf{Componente} & \cellcolor{awsblue!20}\textbf{Descripción} \\
+\hline
+\multirow{7}{*}{\awsservice{MSK}} & Brokers & Instancias que almacenan y transmiten datos \\
+\cline{2-3}
+& Zookeeper & Coordinación y metadata del clúster \\
+\cline{2-3}
+& Topics & Categorías donde se publican mensajes \\
+\cline{2-3}
+& Partitions & División para paralelismo \\
+\cline{2-3}
+& Producers & Apps que envían mensajes \\
+\cline{2-3}
+& Consumers & Apps que leen mensajes \\
+\cline{2-3}
+& Connectors & Integración con otros sistemas \\
+\hline
+\multirow{7}{*}{\awsservice{EMR}} & Master Node & Coordina clúster y gestiona recursos \\
+\cline{2-3}
+& Core Nodes & Ejecutan tareas + almacenamiento HDFS \\
+\cline{2-3}
+& Task Nodes & Solo ejecutan tareas (sin storage) \\
+\cline{2-3}
+& YARN & Administrador de recursos \\
+\cline{2-3}
+& HDFS & Sistema de archivos distribuido \\
+\cline{2-3}
+& Frameworks & Hadoop, Spark, Hive, Presto \\
+\cline{2-3}
+& Steps API & API para ejecutar trabajos \\
+\hline
+\end{longtable}
+\end{center}
+
+\section{Machine Learning}
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{5cm}|p{5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Servicio} & \cellcolor{awsblue!20}\textbf{Función} & \cellcolor{awsblue!20}\textbf{Uso típico} \\
+\hline
+\awsservice{Comprehend} & Procesamiento de lenguaje natural & Análisis sentimientos, extracción entidades \\
+\hline
+\awsservice{Forecast} & Predicción series temporales & Previsión demanda, inventarios \\
+\hline
+\cellcolor{successgreen!20}\awsservice{SageMaker} & Plataforma completa ML & Desarrollo personalizado modelos \\
+\hline
+\awsservice{Rekognition} & Análisis imágenes/videos & Detección facial, moderación contenido \\
+\hline
+\awsservice{Lex} & Chatbots conversacionales & Interfaces voz y texto \\
+\hline
+\awsservice{Polly} & Texto a voz (TTS) & Generación voz natural \\
+\hline
+\awsservice{Translate} & Traducción automática & Traducción multilingüe \\
+\hline
+\awsservice{Personalize} & Recomendaciones tiempo real & E-commerce, contenido personalizado \\
+\hline
+\end{longtable}
+\end{center}
+
+\section{ETL - AWS Glue}
+
+\begin{conceptbox}[AWS Glue Data Catalog]
+\textbf{Primer paso en Glue}: Servicio central de metadatos
+\begin{itemize}
+    \item Almacena estructura y ubicación de datasets
+    \item Actúa como "hive metastore" para EMR, Athena, Redshift
+    \item \important{Catalogar fuentes antes de transformar}
+\end{itemize}
+\end{conceptbox}
+
+\subsection{Glue Studio vs DataBrew}
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{5cm}|p{5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Característica} & \cellcolor{awsblue!20}\textbf{Glue Studio} & \cellcolor{awsblue!20}\textbf{Glue DataBrew} \\
+\hline
+Usuarios objetivo & Ingenieros de datos & Analistas sin código \\
+\hline
+Nivel de código & Bajo código & 100\% no-code \\
+\hline
+Transformaciones & Potentes (PySpark) & Predefinidas \\
+\hline
+Escenario típico & ETL avanzado & Limpieza rápida \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{EMR vs Glue para ETL}
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{5cm}|p{5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Comparación} & \cellcolor{awsblue!20}\textbf{AWS Glue} & \cellcolor{awsblue!20}\textbf{Amazon EMR} \\
+\hline
+Modelo & Serverless ETL & Clúster administrado \\
+\hline
+Lenguajes & PySpark, Scala & PySpark, Hive, Presto \\
+\hline
+Costo & Por job/duración & Por hora de clúster \\
+\hline
+Control & Bajo (automático) & Alto (tuneable) \\
+\hline
+\cellcolor{successgreen!20}Uso ideal & ETL serverless & Big Data complejo \\
+\hline
+\end{longtable}
+\end{center}
+
+\begin{tipbox}[Orquestación ETL]
+\begin{itemize}
+    \item \textbf{Glue Workflows}: Jobs ETL + triggers + crawlers
+    \item \textbf{Step Functions}: Más general, mejor para casos complejos
+    \item \textbf{MWAA}: Airflow administrado para workflows avanzados
+\end{itemize}
+\end{tipbox}
+
+\newpage
+
+\chapter{Arquitectura}
+
+\section{Las 7 R de Migración}
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{9cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Estrategia} & \cellcolor{awsblue!20}\textbf{Descripción} \\
+\hline
+\textbf{Rehost} & \textit{"Lift and shift"} - Migración sin cambios \\
+\hline
+\textbf{Replatform} & Migración con optimizaciones menores \\
+\hline
+\textbf{Repurchase} & Cambio a producto SaaS \\
+\hline
+\cellcolor{successgreen!20}\textbf{Refactor} & Rediseño para servicios cloud \\
+\hline
+\textbf{Retire} & Eliminación de aplicaciones no utilizadas \\
+\hline
+\textbf{Retain} & Mantener on-premises \\
+\hline
+\textbf{Relocate} & Migración de VMs enteras \\
+\hline
+\end{longtable}
+\end{center}
+
+\section{Fases de Migración}
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{9cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Fase} & \cellcolor{awsblue!20}\textbf{Descripción} \\
+\hline
+\textbf{1. Assess} & Evaluación de dependencias, coste y readiness \\
+\hline
+\textbf{2. Mobilize} & Landing zone, herramientas, seguridad \\
+\hline
+\textbf{3. Migrate \& Modernize} & Ejecución + modernización (serverless, containers) \\
+\hline
+\end{longtable}
+\end{center}
+
+\newpage
+
+\chapter{Gestión y Monitoreo}
+
+\section{AWS CloudTrail}
+
+\begin{conceptbox}[Función Principal]
+Registra eventos de API de la cuenta AWS:
+\begin{itemize}
+    \item \textbf{Quién}: Usuario o servicio
+    \item \textbf{Qué}: Acción realizada  
+    \item \textbf{Cuándo}: Timestamp
+    \item \textbf{Desde dónde}: IP, región
+\end{itemize}
+\end{conceptbox}
+
+\section{Amazon CloudWatch Logs}
+
+\begin{itemize}
+    \item \textbf{Función}: Recoge, almacena y visualiza logs
+    \item \textbf{Fuentes}: EC2, Lambda, ECS, aplicaciones
+    \item \textbf{CloudWatch Agent}: Instalado en EC2 para logs del sistema
+    \item \textbf{Permisos}: logs:CreateLogGroup, logs:PutLogEvents
+\end{itemize}
+
+\section{AWS Config}
+
+\begin{conceptbox}[Monitoreo de Configuración]
+\textbf{Función}: Monitorea y registra configuraciones de recursos AWS
+
+\textbf{Componentes}:
+\begin{itemize}
+    \item \textbf{Items}: Recursos rastreados por Config
+    \item \textbf{History}: Versiones pasadas de configuraciones  
+    \item \textbf{Snapshots}: Capturas puntuales del estado
+    \item \textbf{Compliance}: Evaluación contra reglas
+    \item \textbf{Remediation}: Correcciones automáticas con SSM
+\end{itemize}
+\end{conceptbox}
+
+\section{AWS Systems Manager (SSM)}
+
+\begin{awsbox}[Requisitos para EC2]
+\begin{itemize}
+    \item \vcheckmark\ Agente SSM instalado y ejecutándose
+    \item \vcheckmark\ IAM role con permisos: ssm:*, ec2messages:*
+    \item \vcheckmark\ Acceso a internet o endpoints VPC de SSM
+\end{itemize}
+\end{awsbox}
+
+\subsection{Building Blocks}
+
+\begin{itemize}
+    \item \textbf{Run Command}: Ejecuta acciones remotas en instancias
+    \item \textbf{Parameter Store}: Almacena secretos/configuraciones
+    \item \textbf{State Manager}: Mantiene configuraciones deseadas
+    \item \textbf{Automation}: Flujos para tareas repetitivas
+\end{itemize}
+
+\section{CloudFront Access Logs}
+
+\begin{conceptbox}[¿Qué hace?]
+Guarda información detallada de cada petición a una distribución CloudFront.
+\end{conceptbox}
+
+\begin{itemize}
+    \item \textbf{Dónde se almacenan}: En un bucket S3 especificado
+    \item \textbf{Formato}: Texto plano con datos como IP, URI, código de respuesta, etc.
+\end{itemize}
+
+\section{VPC Flow Logs}
+
+\begin{conceptbox}[¿Qué hace?]
+Captura el tráfico IP aceptado o rechazado dentro de una VPC.
+\end{conceptbox}
+
+\begin{itemize}
+    \item \textbf{Nivel}: Se pueden habilitar por VPC, subnet o ENI
+    \item \textbf{Destino}: Logs enviados a CloudWatch Logs o S3
+    \item \textbf{Útiles para}:
+    \begin{itemize}
+        \item Diagnóstico de red
+        \item Auditoría de tráfico
+        \item Monitoreo de seguridad
+    \end{itemize}
+\end{itemize}
+
+\section{Integración CloudTrail, EventsLog y CloudWatch}
+
+\begin{center}
+\begin{tcolorbox}[width=0.9\textwidth, colback=lightgray!50, colframe=awsblue, title=Flujo de Integración]
+\centering
+\textbf{Usuario o servicio hace acción en AWS}
+\\[0.5cm]
+$\downarrow$
+\\[0.5cm]
+\textbf{CloudTrail captura evento}
+\\[0.5cm]
+$\downarrow$
+\\[0.5cm]
+\textbf{Evento se guarda como log en S3 (formato JSON)}
+\\[0.5cm]
+$\downarrow$
+\\[0.5cm]
+\textbf{(opcional) Se envía a CloudWatch Logs (log group)}
+\\[0.5cm]
+$\downarrow$
+\\[0.5cm]
+\textbf{Puedes aplicar métricas, alarmas, insights y alertas}
+\end{tcolorbox}
+\end{center}
+
+\newpage
+
+\chapter{Encriptación y Seguridad}
+
+\section{Certificados Digitales}
+
+\begin{conceptbox}[¿Qué es un certificado digital?]
+Archivo electrónico que vincula una clave pública con identidad:
+
+\textbf{Incluye}:
+\begin{itemize}
+    \item Nombre del titular (Common Name, CN)
+    \item Clave pública
+    \item Fecha de expiración  
+    \item Firma digital de la CA emisora
+\end{itemize}
+\end{conceptbox}
+
+\subsection{Tipos de Certificados}
+
+\begin{center}
+\begin{longtable}{|p{4cm}|p{4cm}|p{4cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Tipo} & \cellcolor{awsblue!20}\textbf{Uso principal} & \cellcolor{awsblue!20}\textbf{Validación} \\
+\hline
+\cellcolor{successgreen!20}Certificado público ACM & HTTPS sitios web públicos & DNS/email dominio \\
+\hline
+Certificado privado (ACM PCA) & Seguridad interna & Políticas internas \\
+\hline
+\end{longtable}
+\end{center}
+
+\begin{awsbox}[Entidades Certificadoras (CAs)]
+\textbf{Función}: Organizaciones que emiten y firman certificados
+
+\textbf{Proceso}:
+\begin{enumerate}
+    \item Validan identidad del solicitante
+    \item Emiten certificado firmado digitalmente
+    \item Funcionan en cadena de confianza
+\end{enumerate}
+\end{awsbox}
+
+\newpage
+
+% Appendices
+\appendix
+
+\chapter{Comandos y Referencias Rápidas}
+
+\section{Enlaces Útiles}
+
+\begin{itemize}
+    \item \href{https://aws.amazon.com/certification/certified-solutions-architect-associate/}{Página oficial del examen SAA}
+    \item \href{https://docs.aws.amazon.com/}{Documentación oficial AWS}
+    \item \href{https://aws.amazon.com/training/}{AWS Training and Certification}
+\end{itemize}
+
+\section{Consejos para el Examen}
+
+\begin{tipbox}[Estrategias de Estudio]
+\begin{enumerate}
+    \item \textbf{Hands-on practice}: Usa la consola AWS y CLI
+    \item \textbf{Arquitecturas de referencia}: Estudia Well-Architected Framework
+    \item \textbf{Casos de uso}: Relaciona servicios con escenarios reales
+    \item \textbf{Costos}: Comprende modelos de pricing
+    \item \textbf{Simulacros}: Practica con exámenes de práctica
+\end{enumerate}
+\end{tipbox}
+
+\begin{warningbox}[Errores Comunes]
+\begin{itemize}
+    \item No confundir Read Replicas con Multi-AZ
+    \item Recordar límites y restricciones de cada servicio
+    \item Distinguir entre servicios similares (ECS vs EKS)
+    \item Conocer cuándo usar cada tipo de Load Balancer
+    \item Entender diferencias entre storage classes de S3
+\end{itemize}
+\end{warningbox}
+
+\chapter{Preguntas Difíciles del Examen}
+
+\begin{conceptbox}[Propósito de esta sección]
+Esta sección está diseñada para recopilar las preguntas más desafiantes y complejas que pueden aparecer en el examen AWS Solutions Architect Associate.
+
+\textbf{Organizadas por categorías}:
+\begin{itemize}
+    \item Preguntas de arquitectura compleja
+    \item Casos de uso específicos con múltiples servicios
+    \item Preguntas que requieren conocimiento profundo
+    \item Escenarios de troubleshooting avanzados
+\end{itemize}
+\end{conceptbox}
+
+
+
+\subsection{Seguridad}
+
+\begin{itemize}
+    \item KMS keys can operate on a multi-region scope, but AWS recommends region-specific keys for most cases. EXPLICACIÓN:Al replicar la clave en varias regiones, si alguna región es comprometida, la clave completa podría estar en riesgo.
+    \item when you need to encrypt or sign data in client-side applications across multiple Regions, multi-Region keys might be the solution.
+    \item Cloud Hsm no tiene auto rotacion de claves
+    \item Los SCP son jerárquicos, para que la cuenta admin del OU development hay que asignarle a root, development OU e incluso a la cuenta admin el SCP. No olvidar que además de los SCP hay que asignar policies
+    \item Allow list strategy: ha quitado todos los permisos y todo se tiene que permitir explícitamente
+    \item Deny list (por defecto): los SCP solo se usan para limitar
+    \item La aplicación necesita asumir un rol IAM para obtener credenciales válidas que le permitan autenticarse y ejecutar operaciones en S3, mientras que la bucket policy debe autorizar explícitamente a ese rol a acceder al bucket
+\end{itemize}
+
+\subsection{Servicios de Monitoreo y Análisis}
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{4cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Servicio} & \cellcolor{awsblue!20}\textbf{Función principal} & \cellcolor{awsblue!20}\textbf{Usuarios típicos} & \cellcolor{awsblue!20}\textbf{Visualización integrada} & \cellcolor{awsblue!20}\textbf{Tipo de datos} \\
+\hline
+Amazon Managed Grafana & Visualización y análisis de métricas & DevOps, SRE & Sí & Métricas, logs \\
+\hline
+Amazon QuickSight & Inteligencia de negocio y reportes & Analistas, negocios & Sí & Datos empresariales \\
+\hline
+Amazon Managed Prometheus & Recolección y almacenamiento de métricas Prometheus & Equipos de monitoreo & No (se usa con Grafana) & Métricas de monitoreo \\
+\hline
+\end{longtable}
+\end{center}
+
+\textbf{Prometheus}:
+\begin{itemize}
+    \item Recoge métricas de aplicaciones y sistemas (CPU, memoria, tráfico, errores)
+    \item Almacena métricas en base de datos de series temporales
+    \item Permite consultas complejas para entender comportamiento de sistemas
+\end{itemize}
+
+\subsection{Cobro de Transferencia de Datos}
+
+\begin{itemize}
+    \item \important{De Internet a AWS solo se cobra con Direct Connect}
+\end{itemize}
+
+\begin{center}
+\begin{longtable}{|p{4cm}|p{2cm}|p{6cm}|p{3cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Escenario} & \cellcolor{awsblue!20}\textbf{¿Tiene coste?} & \cellcolor{awsblue!20}\textbf{¿Qué se cobra exactamente?} & \cellcolor{awsblue!20}\textbf{Notas clave} \\
+\hline
+Entre servicios en la misma AZ & \crossmark\ No & Nada & Ej: EC2 → S3 en us-east-1a \\
+\hline
+Entre AZs en la misma región & \vcheckmark\ Sí (\textasciitilde 0.01 USD/GB) & Por GB transferido & Afecta servicios como EFS si se accede desde AZ distinta \\
+\hline
+Entre regiones AWS & \vcheckmark\ Sí (\textasciitilde 0.02–0.09 USD/GB) & Por GB & Replicación entre regiones también se cobra \\
+\hline
+Desde AWS a Internet (egreso) & \vcheckmark\ Sí & Primer GB gratis, luego escalonado (\textasciitilde 0.09 USD/GB) & Uno de los costes más altos sin CDN \\
+\hline
+Desde Internet a AWS (ingreso) & \crossmark\ No & Nada & Gratis para mayoría de servicios \\
+\hline
+Entre VPCs mediante peering & \vcheckmark\ Sí (\textasciitilde 0.01 USD/GB) & Por GB & Más barato que Transit Gateway \\
+\hline
+Entre VPCs mediante Transit Gateway & \vcheckmark\ Sí & Se cobra por hora + por GB & Mayor flexibilidad, pero más caro \\
+\hline
+AWS → On-premises por VPN & \vcheckmark\ Sí & Tráfico saliente desde AWS & Costo similar al egreso normal \\
+\hline
+AWS → On-premises por Direct Connect & \vcheckmark\ Sí & Tarifa fija por puerto + coste por GB desde AWS & Más barato que Internet \\
+\hline
+On-premises → AWS por Direct Connect & \vcheckmark\ Sí & Coste por GB transferido hacia AWS & A menudo más barato que la salida \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{Placement Groups en Cassandra}
+
+\begin{center}
+\begin{longtable}{|p{2.5cm}|p{10cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Tipo} & \cellcolor{awsblue!20}\textbf{Características principales} \\
+\hline
+\textbf{Cluster} & • Instancias muy próximas físicamente (misma AZ) \newline • Alta velocidad y baja latencia \newline • Ideal para HPC, big data \newline • \important{Menor resiliencia}: una falla afecta a muchas instancias \\
+\hline
+\textbf{Partition} & • Divide instancias en hasta 3 particiones físicas separadas \newline • Cada partición va en un rack distinto \newline • \important{Puede ser Multi-AZ} \newline • Alta resiliencia, ideal para HDFS, Cassandra \\
+\hline
+\textbf{Spread} & • Cada instancia se ubica en un rack distinto \newline • Máximo 7 instancias por AZ \newline • Muy alta resiliencia, ideal para cargas críticas de baja densidad \\
+\hline
+\end{longtable}
+\end{center}
+
+\textbf{Cluster} = rendimiento alto, pero baja tolerancia a fallos (Single-AZ)
+
+\subsection{Servicios de Búsqueda}
+
+\textbf{Amazon OpenSearch} (antes Elasticsearch):
+\begin{itemize}
+    \item Diseñado para análisis de big data y análisis en tiempo real
+    \item Motor de búsqueda y análisis de datos estructurados
+    \item Indexa datos (en JSON) y permite búsquedas rápidas y agregaciones
+    \item Ejemplo: Buscar errores en logs del sistema
+    \item Interfaz: OpenSearch Dashboards (antes Kibana)
+\end{itemize}
+
+\textbf{Amazon Kendra}:
+\begin{itemize}
+    \item Motor de búsqueda inteligente con IA (semántica)
+    \item Usa NLP para entender preguntas y extraer respuestas
+    \item Ejemplo: "¿Cómo reinicio el servidor?" y encuentra la respuesta en un manual
+    \item Interfaz: Web, API, integración con otras apps
+\end{itemize}
+
+\textbf{Notas importantes}:
+\begin{itemize}
+    \item Amazon Comprehend es ideal para análisis de texto, no búsqueda específicamente
+    \item AWS Rekognition se usa para análisis de imágenes y videos
+\end{itemize}
+
+\subsection{VPC Network Analyzer}
+
+\begin{center}
+\begin{longtable}{|p{3.5cm}|p{5cm}|p{4cm}|p{3cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Servicio} & \cellcolor{awsblue!20}\textbf{Propósito} & \cellcolor{awsblue!20}\textbf{Qué analiza} & \cellcolor{awsblue!20}\textbf{Uso típico} \\
+\hline
+VPC Reachability Analyzer & Verifica conectividad entre dos puntos en VPC & Caminos de red entre recursos & Diagnóstico de conectividad, reglas de seguridad \\
+\hline
+VPC Network Access Analyzer & Analiza configuraciones para detectar riesgos & Políticas, grupos de seguridad, ACLs & Seguridad: detectar accesos no autorizados \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{Savings Plans vs Reserved Instances}
+
+\begin{itemize}
+    \item \important{Neither Reserved Instance option or the EC2 Instance Savings Plan allow customers to switch instance families}
+\end{itemize}
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{4cm}|p{3cm}|p{2.5cm}|p{3cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Tipo} & \cellcolor{awsblue!20}\textbf{Cobertura} & \cellcolor{awsblue!20}\textbf{Flexibilidad} & \cellcolor{awsblue!20}\textbf{Descuento} & \cellcolor{awsblue!20}\textbf{Ideal para} \\
+\hline
+\cellcolor{successgreen!20}Compute Savings Plans & EC2, Fargate, Lambda (cualquier familia/región) & Muy flexible & Hasta \textasciitilde 66\% & Cargas variables o migraciones \\
+\hline
+EC2 Instance Savings Plans & EC2 específico por familia/región & Menos flexible & Hasta \textasciitilde 72\% & Cargas estables en instancias específicas \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{Tecnologías de Red Avanzadas}
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{4cm}|p{4cm}|p{4cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Tecnología} & \cellcolor{awsblue!20}\textbf{Qué es} & \cellcolor{awsblue!20}\textbf{Para qué sirve} & \cellcolor{awsblue!20}\textbf{Uso típico} \\
+\hline
+CGVF & Virtualización de CPU/GPU & Asignar CPU/GPU dedicados a VMs & ML, cálculos intensivos \\
+\hline
+\cellcolor{successgreen!20}ENA & Adaptador de red de alto rendimiento AWS & Alta velocidad, baja latencia en red & Bases de datos, streaming \\
+\hline
+Intel 82599 VF & SR-IOV en tarjeta Intel 82599 & Interfaces de red virtuales directas & Entornos con Intel 82599, baja latencia \\
+\hline
+DNA & Adaptador dual-stack (IPv4 e IPv6) & Compatibilidad IPv4/IPv6 simultánea & Redes híbridas modernas \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{Conceptos Varios}
+
+\begin{itemize}
+    \item \textbf{Multipart uploads}: Siempre es buena opción "Pause multipart uploads during peak network usage" si no hay buen ancho de banda
+    \item \textbf{Block Device Mapping en EC2}: Define los discos que se adjuntan a una instancia al arrancar. Se puede personalizar al lanzar instancias y soporta volúmenes EBS (persistentes) o Instance Store (efímeros)
+    \item \textbf{IP Pública en EC2}: \important{Una instancia necesita IP pública además de estar en una subnet pública}
+    \item \textbf{Transparent encryption}: Significa cifrado at rest y in transit
+    \item \textbf{IAM Roles para EC2}: Usa IAM Roles asociados a instancias EC2 (Instance Profiles) para dar permisos a aplicaciones
+\end{itemize}
+
+\subsection{Directory Service}
+
+\begin{center}
+\begin{longtable}{|p{4cm}|p{9cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Tipo} & \cellcolor{awsblue!20}\textbf{Descripción breve} \\
+\hline
+\cellcolor{successgreen!20}AWS Managed Microsoft AD & AD real gestionado por AWS. Ideal para apps Windows que requieren Active Directory \\
+\hline
+AD Connector & Conecta tu AD on-premises con AWS sin replicar datos \\
+\hline
+Simple AD & Alternativa más liviana basada en Samba, útil para entornos pequeños \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{EFS y Almacenamiento}
+
+\begin{itemize}
+    \item \textbf{Control de acceso EFS}: Use IAM to control file system data access with an EFS file system policy that includes the condition aws:SecureTransport set to true
+    \item \textbf{Transición de clases de almacenamiento}: \important{En EFS y S3 los objetos van de una clase lenta a Standard solo si se usa Intelligent Tiering}
+\end{itemize}
+
+\subsection{Auto Scaling y Lifecycle}
+
+\begin{itemize}
+    \item \textbf{Amazon Data Lifecycle Manager}: Use para automatizar ciclos de vida de Amazon Machine Images (AMI)
+    \item \textbf{Auto Scaling launch templates}: Pueden desplegar instancias de múltiples tipos y modalidades de compra
+    \item \textbf{Retención de resultados}: At the moment of this writing, long-term result retention is not an option that you can select in the console to store your findings. Similarly, Glacier result retention and short-term result retention are not options to select
+\end{itemize}
+
+\subsection{DynamoDB Backups}
+
+\begin{itemize}
+    \item \textbf{DynamoDB Backups}: Existe y es más eficiente
+    \item Puedes restaurar la tabla a la misma región AWS o a una región diferente
+    \item Puedes excluir índices secundarios de la nueva tabla restaurada
+    \item Puedes especificar un modo de cifrado diferente
+\end{itemize}
+
+\subsection{Arquitectura de Bases de Datos}
+
+\textbf{Sharding}:
+\begin{itemize}
+    \item \textbf{¿Qué es?}: Dividir la base de datos en varias bases de datos más pequeñas e independientes (shards)
+    \item \textbf{¿Por qué?}: Permite distribuir la carga en múltiples instancias, superando límites de capacidad
+    \item \textbf{Requisitos}:
+    \begin{itemize}
+        \item Lógica en la aplicación para decidir en qué shard realizar consultas
+        \item Definir cómo dividir los datos (partir tablas, duplicar y distribuir filas)
+    \end{itemize}
+\end{itemize}
+
+\subsection{Tecnologías de Red HPC}
+
+\textbf{EFA (Elastic Fabric Adapter)}:
+\begin{itemize}
+    \item Interfaz de red para instancias EC2 con baja latencia y alta velocidad
+    \item Diseñada para cargas HPC (High Performance Computing)
+    \item Ideal para simulaciones científicas o machine learning distribuido
+\end{itemize}
+
+\subsection{Route 53 Health Checks}
+
+\textbf{Amazon Route 53 Calculated Health Check}:
+\begin{itemize}
+    \item Tipo especial que no verifica directamente un endpoint
+    \item Evalúa la salud combinada de otros health checks existentes
+    \item Usa reglas lógicas personalizadas
+    \item \important{Para múltiples instancias}
+\end{itemize}
+
+\subsection{Conectividad y Transit Gateway}
+
+\textbf{AWS Transit Gateway} soporta:
+\begin{itemize}
+    \item Cross-account connectivity
+    \item Inter-region routing
+    \item Private network traffic
+    \item Centralized and scalable architecture
+\end{itemize}
+
+\textbf{VPC Interface Endpoints}:
+\begin{itemize}
+    \item Están disponibles para Amazon RDS
+    \item \important{No son tan cost-effective como VPC peering connection}
+\end{itemize}
+
+\subsection{Optimización y Monitoreo}
+
+\textbf{AWS Compute Optimizer}:
+\begin{itemize}
+    \item Analiza automáticamente el uso de recursos de cómputo (EC2, Lambda, EBS, ECS)
+    \item Proporciona recomendaciones para optimizar basadas en rendimiento y utilización histórica
+\end{itemize}
+
+\subsection{DynamoDB – Claves e Índices}
+
+\textbf{Clave Primaria}:
+\begin{itemize}
+    \item Define cómo se almacenan y acceden los ítems
+    \item \textbf{Clave simple}: solo partition key (PK)
+    \item \textbf{Clave compuesta}: partition key (PK) + sort key (SK)
+    \item DynamoDB distribuye datos usando PK y ordena por SK (si existe)
+\end{itemize}
+
+\textbf{¿Y si necesitas consultar por otros atributos?} Ahí entran los índices secundarios:
+
+\textbf{Global Secondary Index (GSI)}:
+
+\begin{center}
+\begin{longtable}{|p{4cm}|p{9cm}|}
+\hline
+\cellcolor{successgreen!20}\textbf{Característica} & \cellcolor{successgreen!20}\textbf{Descripción} \\
+\hline
+Clave primaria & Propia (PK y SK diferentes a los de la tabla) \\
+\hline
+Independencia & Escala y almacena datos por separado \\
+\hline
+Consistencia de lectura & \crossmark\ Solo eventual \\
+\hline
+Creación & \vcheckmark\ En cualquier momento \\
+\hline
+Uso típico & Búsquedas por atributos no clave \\
+\hline
+\end{longtable}
+\end{center}
+
+\textbf{Local Secondary Index (LSI)}:
+
+\begin{center}
+\begin{longtable}{|p{4cm}|p{9cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Característica} & \cellcolor{awsblue!20}\textbf{Descripción} \\
+\hline
+Clave primaria & Misma PK, diferente SK \\
+\hline
+Independencia & Comparte capacidad y almacenamiento \\
+\hline
+Consistencia de lectura & \vcheckmark\ Soporta lectura fuerte \\
+\hline
+Creación & \crossmark\ Solo al crear la tabla \\
+\hline
+Uso típico & Ordenar/filtrar ítems por otra SK dentro de una PK \\
+\hline
+\end{longtable}
+\end{center}
+
+\textbf{Comparativa Rápida}:
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{3cm}|p{7cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Criterio} & \cellcolor{awsblue!20}\textbf{GSI} & \cellcolor{awsblue!20}\textbf{LSI} \\
+\hline
+¿Misma PK que la tabla? & \crossmark\ No & \vcheckmark\ Sí \\
+\hline
+¿Distinta SK? & \vcheckmark\ Sí & \vcheckmark\ Sí \\
+\hline
+¿Lectura fuerte? & \crossmark\ No & \vcheckmark\ Sí \\
+\hline
+¿Se puede crear luego? & \vcheckmark\ Sí & \crossmark\ No \\
+\hline
+¿Escala independiente? & \vcheckmark\ Sí & \crossmark\ No \\
+\hline
+\end{longtable}
+\end{center}
+
+\textbf{Tipos de lectura}:
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{5cm}|p{5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Tipo de lectura} & \cellcolor{awsblue!20}\textbf{Descripción} & \cellcolor{awsblue!20}\textbf{Soportado en} \\
+\hline
+Fuerte (strong) & Siempre devuelve el valor más reciente & Tabla base, LSI \\
+\hline
+Eventual (default) & Puede devolver datos ligeramente desactualizados al inicio & Tabla base, GSI, LSI \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{Patrones de Red y Conectividad}
+
+\textbf{Hub-and-Spoke}:
+\begin{itemize}
+    \item Patrón de red topológico con un hub central (núcleo) - normalmente un VPC central en AWS
+    \item Desde el hub se conectan múltiples spokes (satélites) - otros VPCs o redes remotas
+\end{itemize}
+
+\textbf{AWS CloudHub}:
+\begin{itemize}
+    \item Patrón de red para conectar distintas oficinas remotas (on-premises) entre sí a través de AWS usando VPNs
+    \item Cada sucursal tiene una conexión VPN Site-to-Site con una Virtual Private Gateway en AWS
+    \item Las sucursales pueden comunicarse entre sí a través de AWS como "hub"
+\end{itemize}
+
+\subsection{Machine Learning - SageMaker}
+
+\textbf{SageMaker Model Monitor}:
+\begin{itemize}
+    \item Detecta deriva de datos y problemas de calidad en modelos desplegados
+    \item Compara datos en tiempo real con una línea base del entrenamiento
+    \item Automatiza alertas si encuentra desviaciones
+    \item Ideal para mantener modelos actualizados y confiables en producción
+\end{itemize}
+
+\subsection{Auto Scaling Avanzado}
+
+\begin{itemize}
+    \item \important{Adjusting the cooldown period can affect performance because it instructs Auto Scaling to ignore metrics for a specific period of time}
+    \item \textbf{Launch templates}: Pueden incluir parámetros para lanzar múltiples tipos de instancia con múltiples opciones de compra en el mismo template y dentro del mismo auto scaling group
+    \item \textbf{Instance refresh}: Simplifica el proceso de reemplazar instancias existentes de un auto scaling group
+\end{itemize}
+
+\begin{warningbox}[Escenario de Examen - PHP Application]
+\textbf{Situación}: Aplicación PHP que crece rápidamente y necesita alta disponibilidad. Actualmente usa instancias pequeñas burstable general purpose en VPC. Ya implementaste auto scaling group con instancias en múltiples AZs. La aplicación requiere recursos de cómputo inesperados.
+
+\textbf{¿Qué otros pasos podrías tomar para optimizar? (Elige 2)}:
+\begin{itemize}
+    \item \vcheckmark\ \textbf{Launch larger instances and remove some smaller ones}
+    \item \crossmark\ Create a second auto scaling group for high availability
+    \item \crossmark\ Create a multi-AZ environment to offload read traffic
+    \item \vcheckmark\ \textbf{Launch some compute optimized instances}
+\end{itemize}
+\end{warningbox}
+
+\subsection{EFS vs S3 - Diferencias Clave}
+
+\begin{itemize}
+    \item \textbf{Amazon EFS}: Permite modificar y añadir datos a archivos existentes (append), ideal para logs o archivos que crecen con el tiempo
+    \item \textbf{S3}: Los archivos son inmutables y deben sobrescribirse completos
+    \item \textbf{EFS para Lambda}: Código para lambda functions si cambia mucho
+    \item \textbf{EFS Max I/O}: Es la mejor opción para aplicaciones altamente paralelas que requieren el mayor throughput y operaciones por segundo posibles
+    \item \textbf{Provision throughput}: Normalmente cuando necesitas más throughput que lo que almacenas
+\end{itemize}
+
+\subsection{EBS Snapshots}
+
+\begin{itemize}
+    \item \textbf{Snapshot 1}: Para este snapshot, el sistema copia todos los datos EBS; por lo tanto, necesitamos 15 GiB de almacenamiento
+    \item \textbf{Snapshot 2}: 5 GiB de datos han cambiado desde el primer snapshot. Como los snapshots son incrementales, este solo requerirá 5 GiB de almacenamiento
+\end{itemize}
+
+\subsection{IOPS vs Throughput}
+
+\begin{center}
+\begin{longtable}{|p{2.5cm}|p{5.5cm}|p{5.5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Concepto} & \cellcolor{awsblue!20}\textbf{IOPS} & \cellcolor{awsblue!20}\textbf{Throughput} \\
+\hline
+¿Qué mide? & Cantidad de operaciones de lectura/escritura por segundo & Cantidad de datos transferidos por segundo \\
+\hline
+Tipo de carga & Cargas con muchas operaciones pequeñas & Cargas con archivos grandes o secuenciales \\
+\hline
+Unidades & Operaciones/segundo & Megabytes o gigabytes por segundo \\
+\hline
+Ejemplos & Bases de datos, logs, apps web intensivas en IO & Backups, analytics, copias de archivos grandes \\
+\hline
+\end{longtable}
+\end{center}
+
+\textbf{Tipos de volúmenes EBS}:
+\begin{itemize}
+    \item \textbf{General Purpose SSD (gp2)}: Para cargas donde IOPS es más crítico que throughput y el costo es más importante que rendimiento
+    \item \textbf{Provisioned IOPS SSD (io2)}: Para cargas preocupadas por rendimiento IOPS y operaciones I/O pequeñas aleatorias
+    \item \textbf{Throughput Optimized HDD (st1)}: Cuando te preocupa principalmente el throughput y operaciones I/O secuenciales grandes
+    \item \textbf{Cold HDD (sc1)}: Cuando el almacenamiento se accede infrecuentemente y minimizar costos es más importante que rendimiento
+\end{itemize}
+
+\subsection{Cognito vs IAM Identity Center}
+
+\begin{itemize}
+    \item \textbf{AWS Cognito}: Diseñado para ofrecer autenticación, autorización y gestión de usuarios para aplicaciones móviles y web
+    \item \textbf{AWS IAM Identity Center}: Diseñado para empleados corporativos para acceder a AWS y aplicaciones empresariales
+\end{itemize}
+
+\subsection{Cost Allocation Tags}
+
+\begin{itemize}
+    \item \important{Tags que se aplican a objetos S3 no pueden ser rastreados como cost allocation tags}
+    \item Cost allocation tags deben aplicarse a nivel de recurso, no a objetos individuales
+\end{itemize}
+
+\textbf{Información detallada sobre Cost Allocation Tags}:
+
+\begin{conceptbox}[¿Qué son los Cost Allocation Tags?]
+Etiquetas especiales que AWS usa para categorizar y rastrear costos de recursos en informes de facturación detallados.
+\end{conceptbox}
+
+\textbf{Tipos de Cost Allocation Tags}:
+\begin{itemize}
+    \item \textbf{AWS-generated tags}: Creados automáticamente por AWS (ej: aws:createdBy)
+    \item \textbf{User-defined tags}: Creados por el usuario y deben activarse manualmente
+\end{itemize}
+
+\textbf{Limitaciones importantes}:
+\begin{itemize}
+    \item Solo funcionan a nivel de recurso AWS (EC2, RDS, S3 buckets)
+    \item \important{NO funcionan con objetos dentro de S3 buckets}
+    \item Requieren activación manual en la consola de billing
+    \item Los tags nuevos solo aparecen en informes después de 24 horas
+    \item Máximo 10 cost allocation tags activos por cuenta
+\end{itemize}
+
+\textbf{Recursos compatibles}:
+\begin{itemize}
+    \item EC2 instances, volumes, snapshots
+    \item RDS instances y clusters
+    \item S3 buckets (pero no objetos individuales)
+    \item Lambda functions
+    \item ELB load balancers
+    \item Y muchos otros servicios AWS
+\end{itemize}
+
+\subsection{Caching - ElastiCache}
+
+\begin{itemize}
+    \item \textbf{Memcached}: Para escenarios que requieren simple object caching y la capacidad de escalar in y out para responder a la demanda, Memcached es la mejor opción
+\end{itemize}
+
+\subsection{S3 Inventory List}
+
+\textbf{¿Qué es?}:
+\begin{itemize}
+    \item Herramienta de Amazon S3 que genera listados de los objetos almacenados en un bucket, junto con sus metadatos
+\end{itemize}
+
+\textbf{¿Para qué sirve?}:
+\begin{itemize}
+    \item Obtener informes periódicos (diarios o semanales) de todos los objetos
+    \item Auditar el estado de los objetos (verificar cifrado o versionado)
+    \item Validación de políticas de seguridad
+    \item Optimización de almacenamiento
+    \item Preparación para usar Amazon Athena, Glue u otras herramientas analíticas
+\end{itemize}
+
+\subsection{VM Import/Export}
+
+\begin{itemize}
+    \item \important{¿Sirve VM Import/Export para migrar una base de datos entera? No es lo más adecuado}
+    \item VM Import/Export sirve para mover una máquina virtual completa (OS, app, base de datos, configuraciones)
+    \item NO es la mejor práctica para migrar solo una base de datos
+\end{itemize}
+
+\subsection{Aurora Global Database}
+
+\begin{itemize}
+    \item Aurora Global Database replica datos entre regiones, pero la replicación es asíncrona y el failover no es automático ni rápido
+    \item Está pensada para recuperación ante desastres inter-región, no para alta disponibilidad local
+    \item Para failover rápido y automático dentro de una región, se usa Aurora Multi-AZ con Aurora Replicas
+    \item \important{Esa es la opción correcta para garantizar cero downtime si falla el nodo primario}
+\end{itemize}
+
+\subsection{Cluster Placement Group}
+
+\textbf{¿Qué hace?}:
+\begin{itemize}
+    \item Agrupa instancias EC2 físicamente cerca unas de otras dentro de una sola AZ
+    \item Ofrece baja latencia de red y alto throughput entre instancias (hasta 10 Gbps+)
+    \item Ideal para cargas de trabajo que requieren comunicación rápida y densa entre nodos (procesamiento de imágenes, HPC, etc.)
+\end{itemize}
+
+\subsection{SCP Limitaciones}
+
+\begin{itemize}
+    \item \important{SCP limita qué acciones se pueden hacer, pero no otorga permisos para asumir roles directamente}
+\end{itemize}
+
+\subsection{DynamoDB TTL}
+
+\begin{itemize}
+    \item En DynamoDB, TTL elimina ítems automáticamente cuando llega la fecha/hora indicada en un atributo (en formato epoch)
+    \item Si activas TTL y usas expiration\_date como atributo, DynamoDB revisará ese campo y borrará el ítem cuando su valor sea menor que la hora actual
+    \item Sirve para ahorrar costos y limpiar datos caducados sin procesos manuales
+\end{itemize}
+
+\subsection{Contenedores - Docker vs Orquestación}
+
+\begin{itemize}
+    \item \textbf{Elastic Beanstalk}: Puede ejecutar aplicaciones en Docker sin que tengas que configurar toda la infraestructura
+    \item \textbf{ECS y EKS}: Se usan para orquestar contenedores (gestionar dónde y cómo se ejecutan)
+    \item Aunque la orquestación sea automática, el usuario sigue configurando detalles como autoscaling, balanceo, redes, etc.
+    \item \textbf{EKS on Fargate}: Sí existe - permite ejecutar pods de Kubernetes en un entorno serverless, sin necesidad de administrar nodos EC2
+\end{itemize}
+
+\subsection{Optimización de Costos}
+
+\begin{itemize}
+    \item En entornos no productivos, usar instancias on-demand ahorra costos porque no necesitan estar 24/7 encendidas
+    \item Si las detienes, pagas solo por almacenamiento y backups; si las borras, eliminas esos costos también
+\end{itemize}
+
+\subsection{S3 Batch Operations}
+
+\begin{itemize}
+    \item S3 Batch Operations permite ejecutar acciones en muchos objetos a la vez usando un manifiesto (lista de objetos en un CSV en S3)
+    \item \textbf{Operaciones soportadas}:
+    \begin{itemize}
+        \item PUT object tagging → añadir/actualizar etiquetas
+        \item PUT copy object → copiar objetos
+    \end{itemize}
+    \item Se lanza desde la consola S3, CLI o SDK
+    \item Sirve para ahorrar tiempo en tareas masivas, pero su capacidad es limitada
+    \item \important{Neither the AWS CLI nor AWS Batch includes a command/operation to encrypt data in S3. However, if you use the AWS CLI to copy the objects into the same bucket, the system will effectively overwrite these resources with the new encrypted data}
+\end{itemize}
+
+\subsection{Amazon ECR}
+
+\begin{itemize}
+    \item En Amazon ECR, los repositorios se organizan dentro de registros (registries)
+    \item Si un usuario IAM necesita acceso a varios repositorios en diferentes registros, la forma más eficiente es crear una única política IAM que otorgue permisos adecuados para todo el servicio ECR
+    \item Para acceder a un repositorio ECR desde Docker, necesitas un token de autorización
+    \item El token se obtiene con el comando \texttt{aws ecr get-login-password}
+    \item El token es temporal (dura 12 horas) y se usa para hacer login en el registro con Docker
+\end{itemize}
+
+\subsection{Servicios de Seguridad}
+
+\begin{center}
+\begin{longtable}{|p{2.5cm}|p{4cm}|p{4.5cm}|p{3.5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Servicio} & \cellcolor{awsblue!20}\textbf{Función principal} & \cellcolor{awsblue!20}\textbf{Qué hace} & \cellcolor{awsblue!20}\textbf{Uso típico} \\
+\hline
+\cellcolor{dangerred!20}GuardDuty & Detección de amenazas de seguridad & Analiza logs (VPC Flow, CloudTrail, DNS) para detectar actividades sospechosas & Alerta sobre ataques o accesos sospechosos \\
+\hline
+Audit Manager & Gestión y automatización de auditorías & Automatiza recopilación de evidencias y reportes para normativas & Facilitar auditorías internas o externas \\
+\hline
+Detective & Investigación y análisis forense & Usa datos de GuardDuty para visualizar patrones y causas raíz & Investigar incidentes de seguridad \\
+\hline
+\cellcolor{warningyellow!20}Inspector & Vulnerabilidades y seguridad & Verifica accesibilidad de red y vulnerabilidades en EC2 y contenedores & Escaneo de seguridad de aplicaciones \\
+\hline
+\end{longtable}
+\end{center}
+
+\textbf{AWS Inspector}:
+\begin{itemize}
+    \item Herramienta para verificar accesibilidad de red y vulnerabilidades de seguridad en instancias EC2 e imágenes de contenedores
+    \item Si usas Amazon ECR, puedes habilitar Enhanced scanning para que Inspector detecte automáticamente imágenes de contenedores y las escanee
+\end{itemize}
+
+\subsection{Transfer Family vs DataSync}
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{5.5cm}|p{5.5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Característica} & \cellcolor{awsblue!20}\textbf{Transfer Family} & \cellcolor{awsblue!20}\textbf{DataSync} \\
+\hline
+Protocolos & SFTP, FTPS, FTP & No usa protocolos, es un servicio de transferencia directa y acelerada \\
+\hline
+Uso principal & Integración con sistemas que usan FTP/SFTP para mover archivos a S3/EFS & Transferencias masivas y sincronización entre almacenamiento local y AWS \\
+\hline
+Tiempo real & Sí, acceso casi en tiempo real & No es tiempo real, es batch o por tareas programadas \\
+\hline
+Escala y rendimiento & Adecuado para cargas estándar & Alto rendimiento para grandes volúmenes \\
+\hline
+\end{longtable}
+\end{center}
+
+\textbf{Resumen}:
+\begin{itemize}
+    \item \textbf{Transfer Family} = acceso FTP/SFTP a S3/EFS
+    \item \textbf{DataSync} = migración y sincronización rápida de grandes datos entre local y AWS
+\end{itemize}
+
+\subsection{AWS X-Ray}
+
+\begin{itemize}
+    \item AWS X-Ray ayuda a entender cómo fluye una petición dentro de tu aplicación mostrando qué servicios y componentes intervienen
+    \item \textbf{Funcionalidades}:
+    \begin{itemize}
+        \item Ver un mapa (Service Graph) con todos los servicios que participan
+        \item Detectar dónde ocurren errores o retrasos en el procesamiento
+        \item Analizar la salud y rendimiento de cada solicitud
+    \end{itemize}
+    \item \textbf{Cuándo usarlo}: Apps distribuidas, microservicios, aplicaciones serverless (Lambda, API Gateway)
+    \item \important{X-Ray solo funciona con REST APIs, no con otros tipos}
+    \item \textbf{Agente}: No hace falta en Lambda (solo activarlo), sí hace falta instalarlo en EC2 o contenedores
+\end{itemize}
+
+\subsection{Aurora - Comparación de Configuraciones}
+
+\begin{center}
+\begin{longtable}{|p{2.5cm}|p{4cm}|p{3.5cm}|p{4.5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Característica} & \cellcolor{awsblue!20}\textbf{Aurora Global Database} & \cellcolor{awsblue!20}\textbf{Aurora Serverless} & \cellcolor{awsblue!20}\textbf{Aurora Multi-AZ} \\
+\hline
+Objetivo & Replicación global para baja latencia y DR entre regiones & Escalado automático para cargas variables & Alta disponibilidad dentro de una región \\
+\hline
+Regiones & Multirregión (hasta 6) & Una sola región & Una sola región \\
+\hline
+Replicación & Asíncrona entre regiones & No aplica & Sincronizada dentro de la región \\
+\hline
+Escrituras & Solo en región primaria & En la instancia activa & Solo en la primaria \\
+\hline
+Escalabilidad & No escala automáticamente & Escala automáticamente según demanda & No escala automáticamente \\
+\hline
+Alta disponibilidad & Sí, con failover global & Limitada, depende del escalado & Sí, failover automático entre AZ \\
+\hline
+Casos de uso & Apps globales con usuarios distribuidos y DR regional & Apps con demanda variable, ahorro de costes & Apps críticas que requieren HA local \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{Escenarios de Examen}
+
+\begin{conceptbox}[ALB Internet-Facing con Subnets Privadas]
+\textbf{Escenario}: VPC con 2 subnets privadas en diferentes AZ. Se quiere un Application Load Balancer (ALB) internet-facing que distribuya tráfico a instancias en esas subnets privadas.
+
+\textbf{Solución}:
+\begin{enumerate}
+    \item Crear una subnet pública en cada AZ
+    \item El ALB internet-facing debe estar en subnets públicas para recibir tráfico de Internet
+    \item Asociar el ALB a esas subnets públicas (una por AZ)
+    \item Configurar grupos de seguridad:
+    \begin{itemize}
+        \item ALB: Permitir tráfico entrante desde Internet y saliente hacia las instancias
+        \item Instancias: Permitir tráfico entrante desde el grupo de seguridad del ALB
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Por qué}: Un ALB internet-facing no puede estar en subnets privadas porque no tiene acceso directo a Internet.
+\end{conceptbox}
+
+\begin{tipbox}[Servicio de Streaming con Cache]
+\textbf{Caso}: Servicio de streaming con guía de programación donde solo se accede al 1\% del contenido almacenado en S3, pero millones de usuarios esperan carga rápida.
+
+\textbf{Solución recomendada}: Usar Amazon ElastiCache para cachear el contenido más usado de S3.
+
+\textbf{Por qué no Transfer acceleration}: Útil para grandes transferencias directas desde cliente a S3, no aplica aquí porque la app sirve el contenido.
+\end{tipbox}
+
+\begin{warningbox}[RDS Multi-AZ Failover]
+\textbf{Concepto importante}: Failover will occur in a multi-AZ configuration to a standby server. Read replicas are for scaling, not high availability, and are not involved in the automatic failover process.
+\end{warningbox}
+
+\begin{conceptbox}[Lambda con VPC - Arquitectura Cost-Effective]
+\textbf{Contexto}: VPC con subred pública y privada. Lambda debe comunicarse con recursos en la subred privada. Se busca una arquitectura coste-eficiente.
+
+\textbf{Solución recomendada}: Configurar un Interface VPC Endpoint para que el tráfico entre la subred privada y la API de Lambda no salga a Internet.
+
+\textbf{Por qué es cost-effective}: Evita costos adicionales por transferencia de datos y cargos fijos asociados a NAT Gateway.
+
+\textbf{Por qué no otras opciones}:
+\begin{itemize}
+    \item NAT Gateway: genera costos fijos por hora y cargos por transferencia
+    \item EC2 en subred pública: las solicitudes usarían Internet pública, generando costos
+\end{itemize}
+\end{conceptbox}
+
+\subsection{AWS App Runner vs Elastic Beanstalk}
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{5.5cm}|p{5.5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Característica} & \cellcolor{awsblue!20}\textbf{AWS App Runner} & \cellcolor{awsblue!20}\textbf{AWS Elastic Beanstalk} \\
+\hline
+Tipo de servicio & Servicio serverless para apps web y APIs contenedorizadas & Plataforma PaaS para desplegar apps en varias tecnologías \\
+\hline
+Gestión de infraestructura & Totalmente administrado, sin configurar servidores & Gestiona infraestructura, pero puedes personalizar instancias, balanceadores, red \\
+\hline
+Complejidad & Muy simple y rápido para desplegar y escalar & Más flexible, pero puede ser más complejo de configurar \\
+\hline
+Escalado & Escalado automático gestionado, basado en demanda & Escalado automático configurable, pero a veces requiere ajustes manuales \\
+\hline
+Tipos de aplicaciones & Apps web y APIs que pueden correr en contenedores o código fuente directamente & Soporta apps tradicionales, contenedores Docker, y aplicaciones en varios lenguajes y frameworks \\
+\hline
+Control & Menos control sobre infraestructura y configuraciones avanzadas & Más control sobre configuraciones de red, instancias, actualizaciones \\
+\hline
+Uso ideal & Desplegar rápido aplicaciones web y APIs sin complicaciones & Cuando quieres más personalización y control para apps más complejas \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{S3 Transfer Acceleration}
+
+\begin{itemize}
+    \item \textbf{S3 Transfer Acceleration Speed Comparison tool}: Herramienta de AWS que permite medir y comparar la velocidad de subir datos a un bucket S3 con y sin Transfer Acceleration
+    \item Sirve para saber si usar esta función mejora la velocidad de transferencia, especialmente cuando se transfieren datos desde ubicaciones lejanas al bucket
+    \item \important{CloudFront es para lectura, si quiero escritura también mejor Transfer Acceleration}
+\end{itemize}
+
+\subsection{CloudFormation Transform}
+
+\begin{itemize}
+    \item CloudFormation Transform es una sección especial del template que le indica al servicio que procese la plantilla usando un transformador adicional antes de crear los recursos
+\end{itemize}
+
+\textbf{Funciones principales de Transform}:
+
+\begin{conceptbox}[AWS SAM (Serverless Application Model)]
+\begin{itemize}
+    \item Cuando pones \texttt{Transform: AWS::Serverless-2016-10-31}, CloudFormation interpreta el template usando la sintaxis simplificada de SAM para aplicaciones serverless (Lambda, API Gateway, DynamoDB)
+    \item Traduce automáticamente esa sintaxis en recursos de CloudFormation estándar
+\end{itemize}
+\end{conceptbox}
+
+\begin{awsbox}[AWS::Include]
+\begin{itemize}
+    \item Permite importar fragmentos de plantillas almacenados en S3
+    \item Útil para reutilizar código y mantener las plantillas más limpias y modulares
+\end{itemize}
+\end{awsbox}
+
+\subsection{AWS Batch}
+
+\begin{itemize}
+    \item AWS Batch is a fully managed cloud service used for batch processing
+    \item It can schedule jobs and provide the optimal resources like CPU for the jobs which are able to run with various AWS compute resources including EC2 and Fargate
+\end{itemize}
+
+\subsection{Kinesis Services - Comparación Completa}
+
+\begin{center}
+\begin{longtable}{|p{2.2cm}|p{2.8cm}|p{2.2cm}|p{2.8cm}|p{2.2cm}|p{2.8cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Servicio} & \cellcolor{awsblue!20}\textbf{Propósito principal} & \cellcolor{awsblue!20}\textbf{Tipo de datos} & \cellcolor{awsblue!20}\textbf{Procesamiento} & \cellcolor{awsblue!20}\textbf{Retención} & \cellcolor{awsblue!20}\textbf{Casos de uso} \\
+\hline
+\cellcolor{successgreen!20}Kinesis Data Streams (KDS) & Ingesta y procesamiento de streams de datos en tiempo real con baja latencia & Datos en tiempo real (eventos, logs, telemetría, clics) & Procesamiento propio o con consumidores (Lambda, Kinesis Data Analytics, apps personalizadas) & 24 horas por defecto (hasta 365 días con Extended Retention) & Análisis de logs en tiempo real, procesamiento de sensores IoT, tracking de clics \\
+\hline
+Kinesis Data Firehose & Ingesta y entrega automática de datos a destinos sin necesidad de administrar servidores & Datos en stream (batch pequeño) & Transformación opcional (Lambda) & No retiene datos (los envía directamente) & Enviar datos a S3, Redshift, OpenSearch, Splunk de forma automática \\
+\hline
+Kinesis Data Analytics & Analizar datos en stream usando SQL o Apache Flink & Datos en stream (desde KDS o Firehose) & Procesamiento administrado (sin servidores) & No retiene (procesa y envía) & Dashboard en tiempo real, detección de patrones y anomalías, alertas \\
+\hline
+Kinesis Video Streams & Ingesta y almacenamiento seguro de video y audio para análisis y streaming & Video, audio, y metadatos & Procesamiento con apps de ML/vision o reproducción & Depende de configuración del stream & Seguridad, videovigilancia, análisis de video, videollamadas \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{Lambda y SQS Error Handling}
+
+\begin{itemize}
+    \item En el caso de Lambda activado por SQS, es mejor usar la DLQ en la cola SQS para manejar mensajes fallidos porque así puedes inspeccionar el mensaje en la cola
+    \item \textbf{Kinesis Producer Library}: Automatically retries PutRecords operations in the event of failure and Lambda functions can be used for additional error handling
+\end{itemize}
+
+\subsection{EC2 Instance Connect Endpoint}
+
+\textbf{¿Qué es?}:
+\begin{itemize}
+    \item EC2 Instance Connect Endpoint es un servicio de AWS que te permite conectarte de forma segura a instancias EC2 que están en subnets privadas
+    \item Sin necesidad de usar VPN, bastion hosts o abrir puertos SSH en Internet
+\end{itemize}
+
+\textbf{¿Por qué es importante?}:
+\begin{itemize}
+    \item Las instancias en subnets privadas no tienen IP pública ni acceso directo desde Internet
+    \item Tradicionalmente usabas Bastion Host o VPN
+    \item Con EC2 Instance Connect Endpoint, puedes conectarte directamente y seguro, sin exponer nada en Internet
+\end{itemize}
+
+\textbf{Cómo funciona}:
+\begin{itemize}
+    \item Creas un Endpoint de EC2 Instance Connect en tu VPC dentro de la subnet privada
+    \item Se integran con IAM para controlar quién puede conectarse a qué instancias
+\end{itemize}
+
+\subsection{Amazon Timestream}
+
+\textbf{¿Qué es?}:
+\begin{itemize}
+    \item Es un servicio de base de datos en la nube totalmente gestionado por AWS, especializado en datos de series temporales
+    \item Está diseñado para almacenar, procesar y analizar datos que cambian con el tiempo como métricas, eventos o telemetría
+    \item Optimizado para manejar grandes volúmenes de datos generados a alta velocidad, con un almacenamiento eficiente y consultas rápidas
+    \item Ideal para aplicaciones como monitoreo de IoT, análisis de registros, métricas operacionales, datos financieros
+\end{itemize}
+
+\subsection{ElastiCache Memcached}
+
+\begin{itemize}
+    \item \important{The ElastiCache Memcached Java client implements consistent hashing. The user will need to turn the feature on since it is inactive by default. NO ES POR LA AWS SDK FOR JAVA}
+\end{itemize}
+
+\subsection{EBS Volume Types - Aclaración}
+
+\begin{itemize}
+    \item \textbf{io2 (Provisioned IOPS SSD)}: Está pensado para cargas de trabajo con muchas operaciones aleatorias pequeñas (como bases de datos OLTP), no para throughput secuencial grande
+    \item \textbf{st1 (Throughput Optimized HDD)}: Es el más adecuado para throughput secuencial grande
+\end{itemize}
+
+\subsection{Step Functions vs DataFlow vs Airflow}
+
+\begin{center}
+\begin{longtable}{|p{2.5cm}|p{3.5cm}|p{3cm}|p{3cm}|p{3cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Servicio} & \cellcolor{awsblue!20}\textbf{Qué es} & \cellcolor{awsblue!20}\textbf{Para qué se usa} & \cellcolor{awsblue!20}\textbf{Características} & \cellcolor{awsblue!20}\textbf{Cuándo usarlo} \\
+\hline
+\cellcolor{successgreen!20}AWS Step Functions (a veces llamado Workflow/Orquestador) & Servicio de orquestación para coordinar varios servicios y tareas en flujos de trabajo (workflows) & Automatizar procesos con pasos encadenados, controlar lógica compleja y manejar errores & Visual, basado en estado, permite coordinar Lambdas, Batch, ECS, etc. No es procesamiento de datos per se, sino orquestar tareas & Cuando tienes procesos complejos que requieren varios pasos, decisiones, reintentos, etc. \\
+\hline
+AWS DataFlow (no existe como servicio oficial) & No es un servicio oficial de AWS. Posiblemente te refieres a: Google Cloud Dataflow (Google), AWS Glue DataBrew o AWS Kinesis Data Firehose / Data Analytics para procesamiento de datos en streaming & Para procesamiento ETL o procesamiento de datos en streaming o batch & Servicios para transformar, limpiar, mover o analizar datos & Para ingesta y transformación de datos masiva o en tiempo real \\
+\hline
+Apache Airflow (no AWS pero usado junto a AWS) & Plataforma open source para orquestar workflows complejos & Programar y monitorear pipelines de datos o tareas en general & Basado en Python, programable, con DAGs para definir flujos de trabajo & Cuando necesitas un orquestador muy flexible para ETL, ML, etc. \\
+\hline
+AWS Glue DataFlow & Dentro de AWS Glue, los DataFlows son visualizaciones o definiciones para ETL sin código & Procesamiento ETL simplificado visualmente & Visual y sin código, para transformar datos y moverlos & Para ETL sin programar, fácil para usuarios no expertos \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{AWS Systems Manager OpsCenter}
+
+\textbf{¿Qué es?}:
+\begin{itemize}
+    \item AWS Systems Manager OpsCenter es una herramienta dentro de AWS Systems Manager que centraliza, organiza y ayuda a resolver problemas operativos (incidentes o "ops issues") en tu infraestructura AWS
+    \item \textbf{Función principal}: Reúne automáticamente los eventos, alertas y problemas relacionados con tus recursos AWS en un solo lugar llamado OpsItems
+    \item Facilita a los equipos de operaciones y desarrollo ver, investigar y solucionar incidencias rápidamente
+\end{itemize}
+
+\textbf{Características principales de OpsCenter (WorksOps)}:
+
+\begin{center}
+\begin{longtable}{|p{4cm}|p{9cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Característica} & \cellcolor{awsblue!20}\textbf{Descripción} \\
+\hline
+Centralización de problemas & Recolecta incidencias de diferentes servicios (CloudWatch, Config, GuardDuty, etc.) \\
+\hline
+OpsItems & Cada problema es registrado como un ítem operativo que puedes gestionar, asignar y hacer seguimiento \\
+\hline
+Automatización & Puedes asociar runbooks (scripts de automatización) para solucionar problemas automáticamente \\
+\hline
+Colaboración & Permite a varios equipos colaborar y compartir detalles del problema en un solo lugar \\
+\hline
+Integración & Compatible con herramientas externas como ServiceNow o Jira \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{Egress-Only Internet Gateway (EOIG)}
+
+\textbf{¿Qué es?}:
+\begin{itemize}
+    \item Componente de Amazon VPC que permite a instancias en subredes IPv6 privadas iniciar conexiones hacia internet y recibir las respuestas
+    \item Bloquea cualquier conexión entrante no solicitada
+\end{itemize}
+
+\textbf{Para qué sirve}:
+\begin{itemize}
+    \item Proporciona una salida segura para IPv6
+    \item Ideal para que instancias privadas descarguen actualizaciones, envíen datos o accedan a APIs públicas sin quedar expuestas a conexiones iniciadas desde internet
+\end{itemize}
+
+\begin{warningbox}[Claves para recordar]
+\begin{itemize}
+    \item \textbf{IPv6 únicamente} (para IPv4 usar NAT Gateway o NAT Instance)
+    \item Solo tráfico de salida y respuestas a conexiones iniciadas desde dentro
+    \item No permite conexiones entrantes iniciadas desde fuera
+    \item Se configura en las tablas de rutas de la VPC
+\end{itemize}
+\end{warningbox}
+
+\textbf{Resumen rápido de ubicación}:
+\begin{itemize}
+    \item \textbf{NAT Gateway}: Subred pública
+    \item \textbf{EOIG}: No va en una subred, se referencia en rutas de subredes privadas IPv6
+\end{itemize}
+
+\subsection{Dual-Homed Network}
+
+\textbf{¿Qué significa "dual-homed"?}:
+\begin{itemize}
+    \item En redes, una máquina dual-homed es aquella que tiene dos interfaces de red conectadas a dos redes diferentes
+    \item \textbf{Ejemplo}: un servidor con una interfaz conectada a una subred pública (front-end) y otra a una subred privada (back-end)
+\end{itemize}
+
+\subsection{EBS vs Instance Store - Consideraciones}
+
+\begin{itemize}
+    \item \important{In general, EBS-backed AMIs boot faster than instance store-backed AMIs}
+    \item Also important to keep in mind when choosing the AMI type is whether you need to stop the instance and then restart it at a later time
+    \item \textbf{Stopping an instance is only possible with EBS-backed instances}; instance store-backed instances can only be running or terminated
+\end{itemize}
+
+\subsection{EBS Encryption Best Practice}
+
+\begin{itemize}
+    \item \important{The best way to ensure that your EBS volumes are encrypted is to enable EBS encryption by default for the AWS Account}
+\end{itemize}
+
+\subsection{AWS Organizations - Resource Sharing}
+
+\begin{itemize}
+    \item When you create an organization, where the parent account is the root account and the acquisition is an OU, this can help from an organizational perspective
+    \item \important{This does not automatically grant the OU account access to the parent resources}
+    \item You still need to set Service Control Policies (SCPs) on both accounts
+    \item \textbf{You will need AWS RAM for resource sharing}
+\end{itemize}
+
+\subsection{Amazon Route 53 - Resumen Completo}
+
+\textbf{1. Qué es}:
+\begin{itemize}
+    \item Amazon Route 53 es un servicio global de AWS para:
+    \begin{itemize}
+        \item \textbf{DNS (Domain Name System)}: Traduce nombres de dominio (example.com) a direcciones IP
+        \item \textbf{Registro de dominios}: Comprar y gestionar dominios
+        \item \textbf{Health Checks}: Monitorizar la salud de endpoints
+        \item \textbf{Enrutamiento avanzado}: Decidir cómo y a dónde enviar tráfico según políticas
+    \end{itemize}
+    \item Se llama Route 53 porque el puerto 53 es el estándar de DNS
+\end{itemize}
+
+\textbf{2. Funciones principales}:
+
+\begin{conceptbox}[Registrar dominios]
+Gestionar dominios directamente en AWS
+\end{conceptbox}
+
+\begin{conceptbox}[Gestionar Hosted Zones]
+\begin{itemize}
+    \item \textbf{Public Hosted Zone}: Dominios accesibles desde internet
+    \item \textbf{Private Hosted Zone}: Dominios internos accesibles solo desde una VPC
+\end{itemize}
+\end{conceptbox}
+
+\begin{conceptbox}[Resolver nombres DNS]
+Registros soportados:
+\begin{itemize}
+    \item A (IPv4)
+    \item AAAA (IPv6)
+    \item CNAME (alias hacia otro nombre)
+    \item MX (correo electrónico)
+    \item TXT (texto, verificaciones)
+    \item Alias (especial AWS, apunta a S3, CloudFront, ELB sin costo de consulta)
+\end{itemize}
+\end{conceptbox}
+
+\begin{conceptbox}[Health Checks]
+Monitorea IPs o URLs y puede activar failover
+\end{conceptbox}
+
+\begin{conceptbox}[Routing Policies]
+\begin{itemize}
+    \item Simple Routing: una única respuesta
+    \item Weighted Routing: distribución por porcentaje
+    \item Latency-Based Routing: al endpoint con menor latencia
+    \item Failover Routing: si falla uno, va al secundario
+    \item Geolocation Routing: según ubicación geográfica
+    \item Geoproximity Routing: según proximidad y reglas de tráfico
+    \item Multivalue Answer Routing: múltiples IPs para balanceo simple
+\end{itemize}
+\end{conceptbox}
+
+\textbf{3. Alias vs CNAME}:
+
+\begin{center}
+\begin{longtable}{|p{6cm}|p{7cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Alias Record} & \cellcolor{awsblue!20}\textbf{CNAME Record} \\
+\hline
+Gratuito & Tiene costo \\
+\hline
+Apunta a recursos AWS & Apunta a otro nombre de dominio \\
+\hline
+Se puede usar en el dominio raíz & No se puede usar en el dominio raíz \\
+\hline
+\end{longtable}
+\end{center}
+
+\textbf{4. Integración con otros servicios}:
+\begin{itemize}
+    \item \textbf{S3}: Hosting estático
+    \item \textbf{CloudFront}: CDN global
+    \item \textbf{Elastic Load Balancing}: Balanceadores
+    \item \textbf{API Gateway}: APIs con dominio personalizado
+    \item \textbf{VPC}: DNS privado
+\end{itemize}
+
+\textbf{5. Lo que sí y no puede hacer}:
+
+\begin{tipbox}[Puede]
+\begin{itemize}
+    \item Alojar zonas públicas para webs externas a AWS
+    \item Ejemplo: Route 53 gestiona el dominio, pero el hosting está en otro proveedor o en on-premises
+\end{itemize}
+\end{tipbox}
+
+\begin{warningbox}[No puede]
+\begin{itemize}
+    \item Resolver nombres DNS internos de tu red local (on-premises) por sí solo
+    \item Para esto necesitas:
+    \begin{itemize}
+        \item Route 53 Resolver con reglas de reenvío
+        \item Conectividad VPN o Direct Connect para enlazar redes
+    \end{itemize}
+\end{itemize}
+\end{warningbox}
+
+\textbf{6. Route 53 Resolver (para entornos híbridos)}:
+\begin{itemize}
+    \item Permite resolver nombres internos de on-premises desde AWS y viceversa
+    \item Usa reglas de forwarding para enviar consultas a tu servidor DNS local
+    \item Requiere conectividad híbrida (VPN o Direct Connect)
+\end{itemize}
+
+\textbf{7. Conceptos clave para el examen}:
+\begin{itemize}
+    \item Route 53 es global
+    \item Alias → se puede usar en el apex/root
+    \item Health Checks pueden activar failover
+    \item Private Hosted Zones → requieren habilitar DNS Resolution y DNS Hostnames en la VPC
+    \item Los cambios DNS dependen del TTL
+    \item Para DNS híbrido → usar Route 53 Resolver
+\end{itemize}
+
+\subsection{Health Checks en Load Balancers (ALB)}
+
+\textbf{1. ¿Qué es un Health Check?}:
+\begin{itemize}
+    \item Es un chequeo que hace el Load Balancer (LB) para asegurarse de que los servidores (targets) que están detrás están funcionando correctamente y pueden manejar tráfico
+\end{itemize}
+
+\textbf{2. ¿Cómo funciona el Health Check?}:
+\begin{itemize}
+    \item El LB envía solicitudes periódicas a cada target en el grupo objetivo (target group)
+    \item La solicitud se hace a una ruta y protocolo específicos que configuras (por ejemplo, HTTPS en /health)
+    \item El target debe responder con un código HTTP esperado, típicamente 200 OK para decir "Estoy bien"
+    \item Si el target no responde, responde con error, o tarda mucho, el LB marca ese target como unhealthy (no saludable)
+    \item El LB deja de enviar tráfico a targets unhealthy hasta que vuelvan a estar healthy
+\end{itemize}
+
+\textbf{3. Parámetros importantes en el Health Check}:
+
+\begin{center}
+\begin{longtable}{|p{4cm}|p{9cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Parámetro} & \cellcolor{awsblue!20}\textbf{Descripción} \\
+\hline
+Protocolo & HTTP, HTTPS o TCP (TCP solo verifica conexión, no respuesta HTTP) \\
+\hline
+Puerto & Puerto donde se hará el chequeo (por defecto 80 HTTP o 443 HTTPS) \\
+\hline
+Path & Ruta en la que el LB envía la solicitud (ej: /health) \\
+\hline
+Intervalo & Cada cuánto tiempo se hacen los chequeos (por defecto 30s) \\
+\hline
+Timeout & Tiempo máximo para esperar respuesta \\
+\hline
+Healthy Threshold & Número de respuestas exitosas consecutivas para marcar healthy \\
+\hline
+Unhealthy Threshold & Número de fallos consecutivos para marcar unhealthy \\
+\hline
+\end{longtable}
+\end{center}
+
+\textbf{4. Protocolo HTTPS vs TCP en Health Checks}:
+\begin{itemize}
+    \item \textbf{HTTPS}: El LB envía una petición HTTPS a la ruta que indiques
+    \begin{itemize}
+        \item Si la aplicación responde con HTTP 200, target está saludable
+        \item Es ideal para comprobar que la aplicación web está funcionando
+    \end{itemize}
+    \item \textbf{TCP}: Solo verifica que el puerto esté abierto y se pueda conectar
+    \begin{itemize}
+        \item No verifica que la aplicación esté respondiendo correctamente
+        \item Útil para servicios que no hablan HTTP
+    \end{itemize}
+\end{itemize}
+
+\textbf{5. ¿Qué pasa cuando un target está unhealthy?}:
+\begin{itemize}
+    \item El LB deja de enviar tráfico a ese target
+    \item Sigue chequeando para ver si vuelve a responder bien
+    \item Cuando vuelve a responder con éxito, el LB lo marca healthy y vuelve a enviar tráfico
+\end{itemize}
+
+\textbf{6. Relación con errores 500}:
+\begin{itemize}
+    \item Un target puede responder 500 pero aún responder a health checks con 200 (porque el path que chequea puede estar bien)
+    \item Por eso, el LB puede estar "healthy" pero la app dar errores 500 en uso real
+    \item Para detectar esos errores en el LB, debes usar CloudWatch para monitorear métricas como:
+    \begin{itemize}
+        \item HTTPCode\_ELB\_5XX\_Count (errores 500 del LB)
+    \end{itemize}
+    \item Y configurar una alarma para que te notifique cuando haya muchos errores 500
+\end{itemize}
+
+\textbf{7. ¿Cómo recibo notificaciones si hay problemas?}:
+\begin{itemize}
+    \item El LB no envía emails directo
+    \item Usas CloudWatch para crear alarmas basadas en métricas (como errores 500)
+    \item Configuras esa alarma para que use SNS y te mande emails, SMS o llame a un webhook
+\end{itemize}
+
+\textbf{8. ¿Qué NO hace Route 53?}:
+\begin{itemize}
+    \item Route 53 NO maneja directamente el tráfico interno ni la salud de los targets del LB
+    \item Route 53 es un DNS, puede hacer health checks externos para sitios públicos, pero no controla si un target dentro de un LB está healthy
+    \item Los health checks en AWS Load Balancer (ALB) se configuran a nivel de grupo objetivo (target group), no por instancia individual
+\end{itemize}
+
+\subsection{Cuándo usar múltiples Load Balancers}
+
+\begin{itemize}
+    \item \important{Lo habitual es 1 LB, salvo en casos especiales donde realmente conviene usar varios}
+\end{itemize}
+
+\begin{center}
+\begin{longtable}{|p{4cm}|p{2.5cm}|p{6.5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Caso de uso} & \cellcolor{awsblue!20}\textbf{¿Normal usar dos LB?} & \cellcolor{awsblue!20}\textbf{Explicación breve} \\
+\hline
+Tráfico muy distinto o apps diferentes & \cellcolor{successgreen!20}Sí & Apps o servicios independientes que requieren aislamiento total \\
+\hline
+Protocolos/configuraciones distintas & \cellcolor{successgreen!20}Sí & Por ejemplo, uno para HTTP/HTTPS y otro para TCP/UDP \\
+\hline
+Multirregión / alta disponibilidad & \cellcolor{successgreen!20}Sí & LB independientes en diferentes regiones para resiliencia \\
+\hline
+Diferentes entornos (dev, staging, prod) & \cellcolor{successgreen!20}Sí & Separar entornos para evitar interferencias o riesgo \\
+\hline
+Requisitos de seguridad diferentes & \cellcolor{successgreen!20}Sí & LB con reglas de seguridad y acceso distintos para cada servicio \\
+\hline
+Diferentes niveles de tráfico & \cellcolor{successgreen!20}Sí & LB dedicados para servicios con demandas muy diferentes \\
+\hline
+Uso de características específicas de LB & \cellcolor{successgreen!20}Sí & Cuando un tipo de LB (ALB, NLB, CLB) es necesario para cada caso \\
+\hline
+Despliegue Canary típico & \cellcolor{warningyellow!20}No & Se usa 1 LB que balancea tráfico entre versiones (target groups) \\
+\hline
+Aplicaciones monolíticas o simples & \cellcolor{warningyellow!20}No & Un solo LB suele ser suficiente y más sencillo de manejar \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{AMI y Block Device Mapping}
+
+\begin{itemize}
+    \item When you launch an instance using the new AMI, Amazon EC2 creates a new EBS volume for the instance's root volume using the snapshot
+    \item If you added instance-store volumes or EBS volumes when you customized the instance, the block device mapping for the new AMI contains information for these volumes
+    \item The block device mappings for instances that you launch from the new AMI automatically contain information for these volumes
+\end{itemize}
+
+\subsection{AWS Beanstalk vs Microservices}
+
+\begin{itemize}
+    \item \important{AWS Beanstalk can support containers to host a web application but is not the best choice for a microservice architecture required in this scenario}
+\end{itemize}
+
+\subsection{AWS Glue - Recomendaciones para reducir costos}
+
+\textbf{Recomendaciones para reducir costos}:
+
+\begin{tipbox}[Formas efectivas de reducir costos]
+\begin{itemize}
+    \item \textbf{Cambiar la clase de ejecución a FLEX}: La clase FLEX ajusta automáticamente los recursos (DPUs) según la carga, equilibrando costo y rendimiento
+    \item \textbf{Minimizar el número de DPUs}: Optimizar los scripts ETL, particionar datos y elegir formatos adecuados reduce el uso de DPUs y, por tanto, el costo
+    \item \textbf{Usar el programador de trabajos (job scheduler)}: Ejecutar los jobs solo cuando sea necesario, por ejemplo en horas valle, evita ejecuciones innecesarias y ahorra dinero
+\end{itemize}
+\end{tipbox}
+
+\begin{warningbox}[NO es una forma directa de reducir costos]
+\begin{itemize}
+    \item \textbf{Usar AWS Glue Crawler para indexar datos en S3}: Facilita la gestión y consulta, pero no reduce directamente el costo de ejecutar jobs ETL y el crawler también genera costos
+\end{itemize}
+\end{warningbox}
+
+\subsection{S3 Event Monitoring y Logging}
+
+\textbf{S3 Event Notifications}:
+\begin{itemize}
+    \item Puedes configurar notificaciones para eventos (como creación, eliminación de objetos) que disparan acciones en Lambda, SNS o SQS
+\end{itemize}
+
+\textbf{AWS CloudTrail Data Events para S3}:
+\begin{itemize}
+    \item Permite registrar detalladamente las llamadas a la API sobre objetos S3, como PutObject, GetObject, DeleteObject, etc.
+    \item Esto es como un "log" de eventos a nivel de objetos
+\end{itemize}
+
+\textbf{S3 Server Access Logs}:
+\begin{itemize}
+    \item Registra detalles de las solicitudes hechas al bucket, como IP, tiempo, tipo de operación, etc.
+\end{itemize}
+
+\subsection{SQS - Short Polling vs Long Polling}
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{5cm}|p{5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Aspecto} & \cellcolor{awsblue!20}\textbf{Short Polling} & \cellcolor{awsblue!20}\textbf{Long Polling} \\
+\hline
+Tiempo de respuesta & Inmediato & Hasta 20 s de espera \\
+\hline
+Eficiencia & Menos eficiente (más requests vacíos) & Más eficiente (menos requests vacíos) \\
+\hline
+Coste & Mayor (más peticiones) & Menor (menos peticiones) \\
+\hline
+Uso recomendado & Casos con baja latencia estricta & Casos generales, recomendado por AWS \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{Tipos de colas en SQS}
+
+\textbf{1. Standard Queue}
+
+Características base:
+\begin{itemize}
+    \item Orden de mensajes no garantizado (pueden llegar en orden diferente al envío)
+    \item Entrega al menos una vez (un mensaje puede duplicarse)
+    \item Throughput prácticamente ilimitado
+\end{itemize}
+
+Modificaciones posibles:
+\begin{itemize}
+    \item \textbf{Message Retention Period}: cuánto tiempo se guardan mensajes (1 min – 14 días)
+    \item \textbf{Visibility Timeout}: tiempo que un mensaje queda "oculto" mientras lo procesa un consumidor (máx. 12h)
+    \item \textbf{Delivery Delay}: retraso para que un mensaje esté disponible en la cola
+    \item \textbf{Long Polling}: para reducir respuestas vacías
+\end{itemize}
+
+\begin{conceptbox}[Standard Queue]
+En general, las Standard se modifican en torno a eficiencia, coste y tiempos, porque ya ofrecen altísimo rendimiento.
+\end{conceptbox}
+
+\textbf{2. FIFO Queue}
+
+Características base:
+\begin{itemize}
+    \item Orden estricto de mensajes (First-In-First-Out)
+    \item Exactly-once processing (sin duplicados)
+    \item Throughput limitado:
+    \begin{itemize}
+        \item 300 mensajes por segundo sin batching
+        \item 3.000 mensajes por segundo con batching
+    \end{itemize}
+\end{itemize}
+
+Modificaciones posibles:
+\begin{itemize}
+    \item Todas las de Standard (Retention, Visibility, Delay, Long Polling)
+    \item \textbf{Message Group ID}: Permite paralelizar el procesamiento en la misma cola. Cada grupo de mensajes se procesa en orden, pero grupos distintos se procesan en paralelo
+    \item \textbf{Batching}: mejora el throughput
+\end{itemize}
+
+\begin{conceptbox}[FIFO Queue]
+En FIFO, las claves para subir el rendimiento son: Batch actions y MessageGroupId.
+\end{conceptbox}
+
+\subsection{SQS Batch Actions}
+
+\begin{itemize}
+    \item Permiten enviar, recibir o borrar hasta 10 mensajes en una sola llamada API
+\end{itemize}
+
+\textbf{Ventajas}:
+\begin{itemize}
+    \item Reduce coste (menos llamadas API)
+    \item Aumenta throughput (más mensajes procesados por segundo)
+    \item Especialmente útil en colas FIFO, donde sin batch el límite es bajo
+\end{itemize}
+
+\textbf{Ejemplo}:
+\begin{itemize}
+    \item Sin batching en FIFO: 300 ops/s
+    \item Con batching (10 mensajes por operación): 3.000 ops/s
+\end{itemize}
+
+\subsection{"In Tandem" (en conjunto)}
+
+AWS recomienda no quedarse solo con una optimización, sino combinar varias:
+
+\begin{itemize}
+    \item \textbf{Batch actions + MessageGroupId + múltiples consumidores} → Más throughput en FIFO
+    \item \textbf{Batch actions + Long polling} → Menos llamadas innecesarias y más eficiencia
+    \item \textbf{Batch actions + múltiples productores} → Más mensajes en paralelo entrando en la cola
+\end{itemize}
+
+\subsection{RDS Event Notifications}
+
+\textbf{¿Qué son?}:
+\begin{itemize}
+    \item Notificaciones que RDS envía cuando ocurre un evento importante en tu base de datos
+    \item Se configuran mediante un Event Subscription y se envían a través de SNS (correo, SMS, Lambda, etc.)
+\end{itemize}
+
+\textbf{Categorías principales}:
+\begin{itemize}
+    \item \textbf{Availability} → reinicio, caída
+    \item \textbf{Backup} → inicio/fin de snapshot
+    \item \textbf{Configuration change} → cambios en parámetros
+    \item \textbf{Failover} → failover en Multi-AZ
+    \item \textbf{Security} → cambios en seguridad
+\end{itemize}
+
+\textbf{Diferencia con CloudWatch}:
+\begin{itemize}
+    \item \textbf{CloudWatch} = métricas
+    \item \textbf{RDS Event Notifications} = eventos del sistema
+\end{itemize}
+
+\subsection{Caso Práctico: Datos entre Regiones S3}
+
+\textbf{Escenario}: Una empresa financiera necesita almacenar cientos de GB diarios en buckets S3 en Frankfurt y Virginia.
+
+\textbf{Solución más eficiente y cost-effective}:
+
+\begin{enumerate}
+    \item \textbf{Enviar datos al bucket de Frankfurt}: Usar VPC Gateway Endpoint
+    \begin{itemize}
+        \item Los Gateway Endpoints crean un endpoint S3 dentro de la VPC
+        \item No viajan por internet público
+        \item Soportan Amazon S3 y DynamoDB
+        \item Más cost-effective que Internet Gateways
+    \end{itemize}
+    
+    \item \textbf{Copiar datos a Virginia}: Usar S3 Cross-Region Replication
+    \begin{itemize}
+        \item Replicación automática entre buckets de diferentes regiones
+        \item S3 Transfer Acceleration NO funciona para replicación entre buckets
+        \item Transfer Acceleration es para uploads/downloads, no replicación
+    \end{itemize}
+\end{enumerate}
+
+\begin{warningbox}[Importante]
+\begin{itemize}
+    \item Interface Endpoints NO soportan Amazon S3
+    \item S3 Transfer Acceleration NO sirve para copiar entre buckets
+    \item VPC Gateway Endpoints NO funcionan entre regiones diferentes
+\end{itemize}
+\end{warningbox}
+
+\subsection{Amazon ECS Anywhere}
+
+\textbf{¿Qué es?}:
+\begin{itemize}
+    \item Extensión de Amazon ECS que permite correr contenedores en tu propia infraestructura on-premises o en otras nubes
+    \item Gestionados desde ECS en AWS
+    \item Usa un agente de ECS que instalas en tus servidores o VMs
+    \item Ideal si quieres gestión centralizada de contenedores sin importar dónde corran (AWS u on-prem)
+\end{itemize}
+
+\begin{conceptbox}[Resumen]
+ECS Anywhere = ECS para fuera de AWS, mismo control, pero en tu infraestructura.
+\end{conceptbox}
+
+\subsection{Balanceo híbrido con ALB}
+
+Se puede usar un Application Load Balancer (ALB) para repartir tráfico entre AWS y on-premises:
+
+\textbf{Configuración}:
+\begin{enumerate}
+    \item Configuras dos Target Groups:
+    \begin{itemize}
+        \item Uno para instancias/servicios en AWS
+        \item Otro para instancias on-premises (registradas en el ALB)
+    \end{itemize}
+    
+    \item Creas una listener rule con pesos (weighted target groups)
+    \begin{itemize}
+        \item Permite decidir qué \% del tráfico va a AWS y qué \% a on-premises
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Listener en un Load Balancer}
+
+\textbf{¿Qué es?}:
+\begin{itemize}
+    \item Componente del Load Balancer que escucha en un puerto y protocolo (ej. HTTP:80, HTTPS:443)
+    \item Cuando llega una petición, el listener la evalúa según sus rules (reglas)
+    \item Esas reglas deciden a qué target group enviar la petición
+\end{itemize}
+
+\textbf{Route 53 weighted routing vs ALB weighted target groups}:
+
+\begin{center}
+\begin{longtable}{|p{6cm}|p{7cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Route 53 weighted routing} & \cellcolor{awsblue!20}\textbf{ALB weighted target groups} \\
+\hline
+Funciona a nivel DNS & Funciona a nivel Load Balancer (capa 7) \\
+\hline
+15\% a app.aws.com, 85\% a app.onprem.com & Un listener rule en el ALB envía tráfico a dos target groups distintos \\
+\hline
+Route 53 devuelve IP según pesos & El peso se aplica después de la resolución DNS, en la distribución del tráfico \\
+\hline
+No entiende de target groups ni listeners & Controla la distribución dentro del ALB \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{Opciones para mover datos entre buckets en distintas regiones}
+
+\textbf{S3 Cross-Region Replication (CRR)}:
+\begin{itemize}
+    \item \textbf{Función}: Replicación automática y continua de objetos de un bucket origen a uno destino en otra región
+    \item \textbf{Timing}: Funciona en tiempo casi real (cuando subes algo al bucket origen, se replica)
+    \item \textbf{Coste}: Más caro porque tienes los datos en varias regiones y pagas transferencia también
+    \item \textbf{Ideal para}:
+    \begin{itemize}
+        \item Alta disponibilidad entre regiones
+        \item Disaster Recovery
+        \item Compartir datos entre equipos en distintas regiones
+    \end{itemize}
+\end{itemize}
+
+\textbf{S3 Batch Replication}:
+\begin{itemize}
+    \item \textbf{Función}: Para migraciones grandes o puntuales
+    \item \textbf{Diferencia}: Replica objetos existentes en lugar de solo los nuevos
+    \item \textbf{Útil}: Si ya tienes mucho historial que mover
+\end{itemize}
+
+\subsection{CloudFormation Template - Secciones Principales}
+
+\textbf{1. AWSTemplateFormatVersion (opcional)}:
+\begin{itemize}
+    \item Indica la versión del formato del template
+    \item Ejemplo: \texttt{AWSTemplateFormatVersion: "2010-09-09"}
+\end{itemize}
+
+\textbf{2. Description (opcional)}:
+\begin{itemize}
+    \item Texto para describir qué hace el template
+    \item Ejemplo: \texttt{Description: "Crea un ELB con 2 EC2"}
+\end{itemize}
+
+\textbf{3. Metadata (opcional)}:
+\begin{itemize}
+    \item Información adicional (puede usarse para GUIs o documentación)
+\end{itemize}
+
+\textbf{4. Parameters}:
+\begin{itemize}
+    \item Valores que el usuario puede pasar al lanzar el stack
+\end{itemize}
+
+Ejemplo:
+\begin{verbatim}
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t3.micro
+    AllowedValues:
+      - t3.micro
+      - t3.small
+      - t3.medium
+    Description: "Tipo de instancia EC2"
+\end{verbatim}
+
+\textbf{5. Mappings}:
+\begin{itemize}
+    \item Diccionarios estáticos con valores por región, entorno, etc.
+\end{itemize}
+
+Ejemplo:
+\begin{verbatim}
+Mappings:
+  RegionAMI:
+    us-east-1:
+      AMI: ami-12345
+    eu-central-1:
+      AMI: ami-67890
+\end{verbatim}
+
+\textbf{6. Conditions}:
+\begin{itemize}
+    \item Reglas lógicas para crear o no recursos
+\end{itemize}
+
+Ejemplo:
+\begin{verbatim}
+Conditions:
+  CreateProdResources: !Equals [ !Ref EnvType, "prod" ]
+\end{verbatim}
+
+\textbf{7. Resources (obligatorio)}:
+\begin{itemize}
+    \item Aquí defines qué se crea (EC2, S3, RDS, etc.)
+\end{itemize}
+
+Ejemplo:
+\begin{verbatim}
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !FindInMap [RegionAMI, !Ref "AWS::Region", AMI]
+\end{verbatim}
+
+\textbf{8. Outputs}:
+\begin{itemize}
+    \item Muestra valores al terminar el stack (ej: DNS, IDs, ARNs)
+    \item Con esto, al terminar de crear el stack en el output saldrá myInstance ID
+\end{itemize}
+
+Ejemplo:
+\begin{verbatim}
+Outputs:
+  InstanceID:
+    Description: "ID de la instancia"
+    Value: !Ref MyInstance
+\end{verbatim}
+
+\textbf{Funciones intrínsecas principales}:
+\begin{itemize}
+    \item \textbf{!Ref} → referencia a parámetros o recursos
+    \item \textbf{!GetAtt} → atributos de un recurso (ej. DNSName de un ELB)
+    \item \textbf{!Sub} → interpolación de variables en strings
+    \item \textbf{!Join} → concatenar strings
+    \item \textbf{!FindInMap} → obtener valores de Mappings
+    \item \textbf{!If} → condicional
+\end{itemize}
+
+\subsection{Secciones adicionales de CloudFormation}
+
+\textbf{Transform}:
+\begin{itemize}
+    \item Permite usar macros o plantillas SAM (AWS::Serverless-2016-10-31)
+    \item Útil para aplicaciones serverless o incluir otras plantillas
+\end{itemize}
+
+\textbf{Metadata}:
+\begin{itemize}
+    \item Información adicional sobre los recursos
+    \item Se puede usar para inicialización de instancias con AWS::CloudFormation::Init
+\end{itemize}
+
+\textbf{Rules}:
+\begin{itemize}
+    \item Define reglas para validar parámetros antes de crear recursos
+    \item Ejemplo: asegurarte que un valor de parámetro cumpla ciertas condiciones
+\end{itemize}
+
+\textbf{Transform y Macros}:
+\begin{itemize}
+    \item Macros permiten modificar el template al vuelo, antes de que se creen los recursos
+\end{itemize}
+
+\textbf{Custom Resources}:
+\begin{itemize}
+    \item No es una sección literal, pero puedes definir recursos personalizados que ejecuten Lambda u otros servicios al desplegar el stack
+\end{itemize}
+
+\subsection{Amazon Data Lifecycle Manager (DLM)}
+
+\textbf{Propósito}: Automatizar el ciclo de vida de snapshots y AMIs.
+
+\textbf{Alcance}: Solo EBS y EC2 AMIs.
+
+\textbf{Funcionalidades clave}:
+\begin{itemize}
+    \item Crear snapshots programados de EBS
+    \item Copiar snapshots a otra región (cross-region)
+    \item Eliminar snapshots antiguos según política de retención
+    \item Crear y eliminar AMIs automáticamente
+\end{itemize}
+
+\textbf{Limitaciones}:
+\begin{itemize}
+    \item Solo trabaja con EBS y AMIs
+    \item No gestiona otros servicios ni cumple políticas centralizadas de backup
+    \item No cambia el cifrado de snapshots automáticamente
+\end{itemize}
+
+\begin{warningbox}[Importante]
+No es lo mismo Data Lifecycle Manager que las Data Lifecycle Policies que son para pasar de S3 a S3 Glacier y demás.
+\end{warningbox}
+
+\subsection{Elastic IP (EIP) - Limitaciones}
+
+\begin{itemize}
+    \item \important{EIPs can be moved from one instance to another in multiple VPCs within the same region - NO EN MÚLTIPLES REGIONES}
+\end{itemize}
+
+\subsection{CloudWatch Alarm Actions}
+
+\begin{itemize}
+    \item Amazon CloudWatch alarm actions allow you to create alarms that automatically stop, terminate, reboot, or recover your Amazon Elastic Compute Cloud (Amazon EC2) instances
+\end{itemize}
+
+\subsection{Graph Database para Fraud Detection}
+
+\begin{itemize}
+    \item \textbf{Fraud detection} → graph database
+    \item Las bases de datos de grafos son ideales para detectar patrones de fraude y relaciones complejas entre entidades
+\end{itemize}
+
+\subsection{Recuperar acceso a EC2 cuando se pierde el key pair}
+
+\textbf{Escenario}:
+\begin{itemize}
+    \item Instancia EC2 Linux con EBS root volume
+    \item Key pair privado perdido → no se puede conectar por SSH
+\end{itemize}
+
+\textbf{Pasos recomendados (menor overhead)}:
+\begin{enumerate}
+    \item Detener la instancia original
+    \item Desmontar el root volume
+    \item Adjuntar el volumen a otra instancia como volumen de datos
+    \item Editar \texttt{\~{}/.ssh/authorized\_keys} y añadir una nueva clave pública
+    \item Desmontar el volumen y volver a montar en la instancia original
+    \item Arrancar la instancia y conectarse con la nueva clave
+\end{enumerate}
+
+\begin{warningbox}[Notas importantes]
+\begin{itemize}
+    \item Montar como data evita corromper el sistema operativo y permite modificar archivos de usuario con seguridad
+    \item Este procedimiento no funciona para instancias con instance store-backed root volumes
+\end{itemize}
+\end{warningbox}
+
+\subsection{Source/Destination Check (SDC) en EC2}
+
+\textbf{¿Qué es?}:
+\begin{itemize}
+    \item Propiedad de las instancias EC2 que determina si la instancia acepta tráfico que no esté destinado a ella o que no haya generado
+    \item Por defecto, está habilitada → la instancia solo puede enviar/recibir tráfico que le pertenece (su propia IP)
+\end{itemize}
+
+\textbf{Diferencia clave}:
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{5cm}|p{5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Concepto} & \cellcolor{awsblue!20}\textbf{NAT Gateway} & \cellcolor{awsblue!20}\textbf{NAT Instance} \\
+\hline
+SDC & No se toca → AWS lo gestiona internamente & Debe deshabilitarse para enrutar tráfico \\
+\hline
+Administración & Servicio completamente gestionado por AWS & Tú gestionas la instancia EC2 que hace NAT \\
+\hline
+Escalabilidad & Automática & Depende de la instancia y zona \\
+\hline
+\end{longtable}
+\end{center}
+
+\textbf{¿Por qué no se desactiva SDC en NAT Gateway?}:
+\begin{itemize}
+    \item NAT Gateway es un servicio de AWS, no una instancia EC2 normal
+    \item Ya sabe cómo enrutar tráfico de las instancias privadas a Internet
+    \item Si desactivaras SDC, no sirve de nada, porque no tienes control sobre el tráfico internamente
+\end{itemize}
+
+\textbf{¿Por qué sí se desactiva SDC en NAT Instance?}:
+\begin{itemize}
+    \item Una NAT Instance es una EC2 normal
+    \item Debe aceptar tráfico que no tiene como destino su propia IP, porque actúa como puerta de enlace para otras instancias privadas
+    \item Por eso, hay que desactivar SDC para que funcione correctamente como NAT
+\end{itemize}
+
+\subsection{Aurora Serverless para cargas impredecibles}
+
+\begin{itemize}
+    \item \textbf{Conclusión}: Aurora Serverless es la opción más coste-eficiente y flexible para cargas impredecibles en bases de datos relacionales
+    \item Se adapta automáticamente a los picos y evita pagar por capacidad ociosa
+    \item Ideal cuando es posible que no se use la BD por períodos prolongados
+\end{itemize}
+
+\subsection{Datos en Instance Store}
+
+\textbf{Persistencia}:
+\begin{itemize}
+    \item Persiste solo mientras la instancia existe
+    \item Se mantiene si la instancia se reinicia (reboot)
+\end{itemize}
+
+\textbf{Se pierde si ocurre}:
+\begin{itemize}
+    \item Fallo del disco subyacente
+    \item La instancia se detiene (stop)
+    \item La instancia se termina
+\end{itemize}
+
+\subsection{Dedicated Instances vs Dedicated Hosts}
+
+\begin{center}
+\begin{longtable}{|p{4cm}|p{5cm}|p{5cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Característica} & \cellcolor{awsblue!20}\textbf{Dedicated Instances} & \cellcolor{awsblue!20}\textbf{Dedicated Hosts} \\
+\hline
+Hardware exclusivo & Sí, no compartido con otras cuentas & Sí, no compartido con otras cuentas \\
+\hline
+Control sobre el host & No, AWS decide dónde se colocan & Sí, el cliente elige en qué host físico se ejecuta cada instancia \\
+\hline
+Modificar hardware & No permitido & Puedes ver inventario de sockets, núcleos, licencias de software, etc. \\
+\hline
+Costo & Generalmente más bajo & Más caro porque pagas por el host completo \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{Provisioned Throughput - Cost Effectiveness}
+
+\begin{itemize}
+    \item Provisioned throughput puede ser cost effective si la workload es predecible, porque solo pagas por lo que usas
+\end{itemize}
+
+\subsection{Lambda Event-Based - Limitaciones}
+
+\textbf{¿Por qué no usar un Lambda "event-based" directamente?}:
+\begin{itemize}
+    \item La idea de "event-based Lambda" suena bien, pero Lambda no recibe eventos directamente de cambios en security groups
+    \item Necesitas un servicio que detecte los cambios en la API, como EventBridge (antes CloudWatch Events)
+\end{itemize}
+
+\textbf{Lambda basada en eventos (Event-based Lambda)}:
+\begin{itemize}
+    \item No "escucha" recursos directamente
+    \item Se dispara por eventos generados por otros servicios de AWS
+\end{itemize}
+
+\textbf{Tipos de eventos que puede escuchar}:
+\begin{itemize}
+    \item \textbf{Eventos de EventBridge / CloudWatch Events}: Cambios en recursos (API calls capturadas por CloudTrail). Ejemplos: creación/modificación/eliminación de EC2, Security Groups, S3 buckets, IAM roles, etc.
+    \item \textbf{Eventos de S3}: Subida, eliminación o reemplazo de objetos
+    \item \textbf{Eventos de DynamoDB Streams}: Cambios en tablas (insert, update, delete)
+    \item \textbf{Eventos de Kinesis o SQS}: Mensajes o registros nuevos → Lambda los procesa
+    \item \textbf{Eventos de CloudFormation o CodePipeline}: Cambios en stacks o pipelines → Lambda puede reaccionar
+\end{itemize}
+
+\subsection{Savings Plans - Consideración importante}
+
+\begin{warningbox}[Importante]
+Con un Compute Savings Plan (y también con un EC2 Instance Savings Plan) te comprometes a pagar una cantidad fija por hora durante todo el año, como si la instancia estuviese corriendo constantemente, aunque en realidad la uses solo unas horas al día.
+\end{warningbox}
+
+\begin{center}
+\begin{longtable}{|p{3cm}|p{1.5cm}|p{2.5cm}|p{2.5cm}|p{2cm}|p{2cm}|}
+\hline
+\cellcolor{awsblue!20}\textbf{Opción} & \cellcolor{awsblue!20}\textbf{Ahorro máx} & \cellcolor{awsblue!20}\textbf{Flex tipo/familia} & \cellcolor{awsblue!20}\textbf{Flex región} & \cellcolor{awsblue!20}\textbf{Interrupciones} & \cellcolor{awsblue!20}\textbf{Comentario} \\
+\hline
+Spot Instances & Hasta 90\% & Total & Total & Sí & Muy barato, no para jobs críticos \\
+\hline
+\cellcolor{successgreen!20}Compute Savings Plan & Hasta 66\% & Total & Total & No & Ideal para cargas constantes con flexibilidad \\
+\hline
+Convertible RI & Hasta 66\% & Alta & Limitada & No & Bueno si necesitas cambiar tipo \\
+\hline
+EC2 Instance SP & Hasta 66\% & Limitada & Limitada & No & Menos flexible \\
+\hline
+\end{longtable}
+\end{center}
+
+\subsection{AWS X-Ray}
+
+\begin{itemize}
+    \item AWS X-Ray collects data about requests that your application serves and provides tools that you can use to view the interaction between the services
+    \item Data collected is used to create graphs on the application and its dependencies and the health of any request made by the application
+    \item X-Ray uses trace data from the AWS resources that power your serverless application to generate a detailed Service Graph
+\end{itemize}
+
+\subsection{CloudFront Invalidation}
+
+\begin{itemize}
+    \item "Invalidate" en CloudFront significa marcar los objetos cacheados como obsoletos
+    \item AWS no permite borrar manualmente los edge caches, solo mediante invalidación
+\end{itemize}
+
+\subsection{DynamoDB Streams a S3}
+
+\begin{itemize}
+    \item \important{Streaming data from DynamoDB Streams into S3 isn't typically possible without a processing intermediary like AWS Lambda or Kinesis Firehose}
+    \item DynamoDB Streams needs to be processed (read and transformed) before the data can be stored in S3
+    \item Los DynamoDB Streams no almacenan datos por sí mismos, son solo un flujo de eventos
+    \item Para guardar esos datos en otro sitio necesitas un intermediario que lea el stream y los escriba en tu destino
+\end{itemize}
+
+\subsection{EBS Encryption by Default}
+
+\begin{itemize}
+    \item Aunque normalmente no puedes crear un snapshot cifrado a partir de uno no cifrado directamente, la función de Encryption by Default de la cuenta evita ese problema y cifra el volumen automáticamente al momento de la creación
+\end{itemize}
+
+\newpage
+
+\chapter{Glosario}
+
+\begin{description}
+    \item[AZ] Availability Zone - Zona de Disponibilidad
+    \item[VPC] Virtual Private Cloud - Nube Privada Virtual  
+    \item[ELB] Elastic Load Balancer - Balanceador de Carga Elástico
+    \item[Auto Scaling] Escalado automático de recursos
+    \item[Multi-AZ] Configuración en múltiples zonas de disponibilidad
+    \item[RTO] Recovery Time Objective - Tiempo objetivo de recuperación
+    \item[RPO] Recovery Point Objective - Punto objetivo de recuperación
+    \item[IOPS] Input/Output Operations Per Second
+    \item[EBS] Elastic Block Store - Almacenamiento de bloques
+    \item[S3] Simple Storage Service - Servicio de almacenamiento simple
+\end{description}
+
+\vfill
+
+\begin{center}
+\textit{¡Buena suerte en tu examen AWS Solutions Architect Associate!}
+
+\vspace{1cm}
+
+\textcolor{awsorange}{\Large \faAws}
+\end{center}
+
+\end{document}

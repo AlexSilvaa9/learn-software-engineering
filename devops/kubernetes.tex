@@ -1,0 +1,2769 @@
+\documentclass[11pt,a4paper]{article}
+
+% ====== PAQUETES Y CONFIGURACIÓN ======
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\geometry{a4paper, margin=2.5cm}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{pagecolor}
+\usepackage{afterpage}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{fontawesome5}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% ====== DEFINICIÓN DE COLORES K8S OSCUROS ======
+\definecolor{k8sblue}{RGB}{0,123,255}           % Azul Kubernetes oficial
+\definecolor{k8sdarkblue}{RGB}{13,71,161}       % Azul oscuro principal
+\definecolor{k8snavyblue}{RGB}{25,46,94}        % Azul marino muy oscuro
+\definecolor{k8slightblue}{RGB}{63,149,244}     % Azul claro para acentos
+\definecolor{k8scyan}{RGB}{0,188,212}           % Cyan para información
+\definecolor{k8ssteelblue}{RGB}{69,90,120}      % Azul acero para secundarios
+\definecolor{k8scodebg}{RGB}{22,29,47}          % Fondo código azul muy oscuro
+\definecolor{k8swarning}{RGB}{255,152,0}        % Naranja para warnings
+\definecolor{k8serror}{RGB}{244,67,54}          % Rojo para errores
+\definecolor{k8ssuccess}{RGB}{76,175,80}        % Verde para success
+\definecolor{k8slightgray}{RGB}{236,239,244}    % Gris claro
+\definecolor{k8sdarkgray}{RGB}{96,108,118}      % Gris oscuro
+
+% ====== CONFIGURACIÓN DE HYPERLINKS ======
+\hypersetup{
+    colorlinks=true,
+    linkcolor=k8slightblue,
+    urlcolor=k8scyan,
+    citecolor=k8ssteelblue,
+    pdfborderstyle={/S/U/W 1},
+    pdftitle={Kubernetes CKA 2024 - Guía Completa},
+    pdfauthor={Administrador Kubernetes},
+    pdfsubject={Certificación CKA},
+    pdfkeywords={Kubernetes, CKA, Administración, Containers}
+}
+
+% ====== CONFIGURACIÓN DE HEADERS CON LOGO K8S ======
+\pagestyle{fancy}
+\fancyhf{}
+% Header izquierdo con logo K8s simulado y título
+\fancyhead[L]{%
+    \textcolor{k8sdarkblue}{\textbf{⎈}} \hspace{2pt}
+    \textcolor{k8sdarkblue}{\textbf{Kubernetes CKA 2024}}
+    \textcolor{k8ssteelblue}{\textbf{ - Guía Completa}}
+}
+\fancyhead[R]{\textcolor{k8sdarkgray}{\textbf{\thepage}}}
+\renewcommand{\headrulewidth}{3pt}
+\renewcommand{\headrule}{%
+    \hbox to\headwidth{%
+        \color{k8sdarkblue}\leaders\hrule height 2pt\hfill%
+        \kern2pt%
+        \color{k8slightblue}\leaders\hrule height 1pt\hfill%
+    }%
+}
+\setlength{\headheight}{25pt}
+
+% ====== ESTILOS DE TÍTULOS CON GRADIENTE AZUL ======
+\titleformat{\section}
+{\color{k8sdarkblue}\LARGE\bfseries}
+{\textcolor{k8slightblue}{\thesection}}{1em}{}
+
+\titleformat{\subsection}
+{\color{k8snavyblue}\Large\bfseries}
+{\textcolor{k8scyan}{\thesubsection}}{1em}{}
+
+\titleformat{\subsubsection}
+{\color{k8ssteelblue}\large\bfseries}
+{\textcolor{k8slightblue}{\thesubsubsection}}{1em}{}
+
+% ====== CAJAS PERSONALIZADAS CON TEMA AZUL OSCURO ======
+\tcbset{
+    commandstyle/.style={
+        colback=k8scodebg,
+        coltext=white,
+        colframe=k8slightblue,
+        boxrule=2.5pt,
+        arc=8pt,
+        left=12pt,
+        right=12pt,
+        top=10pt,
+        bottom=10pt,
+        shadow={2pt}{2pt}{0pt}{k8snavyblue!50},
+        borderline west={4pt}{0pt}{k8scyan}
+    }
+}
+
+\newtcolorbox{commandbox}{
+    commandstyle,
+    fontupper=\ttfamily\small,
+    before upper={\parindent0pt}
+}
+
+\newtcolorbox{warningbox}{
+    colback=k8swarning!5,
+    coltext=black,
+    colframe=k8swarning,
+    boxrule=2pt,
+    arc=6pt,
+    left=12pt,
+    right=12pt,
+    top=10pt,
+    bottom=10pt,
+    title={\textcolor{k8swarning}{\faExclamationTriangle}\ \textcolor{k8sdarkblue}{\textbf{Importante}}},
+    fonttitle=\bfseries,
+    toptitle=8pt,
+    bottomtitle=8pt,
+    shadow={1pt}{1pt}{0pt}{k8swarning!30}
+}
+
+\newtcolorbox{infobox}{
+    colback=k8scyan!8,
+    coltext=black,
+    colframe=k8scyan,
+    boxrule=2pt,
+    arc=6pt,
+    left=12pt,
+    right=12pt,
+    top=10pt,
+    bottom=10pt,
+    title={\textcolor{k8scyan}{\faInfoCircle}\ \textcolor{k8sdarkblue}{\textbf{Información}}},
+    fonttitle=\bfseries,
+    toptitle=8pt,
+    bottomtitle=8pt,
+    shadow={1pt}{1pt}{0pt}{k8scyan!30}
+}
+
+\newtcolorbox{tipbox}{
+    colback=k8ssuccess!8,
+    coltext=black,
+    colframe=k8ssuccess,
+    boxrule=2pt,
+    arc=6pt,
+    left=12pt,
+    right=12pt,
+    top=10pt,
+    bottom=10pt,
+    title={\textcolor{k8ssuccess}{\faLightbulb}\ \textcolor{k8sdarkblue}{\textbf{Tip Profesional}}},
+    fonttitle=\bfseries,
+    toptitle=8pt,
+    bottomtitle=8pt,
+    shadow={1pt}{1pt}{0pt}{k8ssuccess!30}
+}
+
+\newtcolorbox{errorbox}{
+    colback=k8serror!8,
+    coltext=black,
+    colframe=k8serror,
+    boxrule=2pt,
+    arc=6pt,
+    left=12pt,
+    right=12pt,
+    top=10pt,
+    bottom=10pt,
+    title={\textcolor{k8serror}{\faTimes}\ \textcolor{k8sdarkblue}{\textbf{Error Común}}},
+    fonttitle=\bfseries,
+    toptitle=8pt,
+    bottomtitle=8pt,
+    shadow={1pt}{1pt}{0pt}{k8serror!30}
+}
+
+% ====== CONFIGURACIÓN DE LISTINGS CON TEMA OSCURO ======
+\lstset{
+    backgroundcolor=\color{k8scodebg},
+    basicstyle=\color{white}\ttfamily\small,
+    keywordstyle=\color{k8slightblue}\bfseries,
+    stringstyle=\color{k8scyan},
+    commentstyle=\color{k8sdarkgray}\itshape,
+    numbers=left,
+    numberstyle=\tiny\color{k8ssteelblue},
+    stepnumber=1,
+    numbersep=8pt,
+    frame=leftline,
+    rulecolor=\color{k8slightblue},
+    framerule=3pt,
+    xleftmargin=20pt,
+    xrightmargin=10pt,
+    breaklines=true,
+    breakatwhitespace=false,
+    showstringspaces=false,
+    tabsize=4,
+    captionpos=t,
+    escapeinside={(*@}{@*)}
+}
+
+% ====== DOCUMENTO ======
+\begin{document}
+
+% ====== PORTADA PROFESIONAL CON DISEÑO K8S ======
+\begin{titlepage}
+    \pagecolor{k8snavyblue}
+    \centering
+    \vspace*{1.5cm}
+    
+    % Logo personalizado de Kubernetes con TikZ
+    \begin{tikzpicture}[scale=1.2]
+        % Círculo exterior azul
+        \draw[fill=k8slightblue, line width=3pt, draw=white] (0,0) circle (2.2);
+        % Círculo interior oscuro
+        \draw[fill=k8scodebg, line width=2pt, draw=k8scyan] (0,0) circle (1.8);
+        % Símbolo de timón de Kubernetes estilizado
+        \foreach \angle in {0, 60, 120, 180, 240, 300} {
+            \draw[white, line width=4pt, line cap=round] 
+                (\angle:0.4) -- (\angle:1.4);
+            \draw[k8scyan, line width=2pt, line cap=round] 
+                (\angle:0.6) -- (\angle:1.2);
+        }
+        % Centro del timón
+        \draw[fill=white] (0,0) circle (0.3);
+        \draw[fill=k8slightblue] (0,0) circle (0.2);
+    \end{tikzpicture}
+    
+    \vspace{0.8cm}
+    
+    % Título principal con gradiente simulado
+    {\fontsize{48}{58}\selectfont\color{white}\textbf{KUBERNETES}}\\[0.3cm]
+    {\fontsize{24}{30}\selectfont\color{k8slightblue}\textbf{Certified Kubernetes Administrator}}\\[0.2cm]
+    {\fontsize{16}{20}\selectfont\color{k8scyan}\textbf{CKA 2024 | Guía Completa de Estudio}}\\[1.2cm]
+    
+    % Línea decorativa
+    \textcolor{k8slightblue}{\rule{0.7\textwidth}{2pt}}\\[0.8cm]
+    
+    {\fontsize{18}{22}\selectfont\color{k8slightblue}\textbf{Guía Definitiva de Administración}}\\[0.2cm]
+    {\fontsize{14}{17}\selectfont\color{white}\textit{De Principiante a Administrador Certificado}}\\[1.5cm]
+    
+    % Caja de contenido mejorada
+    \begin{center}
+    \begin{tcolorbox}[
+        colback=k8scodebg!90,
+        colframe=k8slightblue,
+        boxrule=2pt,
+        arc=10pt,
+        width=0.85\textwidth,
+        shadow={3pt}{3pt}{0pt}{black!50},
+        borderline west={5pt}{0pt}{k8scyan}
+    ]
+        \centering
+        {\fontsize{14}{17}\selectfont\color{k8slightblue}\textbf{\faBook\ CONTENIDO INCLUIDO}}\\[0.4cm]
+        
+        \begin{minipage}{0.45\textwidth}
+            \color{white}
+            {\small
+            \textcolor{k8scyan}{\faServer} \textbf{Arquitectura \& Instalación}\\[0.2cm]
+            \textcolor{k8scyan}{\faDatabase} \textbf{Storage \& Persistence}\\[0.2cm]
+            \textcolor{k8scyan}{\faNetworkWired} \textbf{Networking \& Services}\\[0.2cm]
+            }
+        \end{minipage}
+        \hfill
+        \begin{minipage}{0.45\textwidth}
+            \color{white}
+            {\small
+            \textcolor{k8scyan}{\faCog} \textbf{Workloads \& Scheduling}\\[0.2cm]
+            \textcolor{k8scyan}{\faShield} \textbf{Security \& RBAC}\\[0.2cm]
+            \textcolor{k8scyan}{\faTools} \textbf{Troubleshooting \& Debug}\\[0.2cm]
+            }
+        \end{minipage}\\[0.3cm]
+        
+        \textcolor{k8slightblue}{\rule{0.8\textwidth}{1pt}}\\[0.2cm]
+        {\small\color{k8slightblue}\textbf{+ 200 Comandos Prácticos | Ejercicios CKA | Laboratorios}}
+    \end{tcolorbox}
+    \end{center}
+    
+    \vspace{1cm}
+    
+    % Información adicional estilizada
+    \begin{tikzpicture}
+        \node[
+            rectangle,
+            rounded corners=5pt,
+            fill=k8slightblue!20,
+            draw=k8slightblue,
+            line width=1pt,
+            minimum width=6cm,
+            minimum height=1cm
+        ] at (0,0) {
+            \textcolor{k8snavyblue}{\textbf{\faCheckCircle\ Actualizado 2024 | \faCheckCircle\ Ejemplos Reales | \faCheckCircle\ Best Practices}}
+        };
+    \end{tikzpicture}
+    
+    \vfill
+    
+    {\fontsize{12}{15}\selectfont\color{k8sdarkgray}\textbf{Enero 2026 | Versión 1.30+}}
+    
+    \restoregeometry
+    \nopagecolor
+\end{titlepage}
+
+% ====== ÍNDICE ======
+\tableofcontents
+\newpage
+
+% ====== INTRODUCCIÓN ======
+\section{Introducción a Kubernetes}
+
+\begin{infobox}
+Kubernetes es una plataforma de orquestación de contenedores de código abierto que automatiza el despliegue, escalado y gestión de aplicaciones en contenedores.
+\end{infobox}
+
+\subsection{¿Qué es Kubernetes?}
+
+Kubernetes (también conocido como K8s) es un sistema de orquestación de contenedores que fue desarrollado originalmente por Google y ahora es mantenido por la Cloud Native Computing Foundation (CNCF). Su nombre proviene del griego y significa "timonel" o "piloto".
+
+\subsubsection{Características Principales}
+
+\begin{itemize}[leftmargin=2cm]
+    \item[\textcolor{k8sblue}{\faDocker}] \textbf{Orquestación de Contenedores}: Gestiona automáticamente la vida útil de los contenedores
+    \item[\textcolor{k8ssuccess}{\faArrowsAltH}] \textbf{Escalado Automático}: Escala aplicaciones hacia arriba o abajo según la demanda
+    \item[\textcolor{k8swarning}{\faHeart}] \textbf{Auto-sanación}: Reinicia contenedores fallidos, reemplaza nodos, etc.
+    \item[\textcolor{k8ssteelblue}{\faBalanceScale}] \textbf{Load Balancing}: Distribuye el tráfico de red automáticamente
+    \item[\textcolor{k8serror}{\faLock}] \textbf{Gestión de Secrets}: Manejo seguro de información sensible
+\end{itemize}
+
+\subsection{Arquitectura de Kubernetes}
+
+Kubernetes sigue una arquitectura maestro-esclavo (master-worker) con los siguientes componentes principales:
+
+\subsubsection{Control Plane (Plano de Control)}
+
+\begin{tipbox}
+El Control Plane es el cerebro de Kubernetes, donde se toman todas las decisiones de gestión del cluster.
+\end{tipbox}
+
+\begin{enumerate}
+    \item \textbf{\textcolor{k8sblue}{API Server (kube-apiserver)}}
+    \begin{itemize}
+        \item Punto de entrada principal para todas las operaciones REST
+        \item Valida y configura datos para objetos API
+        \item Sirve como frontend para el estado compartido del cluster
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8ssuccess}{etcd}}
+    \begin{itemize}
+        \item Base de datos distribuida y consistente
+        \item Almacena toda la configuración del cluster
+        \item Utiliza el algoritmo de consenso Raft
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8swarning}{Controller Manager (kube-controller-manager)}}
+    \begin{itemize}
+        \item Ejecuta los controladores del cluster
+        \item Node Controller, Replication Controller, Endpoints Controller
+        \item Service Account \& Token Controllers
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8ssteelblue}{Scheduler (kube-scheduler)}}
+    \begin{itemize}
+        \item Asigna pods a nodos específicos
+        \item Considera recursos, políticas y restricciones
+        \item Optimiza la distribución de cargas de trabajo
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Worker Nodes (Nodos de Trabajo)}
+
+\begin{enumerate}
+    \item \textbf{\textcolor{k8sblue}{Kubelet}}
+    \begin{itemize}
+        \item Agente que se ejecuta en cada nodo
+        \item Se comunica con el API Server
+        \item Gestiona pods y contenedores en el nodo
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8ssuccess}{Kube-proxy}}
+    \begin{itemize}
+        \item Componente de red que mantiene reglas de red
+        \item Permite comunicación de red a los pods
+        \item Implementa parte del concepto de Service
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8swarning}{Container Runtime}}
+    \begin{itemize}
+        \item Docker, containerd, CRI-O
+        \item Responsable de ejecutar contenedores
+        \item Gestiona imágenes de contenedores
+    \end{itemize}
+\end{enumerate}
+
+\newpage
+
+% ====== ARQUITECTURA, INSTALACIÓN Y CONFIGURACIÓN ======
+\section{Cluster Architecture, Installation \& Configuration}
+
+\begin{warningbox}
+Esta sección cubre el 25\% del examen CKA y es fundamental para entender cómo funciona Kubernetes internamente.
+\end{warningbox}
+
+\subsection{Role Based Access Control (RBAC)}
+
+RBAC es un método para regular el acceso a recursos informáticos basado en los roles de usuarios individuales dentro de una organización.
+
+\subsubsection{Componentes de RBAC}
+
+\begin{enumerate}
+    \item \textbf{\textcolor{k8sblue}{Role y ClusterRole}}
+    \begin{itemize}
+        \item \textbf{Role}: Define permisos dentro de un namespace específico
+        \item \textbf{ClusterRole}: Define permisos a nivel de cluster
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8ssuccess}{RoleBinding y ClusterRoleBinding}}
+    \begin{itemize}
+        \item \textbf{RoleBinding}: Vincula un Role a usuarios/grupos en un namespace
+        \item \textbf{ClusterRoleBinding}: Vincula un ClusterRole a nivel de cluster
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8swarning}{Subjects}}
+    \begin{itemize}
+        \item Users (usuarios)
+        \item Groups (grupos)
+        \item ServiceAccounts (cuentas de servicio)
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Ejemplo Práctico de RBAC}
+
+\begin{commandbox}
+\# Crear un Role para leer pods
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+\end{commandbox}
+
+\begin{commandbox}
+\# Crear un RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-pods
+  namespace: default
+subjects:
+- kind: User
+  name: jane
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+\end{commandbox}
+
+\subsubsection{Comandos Útiles para RBAC}
+
+\begin{commandbox}
+\# Verificar permisos de un usuario
+kubectl auth can-i get pods --as=jane
+
+\# Verificar todos los permisos
+kubectl auth can-i --list --as=jane
+
+\# Crear ServiceAccount
+kubectl create serviceaccount my-service-account
+
+\# Obtener token de ServiceAccount
+kubectl create token my-service-account
+\end{commandbox}
+
+\subsection{Instalación de Kubernetes con kubeadm}
+
+kubeadm es una herramienta oficial para crear clusters de Kubernetes que funciona rápida y fácilmente.
+
+\subsubsection{Preparación del Sistema}
+
+\begin{commandbox}
+\# Deshabilitar swap
+sudo swapoff -a
+sudo sed -i 's|/ swap |/# swap |g' /etc/fstab
+
+\# Cargar módulos del kernel necesarios
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br\_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br\_netfilter
+
+\# Configurar parámetros del kernel
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip\_forward                 = 1
+EOF
+
+sudo sysctl --system
+\end{commandbox}
+
+\subsubsection{Instalación de Container Runtime (containerd)}
+
+\begin{commandbox}
+\# Instalar containerd
+sudo apt-get update
+sudo apt-get install -y containerd
+
+\# Configurar containerd
+sudo mkdir -p /etc/containerd
+containerd config default | sudo tee /etc/containerd/config.toml
+
+\# Editar config.toml para usar systemd como cgroup driver
+sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' \\
+  /etc/containerd/config.toml
+
+\# Reiniciar containerd
+sudo systemctl restart containerd
+sudo systemctl enable containerd
+\end{commandbox}
+
+\subsubsection{Instalación de kubeadm, kubelet y kubectl}
+
+\begin{commandbox}
+\# Agregar repositorio de Kubernetes
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl
+
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | \\
+  sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] \\
+  https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | \\
+  sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+\# Instalar componentes
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+
+\# Habilitar kubelet
+sudo systemctl enable kubelet
+\end{commandbox}
+
+\subsubsection{Inicialización del Cluster}
+
+\begin{commandbox}
+\# Inicializar el nodo maestro
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+
+\# Configurar kubectl para el usuario
+mkdir -p \$HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf \$HOME/.kube/config
+sudo chown $(id -u):$(id -g) \$HOME/.kube/config
+
+\# Instalar plugin de red (Flannel)
+kubectl apply -f \\
+  https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+\end{commandbox}
+
+\begin{tipbox}
+Guarda el comando \texttt{kubeadm join} que aparece al final de la inicialización. Lo necesitarás para unir nodos worker al cluster.
+\end{tipbox}
+
+\subsection{Alta Disponibilidad en Kubernetes}
+
+Un cluster de alta disponibilidad garantiza que el plano de control esté replicado a través de múltiples nodos para evitar puntos únicos de falla.
+
+\subsubsection{Topologías de Alta Disponibilidad}
+
+\begin{enumerate}
+    \item \textbf{\textcolor{k8sblue}{Stacked etcd}}
+    \begin{itemize}
+        \item etcd se ejecuta en los mismos nodos que el control plane
+        \item Menos infraestructura requerida
+        \item Mayor riesgo de pérdida de datos
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8ssuccess}{External etcd}}
+    \begin{itemize}
+        \item etcd se ejecuta en nodos separados
+        \item Mayor resiliencia
+        \item Más infraestructura requerida
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Configuración con Load Balancer}
+
+\begin{commandbox}
+\# Configuración de HAProxy para load balancer
+\# /etc/haproxy/haproxy.cfg
+
+global
+    maxconn 4096
+    log stdout local0
+
+defaults
+    mode tcp
+    timeout connect 5000ms
+    timeout client 50000ms
+    timeout server 50000ms
+
+frontend k8s-api
+    bind *:6443
+    default\_backend k8s-masters
+
+backend k8s-masters
+    balance roundrobin
+    server master1 192.168.1.10:6443 check
+    server master2 192.168.1.11:6443 check
+    server master3 192.168.1.12:6443 check
+\end{commandbox}
+
+\subsubsection{Inicialización de HA Cluster}
+
+\begin{commandbox}
+\# En el primer nodo maestro
+sudo kubeadm init --control-plane-endpoint="lb.example.com:6443" \\
+  --upload-certs --pod-network-cidr=10.244.0.0/16
+
+\# Para unir nodos maestros adicionales
+sudo kubeadm join lb.example.com:6443 --token <token> \\
+  --discovery-token-ca-cert-hash sha256:<hash> \\
+  --control-plane --certificate-key <key>
+
+\# Para unir nodos worker
+sudo kubeadm join lb.example.com:6443 --token <token> \\
+  --discovery-token-ca-cert-hash sha256:<hash>
+\end{commandbox}
+
+\subsection{Actualización de Clusters con kubeadm}
+
+\subsubsection{Planificación de la Actualización}
+
+\begin{warningbox}
+Siempre realizar copias de seguridad de etcd antes de actualizar. Las actualizaciones deben ser secuenciales (v1.28 → v1.29 → v1.30).
+\end{warningbox}
+
+\begin{commandbox}
+\# Verificar versión actual
+kubectl get nodes
+
+\# Verificar versiones disponibles
+apt list -a kubeadm
+
+\# Planificar actualización
+sudo kubeadm upgrade plan
+\end{commandbox}
+
+\subsubsection{Actualización del Control Plane}
+
+\begin{commandbox}
+\# Actualizar kubeadm
+sudo apt-mark unhold kubeadm
+sudo apt-get update \ && \ &&  sudo apt-get install -y kubeadm=1.29.0-00
+sudo apt-mark hold kubeadm
+
+\# Verificar la nueva versión
+kubeadm version
+
+\# Realizar la actualización
+sudo kubeadm upgrade apply v1.29.0
+
+\# Drenar el nodo
+kubectl drain <node-name> --ignore-daemonsets
+
+\# Actualizar kubelet y kubectl
+sudo apt-mark unhold kubelet kubectl
+sudo apt-get update \ && \ &&  sudo apt-get install -y \\
+  kubelet=1.29.0-00 kubectl=1.29.0-00
+sudo apt-mark hold kubelet kubectl
+
+\# Reiniciar kubelet
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+
+\# Quitar el taint del nodo
+kubectl uncordon <node-name>
+\end{commandbox}
+
+\subsubsection{Actualización de Worker Nodes}
+
+\begin{commandbox}
+\# En el nodo worker
+\# Actualizar kubeadm
+sudo apt-mark unhold kubeadm
+sudo apt-get update \ && \ &&  sudo apt-get install -y kubeadm=1.29.0-00
+sudo apt-mark hold kubeadm
+
+\# Actualizar configuración del nodo
+sudo kubeadm upgrade node
+
+\# Drenar el nodo (desde el control plane)
+kubectl drain <worker-node-name> --ignore-daemonsets \\
+  --delete-emptydir-data
+
+\# Actualizar kubelet y kubectl
+sudo apt-mark unhold kubelet kubectl
+sudo apt-get update \ && \ &&  sudo apt-get install -y \\
+  kubelet=1.29.0-00 kubectl=1.29.0-00
+sudo apt-mark hold kubelet kubectl
+
+\# Reiniciar kubelet
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+
+\# Quitar el taint del nodo (desde el control plane)
+kubectl uncordon <worker-node-name>
+\end{commandbox}
+
+\subsection{Backup y Restore de etcd}
+
+etcd es el almacén de datos del cluster, por lo que es crucial mantener copias de seguridad regulares.
+
+\subsubsection{Backup de etcd}
+
+\begin{commandbox}
+\# Verificar el endpoint de etcd
+kubectl get pod etcd-master -n kube-system -o yaml | grep -A1 listen-client
+
+\# Realizar backup
+ETCDCTL\_API=3 etcdctl snapshot save /tmp/etcd-backup.db \\
+  --endpoints=https://127.0.0.1:2379 \\
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \\
+  --cert=/etc/kubernetes/pki/etcd/server.crt \\
+  --key=/etc/kubernetes/pki/etcd/server.key
+
+\# Verificar el backup
+ETCDCTL\_API=3 etcdctl snapshot status /tmp/etcd-backup.db \\
+  --write-out=table
+\end{commandbox}
+
+\subsubsection{Restore de etcd}
+
+\begin{errorbox}
+El proceso de restore requiere detener el control plane y puede causar tiempo de inactividad.
+\end{errorbox}
+
+\begin{commandbox}
+\# Detener API server y etcd
+sudo mv /etc/kubernetes/manifests /etc/kubernetes/manifests.backup
+
+\# Restaurar desde backup
+ETCDCTL\_API=3 etcdctl snapshot restore /tmp/etcd-backup.db \\
+  --data-dir=/var/lib/etcd-restore \\
+  --initial-cluster=master=https://192.168.1.10:2380 \\
+  --initial-advertise-peer-urls=https://192.168.1.10:2380
+
+\# Actualizar el manifest de etcd
+sudo sed -i 's|/var/lib/etcd|/var/lib/etcd-restore|' \\
+  /etc/kubernetes/manifests.backup/etcd.yaml
+
+\# Restaurar manifests
+sudo mv /etc/kubernetes/manifests.backup /etc/kubernetes/manifests
+
+\# Verificar que el cluster está funcionando
+kubectl get nodes
+\end{commandbox}
+
+\newpage
+
+% ====== STORAGE, SERVICES & NETWORKING ======
+\section{Storage, Services \& Networking}
+
+\begin{infobox}
+Esta sección representa el 20\% del examen CKA y cubre aspectos críticos de almacenamiento y networking en Kubernetes.
+\end{infobox}
+
+\subsection{Storage en Kubernetes}
+
+El almacenamiento en Kubernetes permite que las aplicaciones persistan datos más allá del ciclo de vida de los pods.
+
+\subsubsection{Tipos de Volúmenes}
+
+\begin{enumerate}
+    \item \textbf{\textcolor{k8sblue}{EmptyDir}}
+    \begin{itemize}
+        \item Volumen temporal que existe mientras el pod existe
+        \item Se crea cuando un pod se asigna a un nodo
+        \item Se elimina cuando el pod se remueve del nodo
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8ssuccess}{HostPath}}
+    \begin{itemize}
+        \item Monta un archivo o directorio del nodo host
+        \item Útil para acceso a logs del sistema o socket de Docker
+        \item No recomendado para aplicaciones en producción
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8swarning}{PersistentVolume (PV)}}
+    \begin{itemize}
+        \item Recurso de almacenamiento en el cluster
+        \item Independiente del ciclo de vida del pod
+        \item Provisionado por un administrador o dinámicamente
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Ejemplo de EmptyDir}
+
+\begin{commandbox}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+spec:
+  containers:
+  - name: test-container
+    image: nginx
+    volumeMounts:
+    - name: cache-volume
+      mountPath: /cache
+  volumes:
+  - name: cache-volume
+    emptyDir: {}
+\end{commandbox}
+
+\subsubsection{Persistent Volumes (PV)}
+
+Los Persistent Volumes son recursos de almacenamiento en el cluster que han sido provisionados por un administrador.
+
+\textbf{Ciclo de Vida de un PV:}
+
+\begin{enumerate}
+    \item \textbf{\textcolor{k8sblue}{Provisioning}}: Creación estática o dinámica
+    \item \textbf{\textcolor{k8ssuccess}{Binding}}: PVC se vincula a un PV
+    \item \textbf{\textcolor{k8swarning}{Using}}: Pod usa el PVC
+    \item \textbf{\textcolor{k8serror}{Reclaiming}}: Liberación del PV
+\end{enumerate}
+
+\begin{commandbox}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-example
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: "/mnt/data"
+\end{commandbox}
+
+\subsubsection{Persistent Volume Claims (PVC)}
+
+Un PVC es una solicitud de almacenamiento por parte de un usuario.
+
+\textbf{Modos de Acceso:}
+\begin{itemize}
+    \item \textbf{ReadWriteOnce (RWO)}: Montaje de lectura-escritura por un solo nodo
+    \item \textbf{ReadOnlyMany (ROX)}: Montaje de solo lectura por múltiples nodos
+    \item \textbf{ReadWriteMany (RWX)}: Montaje de lectura-escritura por múltiples nodos
+\end{itemize}
+
+\begin{commandbox}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-example
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: manual
+\end{commandbox}
+
+\subsubsection{Storage Classes}
+
+Las Storage Classes proporcionan una forma de describir las "clases" de almacenamiento disponibles.
+
+\begin{commandbox}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast-ssd
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp3
+  iops: "3000"
+  throughput: "125"
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+mountOptions:
+  - debug
+volumeBindingMode: WaitForFirstConsumer
+\end{commandbox}
+
+\begin{tipbox}
+El \texttt{volumeBindingMode: WaitForFirstConsumer} es útil para topologías donde el PV debe crearse en la misma zona que el pod.
+\end{tipbox}
+
+\subsection{Services en Kubernetes}
+
+Los Services exponen aplicaciones que se ejecutan en un conjunto de pods como un servicio de red.
+
+\subsubsection{Tipos de Services}
+
+\begin{enumerate}
+    \item \textbf{\textcolor{k8sblue}{ClusterIP}}
+    \begin{itemize}
+        \item Expone el servicio en una IP interna del cluster
+        \item Solo accesible desde dentro del cluster
+        \item Es el tipo por defecto
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8ssuccess}{NodePort}}
+    \begin{itemize}
+        \item Expone el servicio en un puerto estático de cada nodo
+        \item Accesible desde fuera del cluster usando <NodeIP>:<NodePort>
+        \item Puerto en rango 30000-32767
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8swarning}{LoadBalancer}}
+    \begin{itemize}
+        \item Expone el servicio usando un load balancer externo
+        \item Requiere proveedor de nube
+        \item Asigna una IP externa fija
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8ssteelblue}{ExternalName}}
+    \begin{itemize}
+        \item Mapea el servicio a un nombre DNS externo
+        \item No usa proxying, retorna un registro CNAME
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Ejemplo de Service ClusterIP}
+
+\begin{commandbox}
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
+\end{commandbox}
+
+\subsubsection{Ejemplo de Service NodePort}
+
+\begin{commandbox}
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nodeport-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      nodePort: 30080
+  type: NodePort
+\end{commandbox}
+
+\subsubsection{Endpoints}
+
+Los Endpoints definen las IPs y puertos de los pods que respaldan un servicio.
+
+\begin{commandbox}
+\# Ver endpoints de un servicio
+kubectl get endpoints my-service
+
+\# Describir endpoints
+kubectl describe endpoints my-service
+
+\# Endpoints manual (sin selector)
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: my-service
+subsets:
+  - addresses:
+      - ip: 192.168.1.100
+    ports:
+      - port: 8080
+\end{commandbox}
+
+\subsection{Ingress Controllers e Ingress Resources}
+
+Ingress gestiona el acceso externo a los servicios en un cluster, típicamente HTTP.
+
+\subsubsection{Conceptos de Ingress}
+
+\begin{itemize}
+    \item \textbf{Ingress Controller}: Implementación que satisface las reglas de Ingress
+    \item \textbf{Ingress Resource}: Configuración que define las reglas de routing
+\end{itemize}
+
+\subsubsection{Instalación de NGINX Ingress Controller}
+
+\begin{commandbox}
+\# Instalar NGINX Ingress Controller
+kubectl apply -f \\
+  https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
+
+\# Verificar instalación
+kubectl get pods -n ingress-nginx
+
+\# Ver servicio del ingress controller
+kubectl get svc -n ingress-nginx
+\end{commandbox}
+
+\subsubsection{Ejemplo de Ingress Resource}
+
+\begin{commandbox}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - path: /app1
+        pathType: Prefix
+        backend:
+          service:
+            name: app1-service
+            port:
+              number: 80
+      - path: /app2
+        pathType: Prefix
+        backend:
+          service:
+            name: app2-service
+            port:
+              number: 80
+\end{commandbox}
+
+\subsubsection{Ingress con TLS}
+
+\begin{commandbox}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tls-ingress
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - secure.example.com
+    secretName: tls-secret
+  rules:
+  - host: secure.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: secure-service
+            port:
+              number: 443
+\end{commandbox}
+
+\subsection{CoreDNS}
+
+CoreDNS es el servidor DNS del cluster que proporciona resolución de nombres para servicios.
+
+\subsubsection{Configuración de CoreDNS}
+
+\begin{commandbox}
+\# Ver configuración de CoreDNS
+kubectl get configmap coredns -n kube-system -o yaml
+
+\# Configuración típica
+.:53 {
+    errors
+    health {
+       lameduck 5s
+    }
+    ready
+    kubernetes cluster.local in-addr.arpa ip6.arpa {
+       pods insecure
+       fallthrough in-addr.arpa ip6.arpa
+       ttl 30
+    }
+    prometheus :9153
+    forward . /etc/resolv.conf
+    cache 30
+    loop
+    reload
+    loadbalance
+}
+\end{commandbox}
+
+\subsubsection{Resolución DNS en Kubernetes}
+
+\begin{itemize}
+    \item \textbf{Services}: \texttt{my-service.my-namespace.svc.cluster.local}
+    \item \textbf{Pods}: \texttt{192-168-1-1.my-namespace.pod.cluster.local}
+    \item \textbf{Dentro del mismo namespace}: \texttt{my-service}
+\end{itemize}
+
+\begin{commandbox}
+\# Probar resolución DNS desde un pod
+kubectl run test-dns --image=busybox:1.28 --rm -it --restart=Never \\
+  -- nslookup kubernetes.default.svc.cluster.local
+
+\# Verificar configuración DNS de un pod
+kubectl exec test-pod -- cat /etc/resolv.conf
+\end{commandbox}
+
+\subsubsection{Troubleshooting DNS}
+
+\begin{errorbox}
+Problemas comunes: CoreDNS pods no running, configuración incorrecta de iptables, problemas de conectividad de red.
+\end{errorbox}
+
+\begin{commandbox}
+\# Verificar estado de CoreDNS
+kubectl get pods -n kube-system -l k8s-app=kube-dns
+
+\# Ver logs de CoreDNS
+kubectl logs -n kube-system deployment/coredns
+
+\# Probar conectividad DNS
+kubectl run dns-test --image=busybox:1.28 --rm -it --restart=Never \\
+  -- sh -c 'nslookup kubernetes.default \ && \ &&  echo "DNS OK"'
+\end{commandbox}
+
+\subsection{Container Network Interface (CNI)}
+
+CNI define plugins para configurar interfaces de red en contenedores Linux.
+
+\subsubsection{Plugins CNI Populares}
+
+\begin{enumerate}
+    \item \textbf{\textcolor{k8sblue}{Flannel}}
+    \begin{itemize}
+        \item Simple y fácil de configurar
+        \item Usa VXLAN por defecto
+        \item Bueno para comenzar
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8ssuccess}{Calico}}
+    \begin{itemize}
+        \item Soporta políticas de red
+        \item Usa BGP para routing
+        \item Alta performance
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8swarning}{Weave}}
+    \begin{itemize}
+        \item Mesh network automático
+        \item Encryption built-in
+        \item Easy troubleshooting
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Instalación de Calico}
+
+\begin{commandbox}
+\# Instalar Calico
+kubectl create -f \\
+  https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/tigera-operator.yaml
+
+kubectl create -f \\
+  https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/custom-resources.yaml
+
+\# Verificar instalación
+kubectl get pods -n calico-system
+
+\# Ver nodos Calico
+kubectl get nodes -o wide
+\end{commandbox}
+
+\subsubsection{Network Policies con Calico}
+
+\begin{commandbox}
+\# Denegar todo el tráfico por defecto
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: production
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+
+\# Permitir tráfico específico
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+spec:
+  podSelector:
+    matchLabels:
+      role: backend
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: frontend
+    ports:
+    - protocol: TCP
+      port: 8080
+\end{commandbox}
+
+\newpage
+
+% ====== WORKLOADS & SCHEDULING ======
+\section{Workloads \& Scheduling}
+
+\begin{warningbox}
+Esta sección constituye el 20\% del examen CKA y cubre la gestión de aplicaciones y programación de pods.
+\end{warningbox}
+
+\subsection{Pods}
+
+Los Pods son la unidad básica de despliegue en Kubernetes, conteniendo uno o más contenedores que comparten almacenamiento y red.
+
+\subsubsection{Anatomía de un Pod}
+
+\begin{commandbox}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+  labels:
+    app: my-app
+    version: v1.0
+  annotations:
+    description: "Mi aplicación principal"
+spec:
+  containers:
+  - name: main-container
+    image: nginx:1.20
+    ports:
+    - containerPort: 80
+      name: http
+    env:
+    - name: ENV_VAR
+      value: "production"
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/nginx/conf.d
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: 80
+      initialDelaySeconds: 30
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: 80
+      initialDelaySeconds: 5
+      periodSeconds: 5
+  volumes:
+  - name: config-volume
+    configMap:
+      name: nginx-config
+  restartPolicy: Always
+  nodeSelector:
+    disktype: ssd
+\end{commandbox}
+
+\subsubsection{Ciclo de Vida de un Pod}
+
+\begin{enumerate}
+    \item \textbf{\textcolor{k8sblue}{Pending}}: Pod ha sido aceptado pero no todos los contenedores están running
+    \item \textbf{\textcolor{k8ssuccess}{Running}}: Pod está ejecutándose en un nodo
+    \item \textbf{\textcolor{k8swarning}{Succeeded}}: Todos los contenedores han terminado exitosamente
+    \item \textbf{\textcolor{k8serror}{Failed}}: Todos los contenedores han terminado, al menos uno falló
+    \item \textbf{\textcolor{k8ssteelblue}{Unknown}}: Estado del pod no puede ser determinado
+\end{enumerate}
+
+\subsubsection{Comandos Útiles para Pods}
+
+\begin{commandbox}
+\# Crear un pod imperativo
+kubectl run nginx --image=nginx:1.20 --port=80
+
+\# Obtener pods con más información
+kubectl get pods -o wide
+
+\# Describir un pod
+kubectl describe pod my-pod
+
+\# Ver logs de un pod
+kubectl logs my-pod -f
+
+\# Ejecutar comando en un pod
+kubectl exec my-pod -it -- /bin/bash
+
+\# Reenviar puerto
+kubectl port-forward pod/my-pod 8080:80
+
+\# Eliminar un pod
+kubectl delete pod my-pod
+\end{commandbox}
+
+\subsection{Deployments}
+
+Los Deployments proporcionan actualizaciones declarativas para Pods y ReplicaSets.
+
+\subsubsection{Ejemplo de Deployment}
+
+\begin{commandbox}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.20
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+\end{commandbox}
+\end{tcolorbox}
+\subsubsection{Rolling Updates y Rollbacks}
+
+\begin{commandbox}
+\# Actualizar imagen del deployment
+kubectl set image deployment/nginx-deployment nginx=nginx:1.21
+
+\# Ver estado del rollout
+kubectl rollout status deployment/nginx-deployment
+
+\# Ver historial de rollouts
+kubectl rollout history deployment/nginx-deployment
+
+\# Hacer rollback a versión anterior
+kubectl rollout undo deployment/nginx-deployment
+
+\# Hacer rollback a versión específica
+kubectl rollout undo deployment/nginx-deployment --to-revision=2
+
+\# Pausar un rollout
+kubectl rollout pause deployment/nginx-deployment
+
+\# Resumir un rollout
+kubectl rollout resume deployment/nginx-deployment
+\end{commandbox}
+
+\subsubsection{Estrategias de Deployment}
+
+\begin{enumerate}
+    \item \textbf{\textcolor{k8sblue}{RollingUpdate}}
+    \begin{itemize}
+        \item Reemplaza pods gradualmente
+        \item Zero downtime
+        \item Configurable con maxSurge y maxUnavailable
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8ssuccess}{Recreate}}
+    \begin{itemize}
+        \item Elimina todos los pods antes de crear nuevos
+        \item Causa downtime
+        \item Útil cuando no se pueden ejecutar versiones múltiples
+    \end{itemize}
+\end{enumerate}
+
+\subsection{ConfigMaps y Secrets}
+
+ConfigMaps y Secrets permiten separar la configuración del código de la aplicación.
+
+\subsubsection{ConfigMaps}
+
+Los ConfigMaps almacenan datos de configuración no confidenciales en pares clave-valor.
+
+\begin{commandbox}
+\# Crear ConfigMap desde línea de comandos
+kubectl create configmap app-config \\
+  --from-literal=database\_host=localhost \\
+  --from-literal=database_port=5432
+
+\# Crear ConfigMap desde archivo
+kubectl create configmap nginx-config --from-file=nginx.conf
+
+\# ConfigMap declarativo
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: game-config
+data:
+  game.properties: |
+    enemies=aliens
+    lives=3
+    enemies.cheat=true
+  ui.properties: |
+    color.good=purple
+    color.bad=yellow
+    allow.textmode=true
+\end{commandbox}
+
+\subsubsection{Usar ConfigMaps en Pods}
+
+\begin{commandbox}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-pod
+spec:
+  containers:
+  - name: test-container
+    image: busybox
+    command: [ "/bin/sh", "-c", "env" ]
+    env:
+    # Variable desde ConfigMap
+    - name: SPECIAL\_LEVEL\_KEY
+      valueFrom:
+        configMapKeyRef:
+          name: special-config
+          key: special.how
+    # Todas las claves como variables de entorno
+    envFrom:
+    - configMapRef:
+        name: game-config
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/config
+  volumes:
+  - name: config-volume
+    configMap:
+      name: game-config
+\end{commandbox}
+
+\subsubsection{Secrets}
+
+Los Secrets almacenan información sensible como passwords, tokens OAuth, y claves SSH.
+
+\begin{commandbox}
+\# Crear Secret desde línea de comandos
+kubectl create secret generic db-secret \\
+  --from-literal=username=admin \\
+  --from-literal=password=secretpassword
+
+\# Crear Secret para Docker registry
+kubectl create secret docker-registry regcred \\
+  --docker-server=myregistry.com \\
+  --docker-username=myuser \\
+  --docker-password=mypassword \\
+  --docker-email=myemail@example.com
+
+\# Secret declarativo
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+type: Opaque
+data:
+  username: YWRtaW4=  # base64 encoded
+  password: MWYyZDFlMmU2N2Rm  # base64 encoded
+\end{commandbox}
+
+\begin{tipbox}
+Los valores en Secrets deben estar codificados en base64. Usa \texttt{echo -n 'mypassword' | base64} para codificar.
+\end{tipbox}
+
+\subsubsection{Tipos de Secrets}
+
+\begin{itemize}
+    \item \textbf{Opaque}: Datos de usuario arbitrarios
+    \item \textbf{kubernetes.io/service-account-token}: Token de cuenta de servicio
+    \item \textbf{kubernetes.io/dockercfg}: Archivo .dockercfg serializado
+    \item \textbf{kubernetes.io/tls}: Datos para un cliente o servidor TLS
+\end{itemize}
+
+\subsection{Scaling de Aplicaciones}
+
+\subsubsection{Scaling Manual}
+
+\begin{commandbox}
+\# Escalar deployment
+kubectl scale deployment nginx-deployment --replicas=5
+
+\# Escalar replicaset
+kubectl scale rs my-replicaset --replicas=3
+
+\# Escalar usando archivo
+kubectl scale --replicas=3 -f deployment.yaml
+\end{commandbox}
+
+\subsubsection{Horizontal Pod Autoscaler (HPA)}
+
+El HPA escala automáticamente el número de pods basado en CPU, memoria u otras métricas.
+
+\begin{commandbox}
+\# Crear HPA basado en CPU
+kubectl autoscale deployment nginx-deployment --cpu-percent=50 --min=1 --max=10
+
+\# HPA declarativo
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nginx-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx-deployment
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+\end{commandbox}
+
+\begin{warningbox}
+Para que HPA funcione, necesitas tener el Metrics Server instalado y los pods deben tener resource requests definidos.
+\end{warningbox}
+
+\subsubsection{Vertical Pod Autoscaler (VPA)}
+
+VPA ajusta automáticamente los resource requests y limits de los contenedores.
+
+\begin{commandbox}
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: nginx-vpa
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx-deployment
+  updatePolicy:
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: nginx
+      maxAllowed:
+        cpu: 1
+        memory: 500Mi
+      minAllowed:
+        cpu: 100m
+        memory: 50Mi
+\end{commandbox}
+
+\subsection{Pod Scheduling}
+
+El scheduling determina en qué nodos se ejecutan los pods.
+
+\subsubsection{NodeSelector}
+
+La forma más simple de restricrir pods a nodos específicos.
+
+\begin{commandbox}
+\# Etiquetar un nodo
+kubectl label nodes worker-1 disktype=ssd
+
+\# Pod con nodeSelector
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  nodeSelector:
+    disktype: ssd
+\end{commandbox}
+
+\subsubsection{Node Affinity}
+
+Proporciona reglas más expresivas para seleccionar nodos.
+
+\begin{commandbox}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-node-affinity
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/arch
+            operator: In
+            values:
+            - amd64
+            - arm64
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: disktype
+            operator: In
+            values:
+            - ssd
+  containers:
+  - name: with-node-affinity
+    image: nginx
+\end{commandbox}
+
+\subsubsection{Pod Affinity y Anti-Affinity}
+
+Permite programar pods basándose en qué otros pods ya están ejecutándose en el nodo.
+
+\begin{commandbox}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-cache
+spec:
+  selector:
+    matchLabels:
+      app: store
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: store
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - store
+            topologyKey: "kubernetes.io/hostname"
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: security
+                  operator: In
+                  values:
+                  - S1
+              topologyKey: topology.kubernetes.io/zone
+      containers:
+      - name: web-app
+        image: nginx:1.16-alpine
+\end{commandbox}
+
+\subsubsection{Taints y Tolerations}
+
+Los Taints permiten a un nodo repeler un conjunto de pods, mientras que las Tolerations permiten a los pods programarse en nodos con taints correspondientes.
+
+\begin{commandbox}
+\# Aplicar taint a un nodo
+kubectl taint nodes node1 key1=value1:NoSchedule
+
+\# Remover taint
+kubectl taint nodes node1 key1=value1:NoSchedule-
+
+\# Pod con tolerations
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  tolerations:
+  - key: "key1"
+    operator: "Equal"
+    value: "value1"
+    effect: "NoSchedule"
+  - key: "key2"
+    operator: "Exists"
+    effect: "NoExecute"
+    tolerationSeconds: 3600
+\end{commandbox}
+
+\subsubsection{Resource Limits y Requests}
+
+Definen cuántos recursos puede usar un contenedor.
+
+\begin{commandbox}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resource-demo
+spec:
+  containers:
+  - name: resource-demo
+    image: nginx
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+        ephemeral-storage: "1Gi"
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+        ephemeral-storage: "2Gi"
+\end{commandbox}
+
+\begin{tipbox}
+\textbf{Requests}: Recursos garantizados\\
+\textbf{Limits}: Recursos máximos que puede usar\\
+CPU se especifica en millicores (m) o cores\\
+Memoria en bytes (Mi, Gi, etc.)
+\end{tipbox}
+
+\subsubsection{Quality of Service (QoS)}
+
+Kubernetes asigna una clase QoS a cada pod:
+
+\begin{enumerate}
+    \item \textbf{\textcolor{k8ssuccess}{Guaranteed}}: Requests = Limits para todos los contenedores
+    \item \textbf{\textcolor{k8swarning}{Burstable}}: Al menos un contenedor tiene requests pero no guaranteed
+    \item \textbf{\textcolor{k8serror}{BestEffort}}: Ningún contenedor tiene requests ni limits
+\end{enumerate}
+
+\newpage
+
+% Continuar con el resto de las secciones...
+% (Security, Troubleshooting, etc.)
+
+\section{Security}
+
+\begin{errorbox}
+La seguridad en Kubernetes es crítica. Esta sección cubre el 15\% del examen CKA y incluye autenticación, autorización y políticas de seguridad.
+\end{errorbox}
+
+\subsection{Autenticación en Kubernetes}
+
+Kubernetes soporta múltiples métodos de autenticación para usuarios y service accounts.
+
+\subsubsection{Métodos de Autenticación}
+
+\begin{enumerate}
+    \item \textbf{\textcolor{k8sblue}{X.509 Certificates}}
+    \begin{itemize}
+        \item Más común para usuarios administradores
+        \item Cliente presenta certificado válido
+        \item CN del certificado = username, O = groups
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8ssuccess}{Service Account Tokens}}
+    \begin{itemize}
+        \item Para aplicaciones que corren en el cluster
+        \item JWT tokens automáticamente montados en pods
+        \item Gestionados por el Service Account Admission Controller
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8swarning}{Static Token File}}
+    \begin{itemize}
+        \item Tokens pre-compartidos en archivo
+        \item No recomendado para producción
+        \item Requiere reinicio del API server para cambios
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Creación de Certificados de Usuario}
+
+\begin{commandbox}
+\# Generar clave privada para usuario
+openssl genrsa -out john.key 2048
+
+\# Crear Certificate Signing Request
+openssl req -new -key john.key -out john.csr -subj "/CN=john/O=developers"
+
+\# Crear CertificateSigningRequest en Kubernetes
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  name: john
+spec:
+  request: $(cat john.csr | base64 | tr -d '\n')
+  signerName: kubernetes.io/kube-apiserver-client
+  usages:
+  - client auth
+
+\# Aprobar el CSR
+kubectl certificate approve john
+
+\# Obtener el certificado
+kubectl get csr john -o jsonpath='{.status.certificate}' | base64 -d > john.crt
+\end{commandbox}
+
+\subsubsection{Configuración de kubeconfig}
+
+\begin{commandbox}
+\# Configurar cluster
+kubectl config set-cluster kubernetes --server=https://k8s-api:6443 \\
+  --certificate-authority=ca.crt
+
+\# Configurar usuario
+kubectl config set-credentials john \\
+  --client-certificate=john.crt \\
+  --client-key=john.key
+
+\# Configurar contexto
+kubectl config set-context john@kubernetes \\
+  --cluster=kubernetes \\
+  --user=john \\
+  --namespace=development
+
+\# Usar contexto
+kubectl config use-context john@kubernetes
+\end{commandbox}
+
+\subsection{Service Accounts}
+
+Las Service Accounts proporcionan identidad para procesos que corren en pods.
+
+\subsubsection{Gestión de Service Accounts}
+
+\begin{commandbox}
+\# Crear Service Account
+kubectl create serviceaccount my-service-account
+
+\# Ver Service Accounts
+kubectl get serviceaccounts
+
+\# Describir Service Account
+kubectl describe serviceaccount my-service-account
+
+\# Service Account declarativo
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: build-robot
+  namespace: default
+secrets:
+- name: build-robot-secret
+imagePullSecrets:
+- name: my-registry-secret
+\end{commandbox}
+
+\subsubsection{Uso de Service Accounts en Pods}
+
+\begin{commandbox}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  serviceAccountName: my-service-account
+  containers:
+  - name: my-container
+    image: nginx
+    volumeMounts:
+    - name: sa-token
+      mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      readOnly: true
+  volumes:
+  - name: sa-token
+    projected:
+      sources:
+      - serviceAccountToken:
+          path: token
+          expirationSeconds: 3607
+      - configMap:
+          name: kube-root-ca.crt
+          items:
+          - key: ca.crt
+            path: ca.crt
+      - downwardAPI:
+          items:
+          - path: namespace
+            fieldRef:
+              fieldPath: metadata.namespace
+\end{commandbox}
+
+\subsection{Security Contexts}
+
+Los Security Contexts definen configuraciones de seguridad para pods y contenedores.
+
+\subsubsection{Security Context a nivel de Pod}
+
+\begin{commandbox}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo
+spec:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+  - name: sec-ctx-demo
+    image: busybox:1.28
+    command: [ "sh", "-c", "sleep 1h" ]
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      capabilities:
+        drop:
+        - ALL
+        add:
+        - NET\_BIND\_SERVICE
+\end{commandbox}
+
+\subsubsection{Políticas de Seguridad Recomendadas}
+
+\begin{tipbox}
+\textbf{Mejores Prácticas de Seguridad:}
+\begin{itemize}
+    \item Usar usuarios no-root
+    \item Deshabilitar escalation de privilegios
+    \item Solo agregar capabilities necesarias
+    \item Usar readOnlyRootFilesystem cuando sea posible
+    \item Implementar seccomp profiles
+\end{itemize}
+\end{tipbox}
+
+\subsection{Network Policies}
+
+Las Network Policies actúan como firewalls para pods, controlando el tráfico de red.
+
+\subsubsection{Componentes de Network Policy}
+
+\begin{enumerate}
+    \item \textbf{podSelector}: Selecciona pods a los que aplica la política
+    \item \textbf{policyTypes}: Ingress, Egress, o ambos
+    \item \textbf{ingress}: Reglas para tráfico entrante
+    \item \textbf{egress}: Reglas para tráfico saliente
+\end{enumerate}
+
+\subsubsection{Ejemplo de Network Policy Completa}
+
+\begin{commandbox}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      role: db
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 172.17.0.0/16
+        except:
+        - 172.17.1.0/24
+    - namespaceSelector:
+        matchLabels:
+          name: web
+    - podSelector:
+        matchLabels:
+          role: frontend
+    ports:
+    - protocol: TCP
+      port: 6379
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 10.0.0.0/24
+    ports:
+    - protocol: TCP
+      port: 5978
+\end{commandbox}
+
+\subsubsection{Ejemplos Prácticos de Network Policies}
+
+\begin{commandbox}
+\# Denegar todo el tráfico
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+
+\# Permitir solo tráfico DNS
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-access
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+\end{commandbox}
+
+\subsection{Pod Security Standards}
+
+Los Pod Security Standards definen tres políticas para controlar aspectos de seguridad de pods.
+
+\subsubsection{Niveles de Pod Security}
+
+\begin{enumerate}
+    \item \textbf{\textcolor{k8ssuccess}{Privileged}}: Sin restricciones (inseguro)
+    \item \textbf{\textcolor{k8swarning}{Baseline}}: Previene escalaciones conocidas
+    \item \textbf{\textcolor{k8serror}{Restricted}}: Fuertemente restrictivo (más seguro)
+\end{enumerate}
+
+\subsubsection{Implementación con Admission Controller}
+
+\begin{commandbox}
+\# Namespace con Pod Security Standards
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: secure-namespace
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+\end{commandbox}
+
+\newpage
+
+% ====== TROUBLESHOOTING & MONITORING ======
+\section{Troubleshooting \& Monitoring}
+
+\begin{infobox}
+Esta sección cubre el 30\% del examen CKA y es crucial para la administración diaria de clusters Kubernetes.
+\end{infobox}
+
+\subsection{Troubleshooting de Clusters}
+
+\subsubsection{Verificación del Estado del Cluster}
+
+\begin{commandbox}
+\# Estado general del cluster
+kubectl cluster-info
+kubectl get nodes -o wide
+kubectl get pods --all-namespaces
+
+\# Verificar componentes del control plane
+kubectl get pods -n kube-system
+
+\# Estado de componentes
+kubectl get componentstatuses  # Deprecated pero útil
+
+\# Información detallada de nodos
+kubectl describe nodes
+\end{commandbox}
+
+\subsubsection{Troubleshooting de Nodos}
+
+\begin{errorbox}
+Problemas comunes: Nodos NotReady, recursos insuficientes, problemas de red, kubelet no funcional.
+\end{errorbox}
+
+\begin{commandbox}
+\# Verificar estado de nodos
+kubectl get nodes
+kubectl describe node <node-name>
+
+\# Logs del kubelet
+sudo journalctl -u kubelet -f
+
+\# Verificar recursos del sistema
+top
+free -h
+df -h
+
+\# Estado de contenedores
+sudo crictl ps
+sudo crictl pods
+
+\# Reiniciar kubelet si es necesario
+sudo systemctl restart kubelet
+\end{commandbox}
+
+\subsubsection{Troubleshooting de Pods}
+
+\begin{commandbox}
+\# Estados de pods problemáticos
+kubectl get pods --field-selector=status.phase=Failed
+kubectl get pods --field-selector=status.phase=Pending
+
+\# Información detallada
+kubectl describe pod <pod-name>
+kubectl logs <pod-name> -c <container-name>
+kubectl logs <pod-name> --previous
+
+\# Debugging interactivo
+kubectl exec -it <pod-name> -- /bin/bash
+kubectl debug <pod-name> -it --image=busybox
+
+\# Eventos del cluster
+kubectl get events --sort-by='.lastTimestamp'
+\end{commandbox}
+
+\subsubsection{Problemas Comunes y Soluciones}
+
+\begin{enumerate}
+    \item \textbf{\textcolor{k8serror}{ImagePullBackOff}}
+    \begin{itemize}
+        \item Verificar nombre de imagen y tag
+        \item Comprobar conectividad al registry
+        \item Revisar image pull secrets
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8serror}{CrashLoopBackOff}}
+    \begin{itemize}
+        \item Revisar logs del contenedor
+        \item Verificar comando de inicio
+        \item Comprobar health checks
+    \end{itemize}
+    
+    \item \textbf{\textcolor{k8serror}{Pending}}
+    \begin{itemize}
+        \item Recursos insuficientes
+        \item Node affinity no satisfecha
+        \item Taints y tolerations
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Troubleshooting de Redes}
+
+\subsubsection{Conectividad entre Pods}
+
+\begin{commandbox}
+\# Probar conectividad básica
+kubectl run test-pod --image=busybox:1.28 --rm -it -- sh
+
+\# Dentro del pod de prueba:
+\# ping <pod-ip>
+\# nslookup <service-name>
+\# wget -qO- http://<service-name>:<port>
+
+\# Verificar reglas iptables
+sudo iptables -L -n -v
+
+\# Estado de interfaces de red
+ip addr show
+ip route show
+\end{commandbox}
+
+\subsubsection{Troubleshooting de Services}
+
+\begin{commandbox}
+\# Verificar endpoints del service
+kubectl get endpoints <service-name>
+kubectl describe service <service-name>
+
+\# Probar service desde dentro del cluster
+kubectl run debug-pod --image=nicolaka/netshoot --rm -it -- sh
+
+\# Verificar kube-proxy
+kubectl get pods -n kube-system | grep kube-proxy
+kubectl logs -n kube-system <kube-proxy-pod>
+
+\# Verificar reglas de proxy
+sudo iptables -t nat -L -n -v
+\end{commandbox}
+
+\subsection{Monitoring con Métricas}
+
+\subsubsection{Metrics Server}
+
+\begin{commandbox}
+\# Instalar Metrics Server
+kubectl apply -f \\
+  https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+\# Verificar instalación
+kubectl get deployment metrics-server -n kube-system
+
+\# Ver métricas de nodos
+kubectl top nodes
+
+\# Ver métricas de pods
+kubectl top pods
+kubectl top pods --all-namespaces
+\end{commandbox}
+
+\subsubsection{Comandos de Monitoreo Útiles}
+
+\begin{commandbox}
+\# Uso de recursos por namespace
+kubectl top pods --sort-by=cpu -n <namespace>
+kubectl top pods --sort-by=memory -n <namespace>
+
+\# Métricas en tiempo real
+watch kubectl top nodes
+watch kubectl top pods --all-namespaces
+
+\# Descripción de recursos con límites
+kubectl describe limitrange -n <namespace>
+kubectl describe resourcequota -n <namespace>
+\end{commandbox}
+
+\subsubsection{Troubleshooting de Performance}
+
+\begin{tipbox}
+\textbf{Herramientas de Análisis:}
+\begin{itemize}
+    \item kubectl top para métricas básicas
+    \item kubectl describe para eventos y estado
+    \item Logs de aplicación para errores específicos
+    \item Herramientas del sistema (htop, iostat, netstat)
+\end{itemize}
+\end{tipbox}
+
+\subsection{Backup y Disaster Recovery}
+
+\subsubsection{Estrategias de Backup}
+
+\begin{enumerate}
+    \item \textbf{Backup de etcd} (más crítico)
+    \item \textbf{Backup de configuraciones} (YAML manifests)
+    \item \textbf{Backup de datos persistentes}
+    \item \textbf{Backup de certificados y secrets}
+\end{enumerate}
+
+\subsubsection{Script de Backup Automatizado}
+
+\begin{commandbox}
+\#!/bin/bash
+\# Automated backup script
+
+DATE=$(date +%Y%m%d_%H%M%S)
+BACKUP_DIR="/backup/$DATE"
+mkdir -p $BACKUP_DIR
+
+\# etcd backup
+ETCDCTL\_API=3 etcdctl snapshot save $BACKUP_DIR/etcd-snapshot.db \\
+  --endpoints=https://127.0.0.1:2379 \\
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \\
+  --cert=/etc/kubernetes/pki/etcd/server.crt \\
+  --key=/etc/kubernetes/pki/etcd/server.key
+
+\# Backup de manifests
+kubectl get all --all-namespaces -o yaml > $BACKUP_DIR/all-resources.yaml
+
+\# Backup de secrets
+kubectl get secrets --all-namespaces -o yaml > $BACKUP_DIR/all-secrets.yaml
+
+\# Backup de configmaps
+kubectl get configmaps --all-namespaces -o yaml > $BACKUP_DIR/all-configmaps.yaml
+
+echo "Backup completed in $BACKUP_DIR"
+\end{commandbox}
+
+\newpage
+
+% ====== COMANDOS ESENCIALES Y CHEAT SHEET ======
+\section{Comandos Esenciales y Cheat Sheet}
+
+\subsection{Comandos Fundamentales}
+
+\subsubsection{Gestión Básica}
+
+\begin{commandbox}
+\# Información del cluster
+kubectl cluster-info
+kubectl version
+kubectl config view
+
+\# Gestión de contextos
+kubectl config get-contexts
+kubectl config current-context
+kubectl config use-context <context-name>
+
+\# Namespaces
+kubectl get namespaces
+kubectl create namespace <name>
+kubectl delete namespace <name>
+\end{commandbox}
+
+\subsubsection{Pods y Deployments}
+
+\begin{commandbox}
+\# Pods
+kubectl run <pod-name> --image=<image> --port=<port>
+kubectl get pods -o wide
+kubectl describe pod <pod-name>
+kubectl logs <pod-name> -f
+kubectl exec -it <pod-name> -- /bin/bash
+kubectl delete pod <pod-name>
+
+\# Deployments
+kubectl create deployment <name> --image=<image>
+kubectl get deployments
+kubectl scale deployment <name> --replicas=<number>
+kubectl rollout status deployment/<name>
+kubectl rollout history deployment/<name>
+kubectl rollout undo deployment/<name>
+\end{commandbox}
+
+\subsubsection{Services y Networking}
+
+\begin{commandbox}
+\# Services
+kubectl expose deployment <name> --port=<port> --type=<type>
+kubectl get services
+kubectl describe service <service-name>
+
+\# Ingress
+kubectl get ingress
+kubectl describe ingress <ingress-name>
+
+\# Network troubleshooting
+kubectl run netshoot --image=nicolaka/netshoot --rm -it -- bash
+kubectl port-forward pod/<pod-name> <local-port>:<pod-port>
+\end{commandbox}
+
+\subsection{Comandos de Troubleshooting}
+
+\begin{commandbox}
+\# Estado del cluster
+kubectl get nodes
+kubectl get pods --all-namespaces
+kubectl get events --sort-by='.lastTimestamp'
+
+\# Debugging de pods
+kubectl describe pod <pod-name>
+kubectl logs <pod-name> --previous
+kubectl exec -it <pod-name> -- sh
+
+\# Métricas
+kubectl top nodes
+kubectl top pods --all-namespaces
+
+\# Debugging de nodos
+kubectl describe node <node-name>
+kubectl get pods --field-selector spec.nodeName=<node-name>
+\end{commandbox}
+
+\subsection{Comandos de Administración}
+
+\begin{commandbox}
+\# Drain y cordon de nodos
+kubectl drain <node-name> --ignore-daemonsets --delete-emptydir-data
+kubectl cordon <node-name>
+kubectl uncordon <node-name>
+
+\# Etiquetas y annotations
+kubectl label nodes <node-name> <key>=<value>
+kubectl annotate pods <pod-name> <key>=<value>
+
+\# Secrets y ConfigMaps
+kubectl create secret generic <name> --from-literal=<key>=<value>
+kubectl create configmap <name> --from-file=<file>
+\end{commandbox}
+
+\newpage
+
+% ====== EJEMPLOS PRÁCTICOS DEL EXAMEN CKA ======
+\section{Ejemplos Prácticos del Examen CKA}
+
+\begin{warningbox}
+Esta sección incluye escenarios prácticos similares a los del examen CKA real. Practica estos ejercicios para prepararte adecuadamente.
+\end{warningbox}
+
+\subsection{Escenarios de Cluster Architecture}
+
+\subsubsection{Escenario 1: Backup y Restore de etcd}
+
+\textbf{Problema:} Realizar un backup de etcd y restaurarlo en caso de falla.
+
+\begin{commandbox}
+\# 1. Realizar backup de etcd
+ETCDCTL\_API=3 etcdctl snapshot save /opt/etcd-backup.db \\
+  --endpoints=https://127.0.0.1:2379 \\
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \\
+  --cert=/etc/kubernetes/pki/etcd/server.crt \\
+  --key=/etc/kubernetes/pki/etcd/server.key
+
+\# 2. Verificar el backup
+ETCDCTL\_API=3 etcdctl snapshot status /opt/etcd-backup.db
+
+\# 3. Restaurar (en caso necesario)
+sudo systemctl stop kubelet
+sudo systemctl stop etcd
+
+ETCDCTL\_API=3 etcdctl snapshot restore /opt/etcd-backup.db \\
+  --data-dir=/var/lib/etcd-restore
+
+\# 4. Actualizar manifest de etcd y reiniciar
+sudo vim /etc/kubernetes/manifests/etcd.yaml
+sudo systemctl start kubelet
+\end{commandbox}
+
+\subsubsection{Escenario 2: Actualización de Cluster}
+
+\textbf{Problema:} Actualizar un cluster de Kubernetes de v1.28 a v1.29.
+
+\begin{commandbox}
+\# 1. Verificar versión actual
+kubectl get nodes
+
+\# 2. Actualizar control plane
+sudo apt update
+sudo apt-mark unhold kubeadm
+sudo apt install -y kubeadm=1.29.0-00
+sudo apt-mark hold kubeadm
+
+\# 3. Planificar actualización
+sudo kubeadm upgrade plan
+
+\# 4. Aplicar actualización
+sudo kubeadm upgrade apply v1.29.0
+
+\# 5. Actualizar kubelet y kubectl
+kubectl drain control-plane --ignore-daemonsets
+sudo apt-mark unhold kubelet kubectl
+sudo apt install -y kubelet=1.29.0-00 kubectl=1.29.0-00
+sudo apt-mark hold kubelet kubectl
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+kubectl uncordon control-plane
+\end{commandbox}
+
+\subsection{Escenarios de Networking}
+
+\subsubsection{Escenario 3: Configurar Ingress}
+
+\textbf{Problema:} Exponer una aplicación usando Ingress con path-based routing.
+
+\begin{commandbox}
+\# 1. Crear deployment
+kubectl create deployment web-app --image=nginx:1.20
+kubectl expose deployment web-app --port=80 --target-port=80
+
+\# 2. Crear Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: myapp.example.com
+    http:
+      paths:
+      - path: /app
+        pathType: Prefix
+        backend:
+          service:
+            name: web-app
+            port:
+              number: 80
+
+\# 3. Aplicar y verificar
+kubectl apply -f ingress.yaml
+kubectl get ingress
+\end{commandbox}
+
+\subsection{Escenarios de Security}
+
+\subsubsection{Escenario 4: Configurar RBAC}
+
+\textbf{Problema:} Crear un usuario que solo pueda leer pods en el namespace "development".
+
+\begin{commandbox}
+\# 1. Crear namespace
+kubectl create namespace development
+
+\# 2. Crear Role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: development
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+
+\# 3. Crear RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-pods
+  namespace: development
+subjects:
+- kind: User
+  name: dev-user
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+
+\# 4. Verificar permisos
+kubectl auth can-i get pods --namespace=development --as=dev-user
+\end{commandbox}
+
+\subsection{Escenarios de Troubleshooting}
+
+\subsubsection{Escenario 5: Pod no puede iniciar}
+
+\textbf{Problema:} Un pod está en estado "Pending" y no puede programarse.
+
+\begin{commandbox}
+\# 1. Verificar estado del pod
+kubectl get pods
+kubectl describe pod <pod-name>
+
+\# 2. Verificar eventos
+kubectl get events --sort-by='.lastTimestamp'
+
+\# 3. Verificar recursos de nodos
+kubectl top nodes
+kubectl describe nodes
+
+\# 4. Verificar taints y tolerations
+kubectl get nodes -o custom-columns=NAME:.metadata.name,TAINTS:.spec.taints
+
+\# 5. Soluciones comunes:
+\# - Agregar resources requests
+\# - Agregar tolerations para taints
+\# - Verificar nodeSelector/affinity
+\end{commandbox}
+
+\newpage
+
+% ====== APÉNDICES ======
+\section{Apéndices}
+
+\subsection{Recursos Útiles}
+
+\subsubsection{Documentación Oficial}
+
+\begin{itemize}
+    \item \href{https://kubernetes.io/docs/}{Documentación de Kubernetes}
+    \item \href{https://kubernetes.io/docs/reference/kubectl/cheatsheet/}{Kubectl Cheat Sheet}
+    \item \href{https://kubernetes.io/docs/concepts/}{Conceptos de Kubernetes}
+    \item \href{https://kubernetes.io/docs/tasks/}{Tareas y Tutoriales}
+\end{itemize}
+
+\subsubsection{Herramientas de Práctica}
+
+\begin{itemize}
+    \item \href{https://killer.sh/}{killer.sh} - Simulador de examen CKA
+    \item \href{https://kodekloud.com/}{KodeKloud} - Laboratorios interactivos
+    \item \href{https://github.com/kelseyhightower/kubernetes-the-hard-way}{Kubernetes The Hard Way}
+\end{itemize}
+
+\subsection{Configuración de Laboratorio}
+
+\subsubsection{Ambiente con Vagrant}
+
+\begin{commandbox}
+\# Vagrantfile para laboratorio K8s
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/20.04"
+  
+  # Master node
+  config.vm.define "master" do |master|
+    master.vm.hostname = "k8s-master"
+    master.vm.network "private_network", ip: "192.168.56.10"
+    master.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+      v.cpus = 2
+    end
+  end
+  
+  # Worker nodes
+  (1..2).each do |i|
+    config.vm.define "worker#{i}" do |worker|
+      worker.vm.hostname = "k8s-worker#{i}"
+      worker.vm.network "private_network", ip: "192.168.56.1#{i}"
+      worker.vm.provider "virtualbox" do |v|
+        v.memory = 1024
+        v.cpus = 1
+      end
+    end
+  end
+end
+\end{commandbox}
+
+\subsubsection{Script de Instalación Automatizada}
+
+\begin{commandbox}
+\#!/bin/bash
+\# install-k8s.sh - Script de instalación automatizada
+
+set -e
+
+\# Deshabilitar swap
+sudo swapoff -a
+sudo sed -i 's|/ swap |/# swap |g' /etc/fstab
+
+\# Configurar módulos del kernel
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br\_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br\_netfilter
+
+\# Configurar parámetros del kernel
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip\_forward                 = 1
+EOF
+
+sudo sysctl --system
+
+\# Instalar containerd
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl gnupg lsb-release
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+echo \\
+  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \\
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install -y containerd.io
+
+\# Configurar containerd
+sudo mkdir -p /etc/containerd
+containerd config default | sudo tee /etc/containerd/config.toml
+sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+sudo systemctl restart containerd
+sudo systemctl enable containerd
+
+\# Instalar kubeadm, kubelet, kubectl
+curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+
+echo "Instalación completada. Ejecutar 'kubeadm init' para inicializar el cluster."
+\end{commandbox}
+
+\subsection{Glosario de Términos}
+
+\begin{itemize}
+    \item \textbf{API Server}: Componente que expone la API de Kubernetes
+    \item \textbf{CNI}: Container Network Interface - especificación para plugins de red
+    \item \textbf{CRI}: Container Runtime Interface - especificación para runtimes
+    \item \textbf{DaemonSet}: Asegura que todos los nodos ejecuten una copia de un pod
+    \item \textbf{etcd}: Base de datos distribuida que almacena el estado del cluster
+    \item \textbf{HPA}: Horizontal Pod Autoscaler - escala pods automáticamente
+    \item \textbf{RBAC}: Role-Based Access Control - control de acceso basado en roles
+    \item \textbf{Service Mesh}: Capa de infraestructura para comunicación entre servicios
+    \item \textbf{StatefulSet}: Gestiona aplicaciones con estado
+    \item \textbf{VPA}: Vertical Pod Autoscaler - ajusta recursos de pods automáticamente
+\end{itemize}
+
+\newpage
+
+% ====== CONCLUSIÓN ======
+\section{Conclusión}
+
+\begin{infobox}
+Esta guía completa de Kubernetes CKA 2024 cubre todos los aspectos esenciales para la administración de clusters Kubernetes y la preparación para el examen CKA.
+\end{infobox}
+
+\subsection{Puntos Clave para el Examen}
+
+\begin{enumerate}
+    \item \textbf{\textcolor{k8sblue}{Práctica Hands-on}}: El examen es 100\% práctico
+    \item \textbf{\textcolor{k8ssuccess}{Tiempo de Gestión}}: Tienes 2 horas para 15-20 tareas
+    \item \textbf{\textcolor{k8swarning}{Documentación}}: Puedes usar la documentación oficial
+    \item \textbf{\textcolor{k8ssteelblue}{kubectl}}: Domina los comandos esenciales
+    \item \textbf{\textcolor{k8serror}{Troubleshooting}}: Representa el 30\% del examen
+\end{enumerate}
+
+\subsection{Plan de Estudio Recomendado}
+
+\begin{tipbox}
+\textbf{Semana 1-2}: Arquitectura y conceptos básicos\\
+\textbf{Semana 3-4}: Instalación y configuración\\
+\textbf{Semana 5-6}: Networking y storage\\
+\textbf{Semana 7-8}: Security y RBAC\\
+\textbf{Semana 9-10}: Troubleshooting y práctica intensiva\\
+\textbf{Semana 11-12}: Simulacros de examen
+\end{tipbox}
+
+\subsection{Comandos para Memorizar}
+
+Los comandos más importantes que debes dominar:
+
+\begin{commandbox}
+kubectl get/describe/delete <resource>
+kubectl create/apply -f <file>
+kubectl logs/exec -it <pod>
+kubectl drain/cordon/uncordon <node>
+kubectl scale/rollout <deployment>
+kubectl auth can-i <verb> <resource>
+etcdctl snapshot save/restore
+kubeadm init/join/upgrade
+\end{commandbox}
+
+\subsection{Última Recomendación}
+
+\begin{warningbox}
+La práctica constante en un ambiente real es la clave del éxito. Instala tu propio cluster, experimenta con todos los comandos y escenarios de esta guía. ¡Mucha suerte en tu examen CKA!
+\end{warningbox}
+
+\vfill
+\begin{center}
+\textcolor{k8sblue}{\Large\textbf{¡Feliz aprendizaje de Kubernetes!}}\\[0.5cm]
+\textcolor{k8sdarkgray}{\faHeart\ Creado con amor para la comunidad de DevOps}
+\end{center}
+\end{document}

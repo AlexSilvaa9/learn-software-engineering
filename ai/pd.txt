@@ -1,0 +1,119 @@
+PANDAS
+
+SERIES	
+son arrays librería
+es como una columna
+
+calories = {"day1": 420, "day2": 380, "day3": 390}
+
+myvar = pd.Series(calories, index = ["day1", "day2"])
+
+DATAFRAMES 
+es la tabla entera
+
+data = {
+  "calories": [420, 380, 390],
+  "duration": [50, 40, 45]
+}
+
+myvar = pd.DataFrame(data)
+
+
+- df.loc[0] devuelve filas, pueden ser varias df.loc[[0, 1]]
+
+las rows pueden estar indexadas con nombres también, como las series (se pone al crearlo de varias formas)
+        calories  duration
+  day1       420        50
+  day2       380        40
+  day3       390        45
+
+df.loc["day2"]
+
+df= pd.read_... csv json
+
+head
+tail 
+info ***
+
+CLEANING DATA
+df.dropna()
+inplace= True si quiero cambiar el df original y no hacer una copia
+fillna() cambiar los na por algo
+df.duplicates()
+
+loc[0,'columna']
+loc[0]
+loc['columna']
+
+
+iloc[]	Get or set the values of a group of elements in the specified positions
+drop
+T: trasponer
+agg() función agregada
+apply, aplica una función al eje de un dataframe
+.columns
+count()
+cov()covarianza
+std()
+pipe()aplica una función al df
+.size
+.shape
+.values devuelve np array
+
+print(df['Nombre'])
+print(df.Nombre)
+
+sustituir texto:
+df['Nombre'] = df['Nombre'].str.replace('a', 'o')
+
+grouped = df.groupby('Departamento')['Ventas'].sum()
+df.describe()  # Resumen estadístico
+
+TODO SOBRE ACCESO A DATOS
+# Acceder a la primera fila (por posición)
+print(df.iloc[0])
+
+# Acceder a las primeras 2 filas
+print(df.iloc[:2])
+
+# Acceder a una fila específica por posición y columna
+print(df.iloc[0, 1])  # Primera fila, segunda columna (Edad de Ana)
+
+
+# Acceder a una fila por nombre de índice
+print(df.loc['Ana'])
+
+# Acceder a una fila por nombre y columna
+print(df.loc['Ana', 'Edad'])  # Edad de Ana
+
+
+
+# Filtrar varias condiciones (por ejemplo, Edad > 25 y Ciudad == 'Madrid')
+print(df[(df['Edad'] > 25) & (df['Ciudad'] == 'Madrid')])
+
+
+
+# Filtrar con query
+print(df.query('Edad > 25 and Ciudad == "Madrid"'))
+
+# Acceder a múltiples columnas
+print(df[['Edad', 'Ciudad']])
+
+# Obtener un valor específico (por posición)
+print(df.iloc[1, 2])  # Segunda fila, tercera columna (Valor de 'Ciudad')
+
+# Obtener un valor específico (por nombre de índice)
+print(df.loc['Luis', 'Edad'])  # Edad de 'Luis'
+
+# Seleccionar las primeras dos columnas por su posición
+print(df.iloc[:, 0:2])
+
+
+# Aplicar una función a la columna 'Edad'
+df['Edad'] = df['Edad'].apply(lambda x: x + 1)
+
+
+
+
+lambda argumentos: expresión
+lambda x: x + 2

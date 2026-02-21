@@ -1,0 +1,1473 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{inconsolata} % fuente monoespaciada profesional para código
+\usepackage{geometry}
+\geometry{margin=2cm}
+\usepackage{microtype}
+\usepackage{hyperref}
+% Paquetes de navegación y estilo de índice
+\usepackage{bookmark}
+\usepackage{tocloft}
+\usepackage{fancyhdr}
+\usepackage{parskip}
+\usepackage{listingsutf8}
+\usepackage{upquote}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable, listings, theorems}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{caption}
+\captionsetup[lstlisting]{labelfont=bf, singlelinecheck=false, margin=0pt}
+
+% Estilos visuales (paleta neutra profesional)
+\definecolor{codebg}{HTML}{F5F7FA}
+\definecolor{codefg}{HTML}{111827}
+\definecolor{codekw}{HTML}{7C3AED}
+\definecolor{codestr}{HTML}{8B4513}
+\definecolor{codecm}{HTML}{6B7280}
+\definecolor{codeid}{HTML}{111827}
+\definecolor{accent}{HTML}{111827}
+\definecolor{accent2}{HTML}{374151}
+
+% Cajas estilizadas (con la nueva paleta)
+\newtcolorbox{tipbox}{enhanced, breakable, colback=accent!5, colframe=accent!60!black, coltitle=black, title=Consejo Senior, attach boxed title to top left={yshift=-2mm, xshift=2mm}, boxed title style={colback=accent!15, sharp corners}}
+\newtcolorbox{warnbox}{enhanced, breakable, colback=orange!5, colframe=orange!70!black, coltitle=black, title=Evita esto, attach boxed title to top left={yshift=-2mm, xshift=2mm}, boxed title style={colback=orange!20, sharp corners}}
+\newtcolorbox{refbox}{enhanced, breakable, colback=green!5, colframe=green!60!black, coltitle=black, title=Patrón, attach boxed title to top left={yshift=-2mm, xshift=2mm}, boxed title style={colback=green!20, sharp corners}}
+
+% Enlaces en negro
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=black, citecolor=black}
+
+% Índice (ToC) en español y con estilo
+\addto\captionsspanish{\renewcommand{\contentsname}{Índice}}
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+\renewcommand{\cfttoctitlefont}{\LARGE\bfseries}
+\renewcommand{\cftaftertoctitle}{\par\vspace{6pt}\hrule\vspace{10pt}}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecfont}{\bfseries}
+\renewcommand{\cftsecpagefont}{\bfseries}
+\setlength{\cftbeforesecskip}{4pt}
+\setlength{\cftbeforesubsecskip}{2pt}
+
+% Títulos con color y regla
+\titleformat{\section}{\Large\bfseries\color{accent}}{\thesection}{0.6em}{}[\vspace{2pt}\titlerule]
+\titlespacing*{\section}{0pt}{2.0ex plus 1ex minus .2ex}{1ex}
+\titleformat{\subsection}{\large\bfseries\color{accent2}}{\thesubsection}{0.6em}{}
+\titlespacing*{\subsection}{0pt}{1.6ex plus .8ex minus .2ex}{0.8ex}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.6em}{}
+
+% Encabezados/pies
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Spring Senior}
+\fancyhead[R]{\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{15pt}
+
+% Listings en UTF-8 con mapeo de acentos
+\lstset{
+  inputencoding=utf8,
+  literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'\i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+           {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+           {ñ}{{\~n}}1 {Ñ}{{\~N}}1
+           {ü}{{\"u}}1 {Ü}{{\"U}}1
+           {…}{{\ldots}}1
+}
+
+% Lenguajes para listings
+\lstdefinelanguage{Java}{
+  morekeywords={abstract,assert,boolean,break,byte,case,catch,char,class,const,continue,default,do,double,else,enum,extends,final,finally,float,for,if,goto,implements,import,instanceof,int,interface,long,native,new,package,private,protected,public,return,short,static,strictfp,super,switch,synchronized,this,throw,throws,transient,try,void,volatile,record,var},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]", 
+  morestring=[b]'
+}
+
+\lstdefinelanguage{YAML}{
+  morekeywords={true,false,null,yes,no,on,off},
+  sensitive=false,
+  morecomment=[l]{\#}
+}
+
+\lstdefinelanguage{Bash}{
+  morekeywords={echo,cd,ls,cat,grep,sed,awk,tail,head,export,docker,mvn,gradle,java,javac},
+  sensitive=false,
+  morecomment=[l]{\#}
+}
+
+% Estilos de listado (tema profesional)
+\lstdefinestyle{basecodestyle}{
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\small\color{codefg},
+  keywordstyle=\color{codekw}\bfseries,
+  stringstyle=\color{codestr},
+  commentstyle=\color{codecm}\itshape,
+  identifierstyle=\color{codeid},
+  numberstyle=\scriptsize\color{codecm},
+  numbers=left,
+  stepnumber=1,
+  numbersep=8pt,
+  frame=single,
+  rulecolor=\color{accent2},
+  framesep=6pt,
+  xleftmargin=12pt,
+  xrightmargin=4pt,
+  showstringspaces=false,
+  breaklines=true,
+  tabsize=2,
+  upquote=true,
+  captionpos=b
+}
+
+\lstdefinestyle{javastyle}{style=basecodestyle, language=Java}
+\lstdefinestyle{yamlstyle}{style=basecodestyle, language=YAML}
+\lstdefinestyle{bashstyle}{style=basecodestyle, language=Bash}
+
+% Ajuste de título con guión largo (em-dash) para compatibilidad
+\title{Spring Boot a Nivel Senior: Guía Práctica e Internals}
+\author{Apuntes de trabajo}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introducción}
+Estos apuntes cubren Spring Boot 3.x (Spring Framework 6), Java 17+ y el stack moderno: auto-configuración, observabilidad (Micrometer + OpenTelemetry), AOT y native image, seguridad, datos, reactividad y despliegue. Incluye \textbf{internals} para comprender cómo funciona por debajo y tomar decisiones de arquitectura con criterio.
+
+\begin{tipbox}
+Mentalidad senior: simplicidad, límites claros, contratos estables (interfaces/DTOs), observabilidad desde el día uno, automatización y \emph{shift-left testing}.
+\end{tipbox}
+
+% --- NUEVO: Glosario y fundamentos para principiantes ---
+\section{Glosario ultra básico (explicado simple)}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Arrancar (bootstrap)}: iniciar la app. En Java: método \texttt{main} que llama a \texttt{SpringApplication.run(...)}.
+  \item \textbf{Spring Boot}: capas y utilidades que configuran Spring “solas” por convención (\emph{starters}, autoconfiguración).
+  \item \textbf{Bean}: objeto gestionado por Spring (vida, dependencias). Se crea con \texttt{@Component}, \texttt{@Service}, \texttt{@Repository} o \texttt{@Bean}.
+  \item \textbf{IoC/DI}: Inversión de Control/ Inyección de Dependencias. Spring crea e inyecta los beans donde se necesitan.
+  \item \textbf{Controller/RestController}: clase que atiende peticiones HTTP y devuelve respuestas (JSON).
+  \item \textbf{Propiedades}: configuración externa (\texttt{application.yml}). Puedes leerlas con \texttt{@Value} o \texttt{@ConfigurationProperties}.
+  \item \textbf{JPA}: estándar para mapear objetos a tablas (ORM). Spring Data JPA te da repositorios listos.
+  \item \textbf{Transacción}: bloque de trabajo todo-o-nada en BD, controlado con \texttt{@Transactional}.
+  \item \textbf{Actuator}: endpoints de salud/metricas/info para operar la app.
+  \item \textbf{WebFlux/Reactor}: modelo reactivo (no bloqueante) para alto número de conexiones.
+  \item \textbf{AOP}: “envolver” métodos con lógica transversal (métricas, seguridad, transacciones).
+\end{itemize}
+
+\section{Fundamentos prácticos: de cero a tu primera API}
+Objetivo: entender \emph{qué es cada cosa} y \emph{para qué sirve} con un ejemplo mínimo.
+
+\subsection{Cómo arranca una app}
+\begin{lstlisting}[style=javastyle, caption={Aplicación mínima}]
+// src/main/java/com/example/App.java
+package com.example;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.SpringApplication;
+
+@SpringBootApplication // activa escaneo de componentes y autoconfiguración
+public class App {
+  public static void main(String[] args) { SpringApplication.run(App.class, args); }
+}
+\end{lstlisting}
+\textbf{Qué pasa}: Spring busca clases anotadas (beans), crea el “contenedor” (IoC) y las conecta.
+
+\subsection{Tu primer endpoint REST}
+\begin{lstlisting}[style=javastyle, caption={Hola mundo HTTP}]
+// src/main/java/com/example/web/HelloController.java
+package com.example.web;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+class HelloController {
+  @GetMapping("/hello") String hello(@RequestParam(defaultValue="Mundo") String name) {
+    return "Hola, " + name;
+  }
+}
+\end{lstlisting}
+\textbf{Qué pasa}: \texttt{@RestController} expone métodos HTTP. \texttt{@GetMapping} atiende \texttt{GET /hello}.
+
+\subsection{Servicios e inyección de dependencias}
+\begin{lstlisting}[style=javastyle, caption={Separar lógica en un servicio}] 
+// src/main/java/com/example/core/GreeterService.java
+package com.example.core;
+import org.springframework.stereotype.Service;
+
+@Service
+public class GreeterService { public String greet(String name){ return "Hola, " + name; } }
+
+// src/main/java/com/example/web/HelloController.java
+@RestController
+class HelloController {
+  private final GreeterService greeter;
+  HelloController(GreeterService greeter) { this.greeter = greeter; } // inyección por constructor
+  @GetMapping("/hello") String hello(@RequestParam(defaultValue="Mundo") String name) {
+    return greeter.greet(name);
+  }
+}
+\end{lstlisting}
+\textbf{Idea}: el controlador solo orquesta; la lógica vive en servicios.
+
+\subsection{Propiedades y configuración}
+\begin{lstlisting}[style=yamlstyle, caption={application.yml}]
+spring.application.name: demo
+app.title: "Demo App"
+\end{lstlisting}
+\begin{lstlisting}[style=javastyle, caption={ConfigurationProperties tipado}] 
+// src/main/java/com/example/config/AppProps.java
+@ConfigurationProperties(prefix="app")
+public record AppProps(String title) {}
+
+// Activar binding
+a.@EnableConfigurationProperties(AppProps.class)
+\end{lstlisting}
+\textbf{Idea}: configura fuera del código y bindéalo a tipos seguros.
+
+\subsection{Datos con JPA e H2 (memoria)}
+\begin{lstlisting}[style=javastyle, caption={Entidad y repositorio}] 
+@Entity class Note { @Id @GeneratedValue Long id; String text; }
+interface NoteRepo extends JpaRepository<Note, Long> {}
+\end{lstlisting}
+\begin{lstlisting}[style=yamlstyle, caption={BD en memoria para desarrollo}]
+spring.datasource.url: jdbc:h2:mem:demo;DB_CLOSE_DELAY=-1
+spring.jpa.hibernate.ddl-auto: update
+\end{lstlisting}
+\textbf{Idea}: con pocas líneas guardas y lees datos reales.
+
+\subsection{Validación y manejo de errores}
+\begin{lstlisting}[style=javastyle, caption={Validar entrada y responder 400}] 
+record CreateNote(@jakarta.validation.constraints.NotBlank String text) {}
+
+@RestController class NotesCtrl {
+  private final NoteRepo repo;
+  NotesCtrl(NoteRepo repo){ this.repo = repo; }
+  @PostMapping("/notes") Note create(@Valid @RequestBody CreateNote body){
+    var n = new Note(); n.text = body.text(); return repo.save(n);
+  }
+}
+\end{lstlisting}
+\textbf{Idea}: anota DTOs y deja que Spring devuelva 400 automáticamente si no cumplen.
+
+\begin{tipbox}
+Construye siempre así: (1) endpoint mínimo, (2) servicio, (3) propiedades, (4) datos, (5) validación/errores.
+\end{tipbox}
+
+% --- FIN bloque de fundamentos ---
+
+\section{Ecosistema y proyecto}
+\paragraph{Qué significa}
+Spring Boot trae “piezas” preconfiguradas (web, datos, seguridad, observabilidad). Arrancas rápido sin pelear con configuración de bajo nivel.
+\paragraph{En la práctica}
+Elige \emph{starters} según la necesidad (\texttt{spring-boot-starter-web}, \texttt{-data-jpa}, \texttt{-security}). Usa perfiles (\texttt{dev/prod}) en \texttt{application-*.yml}.
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Spring Boot 3.x}: migración a \texttt{jakarta.*}, configuración por convención y \emph{starters}.\
+  \item \textbf{Build}: Maven/Gradle, Buildpacks para imágenes, perfiles y entornos.\
+  \item \textbf{Observabilidad}: Actuator, Micrometer, trazas con OTel.\
+  \item \textbf{Ejecución}: JVM, contenedores, \emph{native images} con GraalVM.
+\end{itemize}
+
+\subsection{Estructura mínima}
+\paragraph{Qué mirar}
+La clase \texttt{@SpringBootApplication} y el \texttt{application.yml}. Luego, paquetes por \textbf{feature}: \texttt{web/}, \texttt{core/}, \texttt{data/}.
+
+\begin{lstlisting}[style=javastyle, caption={Aplicación principal y configuración de beans}]
+// src/main/java/com/example/App.java
+package com.example;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+@SpringBootApplication
+public class App {
+  public static void main(String[] args) { SpringApplication.run(App.class, args); }
+
+  // Executor con virtual threads (Java 21+, Spring Boot 3.2+)
+  @Bean Executor appExecutor() { return Executors.newVirtualThreadPerTaskExecutor(); }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=yamlstyle, caption={application.yml con perfiles y observabilidad}]
+spring:
+  application:
+    name: demo
+  profiles:
+    active: dev
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+  metrics:
+    tags:
+      application: ${spring.application.name}
+\end{lstlisting}
+
+\section{Configuración tipada y propiedades}
+\paragraph{Por qué importa}
+Evita strings sueltos y errores de configuración. Con records y validación fallarás rápido y claro al arrancar.
+
+\begin{lstlisting}[style=javastyle, caption={Configuration Properties con records y validación}]
+// src/main/java/com/example/config/AppProps.java
+package com.example.config;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
+import jakarta.validation.constraints.NotBlank;
+import java.time.Duration;
+
+@Validated
+@ConfigurationProperties(prefix = "app")
+public record AppProps(@NotBlank String title, Duration timeout) {}
+\end{lstlisting}
+
+\begin{lstlisting}[style=javastyle, caption={Activación de binding tipado}]
+// src/main/java/com/example/config/Config.java
+package com.example.config;
+
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@EnableConfigurationProperties(AppProps.class)
+class Config {}
+\end{lstlisting}
+
+\begin{lstlisting}[style=yamlstyle, caption={Valores de ejemplo}]
+app:
+  title: Demo App
+  timeout: 5s
+\end{lstlisting}
+
+\section{Auto-configuración: cómo funciona por debajo}
+\paragraph{Idea clave}
+Spring Boot activa beans según “si está presente tal clase/propiedad y falta tal bean”. Así te ahorra wiring manual.
+\paragraph{En la práctica}
+Si algo no se activa, revisa el \emph{Condition Evaluation Report} o \texttt{/actuator/conditions}.
+
+\begin{itemize}[leftmargin=*]
+  \item Spring Boot importa \textbf{autoconfiguraciones} listadas en \texttt{META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports}.
+  \item Cada clase \texttt{@AutoConfiguration} declara \texttt{@ConditionalOnClass}, \texttt{OnMissingBean}, \texttt{OnProperty}, etc. El \emph{ConditionEvaluationReport} explica por qué se activa o no.
+  \item Orden: \texttt{@AutoConfigureBefore/After}. Desactivar con \texttt{spring.autoconfigure.exclude}.
+\end{itemize}
+
+\begin{lstlisting}[style=javastyle, caption={AutoConfiguration mínima condicional}]
+package com.example.starter;
+
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+
+@AutoConfiguration
+@ConditionalOnClass(name = "com.example.lib.Client")
+public class ClientAutoConfiguration {
+
+  @Bean
+  @ConditionalOnMissingBean
+  public ClientApi clientApi() { return new ClientApi(); }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=yamlstyle, caption={Registrar la autoconfiguración}]
+# META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
+com.example.starter.ClientAutoConfiguration
+\end{lstlisting}
+
+\begin{tipbox}
+Para depurar condiciones: arranca con \texttt{--debug} o revisa el \emph{Condition Evaluation Report} en logs. Usa Actuator endpoint \texttt{/actuator/conditions}.
+\end{tipbox}
+
+\section{Web MVC y REST}
+\paragraph{Cómo diseñar}
+Controladores finos que validan y orquestan; servicios con la lógica; DTOs para entrada/salida; \texttt{@ControllerAdvice} para errores uniformes.
+
+\begin{lstlisting}[style=javastyle, caption={Controlador REST con validación y manejo de errores}]
+package com.example.web;
+
+import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import org.springframework.http.ResponseEntity;
+
+record UserDto(@NotBlank String id, @Email String email) {}
+
+@RestController
+@RequestMapping("/api/users")
+class UserController {
+  @GetMapping("/{id}")
+  ResponseEntity<UserDto> get(@PathVariable String id) {
+    return ResponseEntity.ok(new UserDto(id, "user@example.com"));
+  }
+
+  @PostMapping
+  ResponseEntity<UserDto> create(@Valid @RequestBody UserDto body) {
+    return ResponseEntity.status(201).body(body);
+  }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=javastyle, caption={Advice global para errores}]
+package com.example.web;
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.validation.BindException;
+
+@RestControllerAdvice
+class GlobalErrors {
+  @ExceptionHandler({ BindException.class, MethodArgumentTypeMismatchException.class })
+  ResponseEntity<?> badReq(Exception ex) {
+    return ResponseEntity.badRequest().body(new ErrorPayload("BAD_REQUEST", ex.getMessage()));
+  }
+
+  record ErrorPayload(String code, String message) {}
+}
+\end{lstlisting}
+
+\section{Datos: JPA, transacciones y migraciones}
+\paragraph{Reglas prácticas}
+- Transacciones en servicios. - Evita exponer entidades en la API, usa DTOs. - Controla N+1 con \texttt{EntityGraph} o \emph{fetch join}.
+
+\begin{lstlisting}[style=javastyle, caption={Entidad JPA y repositorio}] 
+package com.example.data;
+
+import jakarta.persistence.*;
+import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
+import java.util.*;
+
+@Entity
+@Table(name = "users")
+public class User {
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  Long id;
+  @Column(nullable = false, unique = true)
+  String email;
+}
+
+interface UserRepo extends JpaRepository<User, Long> {
+  Optional<User> findByEmail(@Param("email") String email);
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=javastyle, caption={Servicio con @Transactional y reglas clave}]
+package com.example.data;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+class UserService {
+  private final UserRepo repo;
+  UserService(UserRepo repo) { this.repo = repo; }
+
+  @Transactional
+  public User create(String email) {
+    var u = new User();
+    u.email = email;
+    return repo.save(u);
+  }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=yamlstyle, caption={Configuración JPA y Flyway}]
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/app
+    username: app
+    password: secret
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc.batch_size: 50
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+\end{lstlisting}
+
+\begin{refbox}
+Evita LazyInitializationException: diseña límites de transacción en servicios, usa \emph{fetch joins} o \emph{entity graphs}. Controla el N+1 con logs y \texttt{hibernate.default\_batch\_fetch\_size}.
+\end{refbox}
+
+\section{Seguridad con Spring Security 6}
+\paragraph{Modelo mental}
+Una cadena de filtros decide quién eres (autenticación) y qué puedes hacer (autorización). Mantén reglas simples y centralizadas.
+
+\begin{lstlisting}[style=javastyle, caption={SecurityFilterChain, CORS y JWT Resource Server}]
+package com.example.security;
+
+import org.springframework.context.annotation.*;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.Customizer;
+
+@Configuration
+class SecurityConfig {
+  @Bean
+  SecurityFilterChain http(HttpSecurity http) throws Exception {
+    http
+      .csrf(csrf -> csrf.disable())
+      .cors(Customizer.withDefaults())
+      .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/actuator/**").permitAll()
+        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+        .anyRequest().authenticated())
+      .oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()));
+    return http.build();
+  }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=yamlstyle, caption={Propiedades JWT (ejemplo con jwk-set-uri)}]
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://issuer.example.com/.well-known/jwks.json
+\end{lstlisting}
+
+\begin{tipbox}
+Método seguro: validación a nivel de método con \texttt{@EnableMethodSecurity} y anotaciones \texttt{@PreAuthorize("hasRole('ADMIN')")}. Externaliza autorizaciones complejas a un servicio.
+\end{tipbox}
+
+\section{Reactividad y WebFlux}
+\paragraph{Cuándo usarlo}
+I/O intensivo con muchas conexiones y latencia de redes. Si tu stack es bloqueante (JPA), quédate en MVC.
+
+\begin{lstlisting}[style=javastyle, caption={Controlador reactivo y WebClient}]
+package com.example.reactive;
+
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.*;
+import org.springframework.web.reactive.function.client.WebClient;
+
+@RestController
+class ReactiveCtrl {
+  private final WebClient http = WebClient.create();
+
+  @GetMapping("/rx") Mono<String> hello() {
+    return Mono.just("ok");
+  }
+
+  @GetMapping("/rx/users") Flux<String> users() {
+    return http.get().uri("https://example.com/users")
+      .retrieve().bodyToFlux(String.class);
+  }
+}
+\end{lstlisting}
+
+\begin{warnbox}
+No mezcles WebFlux con JPA bloqueante; usa R2DBC o drivers no bloqueantes. Si debes integrar, ejecuta en \texttt{boundedElastic} pero entiende el coste.
+\end{warnbox}
+
+\section{Mensajería, tareas y caché}
+\subsection{Kafka / RabbitMQ}
+\begin{lstlisting}[style=javastyle, caption={Productor/consumidor Kafka}]
+package com.example.msg;
+
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+
+@Service
+class KafkaSvc {
+  private final KafkaTemplate<String, String> kt;
+  KafkaSvc(KafkaTemplate<String, String> kt) { this.kt = kt; }
+  void publish(String topic, String value) { kt.send(topic, value); }
+
+  @KafkaListener(topics = "events", groupId = "app")
+  void consume(String value) { System.out.println("event=" + value); }
+}
+\end{lstlisting}
+
+\subsection{Tareas y scheduling}
+\begin{lstlisting}[style=javastyle, caption={@Async y @Scheduled con pools dedicados}]
+package com.example.bg;
+
+import org.springframework.scheduling.annotation.*;
+import org.springframework.context.annotation.*;
+import java.util.concurrent.*;
+
+@Configuration
+@EnableAsync
+@EnableScheduling
+class BgConfig {
+  @Bean Executor taskExecutor() { return Executors.newFixedThreadPool(8); }
+
+  @Async
+  public void work() { /* ... */ }
+
+  @Scheduled(cron = "0 */5 * * * *")
+  public void job() { /* ... */ }
+}
+\end{lstlisting}
+
+\subsection{Caché}
+\begin{lstlisting}[style=javastyle, caption={Caché con Caffeine/Redis}]
+package com.example.cache;
+
+import org.springframework.cache.annotation.*;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@EnableCaching
+class CacheCfg {}
+
+class ProductService {
+  @Cacheable(cacheNames = "products", key = "#id")
+  Product findById(Long id) { /* lookup */ return null; }
+}
+\end{lstlisting}
+
+\section{Observabilidad con Actuator y Micrometer}
+\paragraph{Qué exponer}
+Salud, métricas y trazas. Etiqueta métricas con nombre de aplicación y versión. Envía trazas a tu collector (OTel).
+
+\begin{lstlisting}[style=yamlstyle, caption={Actuator y exportación de métricas/trazas}]
+management:
+  endpoints.web.exposure.include: "*"
+  metrics.export.prometheus.enabled: true
+  otlp:
+    tracing:
+      endpoint: http://otel-collector:4318/v1/traces
+\end{lstlisting}
+
+\begin{lstlisting}[style=javastyle, caption={Métricas personalizadas}]
+package com.example.obs;
+
+import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.stereotype.Component;
+
+@Component
+class Metrics {
+  Metrics(MeterRegistry registry) {
+    registry.counter("app.startups").increment();
+  }
+}
+\end{lstlisting}
+
+\section{Testing eficaz}
+\paragraph{Estrategia mínima}
+- Unit: servicios con mocks. - Slices: \texttt{@WebMvcTest}, \texttt{@DataJpaTest}. - Integración: Testcontainers para BD real. - Smoke: endpoints de Actuator.
+
+\begin{lstlisting}[style=javastyle, caption={@SpringBootTest + MockMvc}]
+package com.example;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+class AppTests {
+  @Autowired MockMvc mvc;
+
+  @Test void health() throws Exception {
+    mvc.perform(get("/actuator/health")).andExpect(status().isOk());
+  }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=javastyle, caption={Testcontainers para PostgreSQL}]
+package com.example;
+
+import org.junit.jupiter.api.*;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+
+@SpringBootTest
+class PgIT {
+  static PostgreSQLContainer<?> pg = new PostgreSQLContainer<>("postgres:15");
+  static { pg.start(); }
+
+  @DynamicPropertySource
+  static void props(DynamicPropertyRegistry r) {
+    r.add("spring.datasource.url", pg::getJdbcUrl);
+    r.add("spring.datasource.username", pg::getUsername);
+    r.add("spring.datasource.password", pg::getPassword);
+  }
+}
+\end{lstlisting}
+
+\section{Empaquetado, Docker y Native Image}
+\paragraph{Ruta práctica}
+Desarrollo con \texttt{spring-boot:run}, empaqueta JAR, luego imagen con Buildpacks. Prueba Native si necesitas arranque ultrarrápido y menor memoria.
+
+\begin{lstlisting}[style=bashstyle, caption={Comandos útiles Maven/Gradle y contenedores}]
+# Ejecutar en desarrollo
+mvn spring-boot:run
+
+# Empaquetar jar
+mvn -DskipTests package
+
+# Imagen con buildpacks
+mvn spring-boot:build-image -DskipTests
+
+# Imagen nativa (GraalVM Native Build Tools instalado)
+mvn -Pnative native:compile
+\end{lstlisting}
+
+\begin{warnbox}
+AOT/native reduce memoria y latencia de arranque pero limita reflexión y proxys dinámicos. Verifica compatibilidad de librerías (hints) y usa \texttt{@RegisterReflectionForBinding} cuando sea necesario.
+\end{warnbox}
+
+\section{Rendimiento y escalabilidad}
+\paragraph{Por dónde empezar}
+Mide primero. Ajusta pool de conexiones, usa paginación, evita trabajo en el hilo de petición, añade caché donde tenga sentido.
+
+\begin{itemize}[leftmargin=*]
+  \item Conexiones: HikariCP, tamaño de pool acorde al workload; en reactividad, evita pools bloqueantes.
+  \item GC y memoria: \texttt{-Xms/-Xmx}, G1/Generational ZGC según JDK.
+  \item Virtual Threads: alto \emph{throughput} I/O-bound con código imperativo; mide latencias y bloqueo de drivers.
+  \item Warmup y JIT: \emph{tiered compilation}; en nativo no hay JIT, calibra tiempo de arranque vs rendimiento sostenido.
+\end{itemize}
+
+\section{Patrones y anti-patrones}
+\begin{refbox}
+Patrones: Hexagonal/Ports-Adapters, Domain Services, DTO/assembler, Outbox para consistencia entre BDs y colas, Idempotency keys.
+\end{refbox}
+
+\begin{warnbox}
+Anti-patrones: entidades anémicas con lógica en controladores, transacciones cruzando límites externos, \texttt{@Transactional} en métodos \texttt{private}, \emph{God Services}, repositorios chatos que exponen JPA al resto del dominio.
+\end{warnbox}
+
+\section{Checklist de revisión senior}
+\begin{enumerate}[leftmargin=*]
+  \item Configuración tipada (\texttt{@ConfigurationProperties}) y validada.
+  \item Límites de transacción claros; sin N+1; migraciones con Flyway/Liquibase.
+  \item Seguridad centralizada; endpoints expuestos y CORS definidos.
+  \item Observabilidad: Actuator, métricas y trazas; logs estructurados.
+  \item Tests con slices y Testcontainers para integrar con dependencias.
+  \item Dockerfile o Buildpacks; perfiles por entorno; \emph{readiness/liveness} para K8s.
+\end{enumerate}
+
+% ------------------------------------------------------
+% SPRING CORE (no solo Boot): IoC, ciclo de vida, AOP, transacciones
+% ------------------------------------------------------
+\section{Spring Core avanzado (más allá de Spring Boot)}
+\subsection{Contenedor IoC, ciclos de vida y extensibilidad}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{BeanFactory vs ApplicationContext}: este último añade internacionalización, eventos, recursos y autowiring avanzado.
+  \item \textbf{Ciclo de vida}: instanciación \textrightarrow{} inyección \textrightarrow{} callbacks (\texttt{InitializingBean}/\texttt{@PostConstruct}) \textrightarrow{} post-procesadores \textrightarrow{} \texttt{SmartInitializingSingleton} \textrightarrow{} destrucción (\texttt{DisposableBean}/\texttt{@PreDestroy}).
+  \item \textbf{Scopes}: \texttt{singleton}, \texttt{prototype} y web (\texttt{request}/\texttt{session}). Cuidado con inyectar \texttt{prototype} en \texttt{singleton}.
+  \item Extensión: \texttt{BeanFactoryPostProcessor}, \texttt{BeanDefinitionRegistryPostProcessor}, \texttt{BeanPostProcessor}, \texttt{FactoryBean}, eventos (\texttt{ApplicationEventPublisher}/\texttt{@EventListener}).
+\end{itemize}
+
+\begin{lstlisting}[style=javastyle, caption={BeanPostProcessor y FactoryBean}] 
+// Post-procesador que aplica un wrapper condicional
+@Component
+class TimingPostProcessor implements BeanPostProcessor {
+  @Override public Object postProcessAfterInitialization(Object bean, String name) {
+    if (bean instanceof Service) return ProxyFactory.getProxy(bean.getClass(), new TimingInterceptor(bean));
+    return bean;
+  }
+}
+
+// FactoryBean crea un bean complejo bajo un id simple
+@Component("client")
+class ClientFactory implements FactoryBean<Client> {
+  public Client getObject() { return new Client("cfg"); }
+  public Class<?> getObjectType() { return Client.class; }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=javastyle, caption={Eventos y listeners transaccionales}] 
+@Component
+class Eventing {
+  private final ApplicationEventPublisher pub;
+  Eventing(ApplicationEventPublisher pub) { this.pub = pub; }
+  public void fire(User u) { pub.publishEvent(new UserCreated(u.id())); }
+}
+
+record UserCreated(Long id) {}
+
+@Component
+class Audits {
+  @EventListener
+  void on(UserCreated e) { /* antes de commit */ }
+
+  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+  void onCommitted(UserCreated e) { /* side-effects confiables */ }
+}
+\end{lstlisting}
+
+\subsection{AOP en profundidad}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Proxies} JDK (interfaces) y CGLIB (clases). Problema clásico: \emph{self-invocation} no pasa por el proxy.
+  \item Tipos de advice: \texttt{@Before}, \texttt{@AfterReturning}, \texttt{@AfterThrowing}, \texttt{@Around}. Diseño de pointcuts con AspectJ (\texttt{execution}, \texttt{within}, \texttt{@annotation}, etc.).
+  \item Ordenación con \texttt{@Order}; minimizar \emph{pointcuts} amplios para evitar impacto en rendimiento.
+\end{itemize}
+
+\begin{lstlisting}[style=javastyle, caption={Aspecto de métricas con @Around}]
+@Aspect
+@Component
+@Order(10)
+class MetricsAspect {
+  private final MeterRegistry m;
+  MetricsAspect(MeterRegistry m) { this.m = m; }
+
+  @Around("within(@org.springframework.stereotype.Service *)")
+  Object timed(ProceedingJoinPoint pjp) throws Throwable {
+    var sample = Timer.start(m);
+    try { return pjp.proceed(); }
+    finally { sample.stop(m.timer("svc.time", "method", pjp.getSignature().getName())); }
+  }
+}
+\end{lstlisting}
+
+\subsection{Transacciones avanzadas}
+\begin{itemize}[leftmargin=*]
+  \item Propagación: \texttt{REQUIRED} (por defecto), \texttt{REQUIRES\_NEW}, \texttt{NESTED}, \texttt{MANDATORY}, \texttt{SUPPORTS}, \texttt{NOT\_SUPPORTED}, \texttt{NEVER}.
+  \item Aislamiento: \texttt{READ\_COMMITTED}, \texttt{REPEATABLE\_READ}, \texttt{SERIALIZABLE}, etc. \texttt{readOnly} es una \emph{pista}; con JPA puede optimizar el \emph{flush}.
+  \item Reglas de rollback: por defecto para \emph{unchecked}; usa \texttt{rollbackFor} para \emph{checked}.
+  \item Eventos transaccionales: \texttt{TransactionSynchronizationManager}; \texttt{@TransactionalEventListener} para \emph{after-commit}.
+\end{itemize}
+
+\begin{lstlisting}[style=javastyle, caption={Propagación y locking}]
+@Service
+class OrderService {
+  private final Repo r;
+  OrderService(Repo r) { this.r = r; }
+
+  @Transactional
+  public void place(Order o) { /* REQUIRED */ save(o); charge(o); }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public void audit(Order o) { /* registra en otra tx */ }
+
+  @Transactional(isolation = Isolation.REPEATABLE_READ)
+  public Order findWithLock(Long id) {
+    return r.findByIdForUpdate(id); // SELECT ... FOR UPDATE (pessimistic)
+  }
+}
+\end{lstlisting}
+
+\begin{warnbox}
+No llames métodos \texttt{@Transactional} de la misma instancia (\emph{self-invocation}): el proxy no intercepta. Extrae a otro bean.
+\end{warnbox}
+
+% ------------------------------------------------------
+% Spring Data avanzado
+% ------------------------------------------------------
+\section{Spring Data avanzado}
+\begin{itemize}[leftmargin=*]
+  \item Ciclo de vida JPA: estados (transient, managed, detached, removed), \emph{dirty checking} y \texttt{flush}.
+  \item \textbf{Proyecciones} (interfaces/clases), \textbf{Specifications} y Querydsl; \textbf{EntityGraph} para asociaciones.
+  \item Auditoría (\texttt{@CreatedDate}/\texttt{@LastModifiedDate}) y \texttt{AuditorAware}.
+  \item Repositorios personalizados y \texttt{@Query} para DTOs.
+\end{itemize}
+
+\begin{lstlisting}[style=javastyle, caption={EntityGraph y proyecciones}] 
+interface UserView { Long getId(); String getEmail(); }
+
+interface UserRepo extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
+  @EntityGraph(attributePaths = {"roles"})
+  Optional<User> findWithRolesById(Long id);
+
+  @Query("select u.id as id, u.email as email from User u where u.email like :q")
+  List<UserView> search(@Param("q") String q);
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=javastyle, caption={Specifications para filtros dinámicos}] 
+class Specs {
+  static Specification<User> emailContains(String q) {
+    return (root, cq, cb) -> cb.like(root.get("email"), "%" + q + "%");
+  }
+  static Specification<User> hasRole(String role) {
+    return (root, cq, cb) -> cb.isMember(role, root.get("roles"));
+  }
+}
+\end{lstlisting}
+
+% ------------------------------------------------------
+% Spring Security avanzado
+% ------------------------------------------------------
+\section{Spring Security avanzado}
+\begin{itemize}[leftmargin=*]
+  \item Arquitectura: cadena de filtros, \texttt{AuthenticationManager}, \texttt{AuthenticationProvider}, \texttt{SecurityContext}.
+  \item Autorización moderna con \texttt{AuthorizationManager}; seguridad a nivel de método con \texttt{@EnableMethodSecurity}.
+  \item Múltiples cadenas \texttt{HttpSecurity} con \texttt{@Order} para separar APIs públicas/privadas.
+  \item \textbf{PermissionEvaluator} para reglas de dominio; sesiones \emph{stateless} y \texttt{SessionCreationPolicy.STATELESS}.
+\end{itemize}
+
+\begin{lstlisting}[style=javastyle, caption={Múltiples HttpSecurity y PermissionEvaluator}] 
+@Configuration
+@EnableMethodSecurity
+class MultiHttp {
+  @Bean @Order(1)
+  SecurityFilterChain api(HttpSecurity http) throws Exception {
+    http.securityMatcher("/api/**")
+      .authorizeHttpRequests(a -> a.anyRequest().authenticated())
+      .oauth2ResourceServer(o -> o.jwt());
+    return http.build();
+  }
+  @Bean @Order(2)
+  SecurityFilterChain web(HttpSecurity http) throws Exception {
+    http.authorizeHttpRequests(a -> a.anyRequest().permitAll());
+    return http.build();
+  }
+}
+
+@Component
+class DomainPermission implements PermissionEvaluator {
+  public boolean hasPermission(Authentication a, Object target, Object perm) {
+    return /* lógica de dominio */ true; }
+  public boolean hasPermission(Authentication a, Serializable id, String type, Object perm) { return true; }
+}
+\end{lstlisting}
+
+% ------------------------------------------------------
+% Web MVC y WebFlux internals
+% ------------------------------------------------------
+\section{MVC/WebFlux: resolvers, handlers y funcional}
+\subsection{Spring MVC}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{ArgumentResolvers}: inyectan parámetros en controladores; \textbf{ReturnValueHandlers}: serializan respuestas.
+  \item Negotiación de contenido, validación y \texttt{HttpMessageConverters} (Jackson, etc.).
+\end{itemize}
+
+\begin{lstlisting}[style=javastyle, caption={ArgumentResolver personalizado}]
+@Configuration
+class MvcCfg implements WebMvcConfigurer {
+  @Override public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+    resolvers.add(new UserIdResolver());
+  }
+}
+
+class UserId {}
+class UserIdResolver implements HandlerMethodArgumentResolver {
+  public boolean supportsParameter(MethodParameter p) { return p.getParameterType().equals(UserId.class); }
+  public Object resolveArgument(MethodParameter p, ModelAndViewContainer m, NativeWebRequest w, WebDataBinderFactory b) {
+    return new UserId();
+  }
+}
+\end{lstlisting}
+
+\subsection{Spring WebFlux}
+\begin{itemize}[leftmargin=*]
+  \item Modelo \emph{reactivo} basado en \textbf{Reactor}: \emph{event loop}, \emph{backpressure} y \texttt{Schedulers}.
+  \item Endpoints funcionales con \texttt{RouterFunction}/\texttt{HandlerFunction}.
+\end{itemize}
+
+\begin{lstlisting}[style=javastyle, caption={Router funcional en WebFlux}] 
+@Configuration
+class Routes {
+  @Bean RouterFunction<ServerResponse> router() {
+    return RouterFunctions.route()
+      .GET("/hello", req -> ServerResponse.ok().bodyValue("hi"))
+      .build();
+  }
+}
+\end{lstlisting}
+
+% ------------------------------------------------------
+% Integration, Batch, Cloud, Resilience
+% ------------------------------------------------------
+\section{Integración, Batch y resiliencia}
+\subsection{Spring Integration}
+\begin{itemize}[leftmargin=*]
+  \item Colas, canales, \emph{gateways}, transformadores y \emph{Enterprise Integration Patterns}.
+\end{itemize}
+
+\subsection{Spring Batch}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Jobs/Steps}: \emph{chunk-oriented} vs \emph{tasklet}. Reintentables, idempotencia y control de estado.
+\end{itemize}
+
+\subsection{Resilience4j y Spring Cloud}
+\begin{itemize}[leftmargin=*]
+  \item Circuit Breaker, Retry, RateLimiter, Bulkhead. Configuración por instancia.
+  \item Spring Cloud: Config, Gateway, OpenFeign, LoadBalancer; trazas con Micrometer Tracing/OTel.
+\end{itemize}
+
+\begin{lstlisting}[style=yamlstyle, caption={Resilience4j por instancia}] 
+resilience4j.circuitbreaker:
+  instances:
+    externalApi:
+      slidingWindowSize: 20
+      failureRateThreshold: 50
+\end{lstlisting}
+
+% ------------------------------------------------------
+% Configuración avanzada
+% ------------------------------------------------------
+\section{Configuración avanzada y PropertySources}
+\begin{itemize}[leftmargin=*]
+  \item Orden de resolución: args de línea de comandos \textrightarrow{} variables de entorno \textrightarrow{} archivos \texttt{application-*.yml} \textrightarrow{} \texttt{@PropertySource}.
+  \item \texttt{Environment} y \texttt{PropertySources}; perfiles y \texttt{@Profile}, \texttt{@Conditional} personalizadas.
+  \item Cifrado de propiedades (JCE/HashiCorp Vault/SOPS) y secretos externos.
+\end{itemize}
+
+\begin{lstlisting}[style=javastyle, caption={Condition personalizada}]
+class OnLinux implements Condition {
+  public boolean matches(ConditionContext c, AnnotatedTypeMetadata m) {
+    return c.getEnvironment().getProperty("os.name", "").toLowerCase().contains("linux");
+  }
+}
+
+@Configuration
+@Conditional(OnLinux.class)
+class LinuxOnly {}
+\end{lstlisting}
+
+% ------------------------------------------------------
+% Testing avanzado
+% ------------------------------------------------------
+\section{Testing avanzado}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Slices}: \texttt{@WebMvcTest}, \texttt{@DataJpaTest}, \texttt{@JsonTest}, \texttt{@RestClientTest}.
+  \item \texttt{@MockBean} para sustituir dependencias; \textbf{context caching} para acelerar.
+  \item WireMock/Testcontainers para dependencias externas (HTTP/Kafka/Redis).
+\end{itemize}
+
+\begin{lstlisting}[style=javastyle, caption={@WebMvcTest con servicio simulado}]
+@WebMvcTest(UserController.class)
+class UserControllerTest {
+  @Autowired MockMvc mvc;
+  @MockBean UserService svc;
+
+  @Test void ok() throws Exception {
+    when(svc.get(anyString())).thenReturn(new UserDto("1","a@b.com"));
+    mvc.perform(get("/api/users/1")).andExpect(status().isOk());
+  }
+}
+\end{lstlisting}
+
+% ------------------------------------------------------
+% Plan de estudio senior Spring
+% ------------------------------------------------------
+\section{Plan de estudio Senior Spring (6 semanas)}
+\begin{enumerate}[leftmargin=*]
+  \item Core IoC, ciclo de vida, eventos, AOP básico; labs con \texttt{BeanPostProcessor} y \texttt{FactoryBean}.
+  \item Transacciones avanzadas, locking, specs JPA y proyecciones; pruebas con \texttt{@DataJpaTest} y Testcontainers.
+  \item Security avanzado (multi-HttpSecurity, método), MVC internals (resolvers/handlers).
+  \item WebFlux: router funcional, backpressure, integración con R2DBC.
+  \item Integración/Batch/Resilience4j; observabilidad profunda con métricas y trazas.
+  \item Cloud: Config, Gateway, OpenFeign; despliegue en contenedores y rendimiento.
+\end{enumerate}
+
+% ------------------------------------------------------
+% API y serialización avanzada
+% ------------------------------------------------------
+\section{API y serialización avanzada}
+\subsection{Validación avanzada y method validation}
+\begin{lstlisting}[style=javastyle, caption={Groups y validación a nivel de método}]
+import jakarta.validation.constraints.*;
+import org.springframework.validation.annotation.Validated;
+
+interface Create {}
+interface Update {}
+
+record Product(@NotNull(groups=Update.class) Long id,
+               @NotBlank(groups={Create.class, Update.class}) String name) {}
+
+@Validated
+class ProductService {
+  public @NotBlank String normalize(@NotBlank String name) { return name.trim(); }
+}
+\end{lstlisting}
+
+\subsection{Jackson: configuración global y JavaTime}
+\begin{lstlisting}[style=javastyle, caption={ObjectMapper personalizado}]
+@Configuration
+class JacksonCfg {
+  @Bean com.fasterxml.jackson.databind.Module javaTime() {
+    return new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule();
+  }
+}
+\end{lstlisting}
+
+\subsection{HTTP caching, ETag y Problem+JSON}
+\begin{lstlisting}[style=javastyle, caption={ETag condicional y Cache-Control}]
+@GetMapping("/items/{id}")
+ResponseEntity<ItemDto> get(@PathVariable Long id, WebRequest req) {
+  var item = svc.get(id);
+  var etag = '"' + item.version() + '"';
+  if (req.checkNotModified(etag)) return null;
+  return ResponseEntity.ok().eTag(etag).cacheControl(CacheControl.maxAge(Duration.ofMinutes(5))).body(item);
+}
+\end{lstlisting}
+
+\begin{tipbox}
+Estandariza errores con application/problem+json; usa un \texttt{@ControllerAdvice} que serialice código, título y detalle de la incidencia.
+\end{tipbox}
+
+% ------------------------------------------------------
+% JPA avanzada
+% ------------------------------------------------------
+\section{JPA avanzada: concurrencia, caché y paginación}
+\subsection{Optimistic/Pessimistic locking}
+\begin{lstlisting}[style=javastyle, caption={@Version y bloqueo pesimista}] 
+@Entity
+class Account {
+  @Id Long id;
+  @Version Long version;
+  BigDecimal balance;
+}
+
+interface AccountRepo extends JpaRepository<Account, Long> {
+  @Lock(LockModeType.PESSIMISTIC_WRITE)
+  @Query("select a from Account a where a.id=:id")
+  Account findForUpdate(@Param("id") Long id);
+}
+\end{lstlisting}
+
+\subsection{Caché de segundo nivel y batch}
+\begin{lstlisting}[style=yamlstyle, caption={Ehcache/Hibernate y batch}] 
+spring:
+  jpa:
+    properties:
+      hibernate.cache.use_second_level_cache: true
+      hibernate.cache.region.factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+      hibernate.javax.cache.provider: org.ehcache.jsr107.EhcacheCachingProvider
+      hibernate.default_batch_fetch_size: 50
+\end{lstlisting}
+
+\subsection{Paginación correcta}
+\begin{lstlisting}[style=javastyle, caption={Page vs Slice y orden estable}] 
+Page<User> page = repo.findAll(PageRequest.of(0, 50, Sort.by("id")));
+Slice<User> slice = repo.findAllByActiveTrue(PageRequest.of(0, 50));
+\end{lstlisting}
+
+% ------------------------------------------------------
+% Mapping y DTOs
+% ------------------------------------------------------
+\section{Mapeo eficiente con MapStruct}
+\begin{lstlisting}[style=javastyle, caption={Mapper con @Mapper(componentModel="spring")}] 
+@Mapper(componentModel = "spring")
+interface UserMapper {
+  UserDto toDto(User e);
+  @Mapping(target="id", ignore=true)
+  User toEntity(CreateUserDto dto);
+}
+\end{lstlisting}
+
+% ------------------------------------------------------
+% Seguridad OAuth2/OIDC avanzada
+% ------------------------------------------------------
+\section{OAuth2/OIDC avanzado}
+\begin{lstlisting}[style=javastyle, caption={Client OIDC (login) y Resource Server}]
+@Configuration
+class OAuthCfg {
+  @Bean SecurityFilterChain login(HttpSecurity http) throws Exception {
+    http.securityMatcher("/ui/**")
+      .authorizeHttpRequests(a -> a.anyRequest().authenticated())
+      .oauth2Login(Customizer.withDefaults());
+    return http.build();
+  }
+  @Bean SecurityFilterChain api(HttpSecurity http) throws Exception {
+    http.securityMatcher("/api/**")
+      .authorizeHttpRequests(a -> a.anyRequest().authenticated())
+      .oauth2ResourceServer(o -> o.jwt());
+    return http.build();
+  }
+}
+\end{lstlisting}
+
+% ------------------------------------------------------
+% Cloud/Kubernetes
+% ------------------------------------------------------
+\section{Despliegue cloud-native y Kubernetes}
+\begin{lstlisting}[style=yamlstyle, caption={Probes y recursos}] 
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: app
+        image: app:latest
+        readinessProbe:
+          httpGet: { path: /actuator/health/readiness, port: 8080 }
+        livenessProbe:
+          httpGet: { path: /actuator/health/liveness, port: 8080 }
+        resources:
+          requests: { cpu: "200m", memory: "256Mi" }
+          limits:   { cpu: "1",    memory: "512Mi" }
+\end{lstlisting}
+
+% ------------------------------------------------------
+% OpenAPI/Swagger
+% ------------------------------------------------------
+\section{OpenAPI y documentación}
+\begin{lstlisting}[style=javastyle, caption={springdoc-openapi configuración mínima}] 
+// build: añade dependency org.springdoc:springdoc-openapi-starter-webmvc-ui
+@Configuration
+class OpenApiCfg {}
+// UI: /swagger-ui.html  Spec: /v3/api-docs
+\end{lstlisting}
+
+% ------------------------------------------------------
+% Logging estructurado
+% ------------------------------------------------------
+\section{Logging estructurado y correlación}
+\begin{lstlisting}[style=javastyle, caption={MDC para correlation id}]
+import org.slf4j.MDC;
+
+try (var ignored = MDC.putCloseable("corrId", UUID.randomUUID().toString())) {
+  log.info("procesando");
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=yamlstyle, caption={Logback JSON (ejemplo)}]
+logging:
+  pattern:
+    console: "%d{ISO8601} %level %logger - %X{corrId} %msg%n"
+\end{lstlisting}
+
+% ------------------------------------------------------
+% Build avanzado
+% ------------------------------------------------------
+\section{Build: Gradle y Jib}
+\begin{lstlisting}[style=bashstyle, caption={Gradle y Jib}]
+./gradlew bootRun
+./gradlew bootJar
+./gradlew jibDockerBuild # com.google.cloud.tools:jib-spring-boot-extension
+\end{lstlisting}
+
+% ------------------------------------------------------
+% Reactivo con R2DBC
+% ------------------------------------------------------
+\section{R2DBC: datos reactivos}
+\begin{lstlisting}[style=javastyle, caption={Repositorio reactive y tx}] 
+interface UserRxRepo extends org.springframework.data.r2dbc.repository.R2dbcRepository<User, Long> {}
+
+@Service
+class RxSvc {
+  private final org.springframework.transaction.reactive.TransactionalOperator tx;
+  private final UserRxRepo repo;
+  Mono<User> create(User u) {
+    return tx.execute(status -> repo.save(u));
+  }
+}
+\end{lstlisting}
+
+% ------------------------------------------------------
+% Patrón Outbox
+% ------------------------------------------------------
+\section{Patrón Outbox para consistencia}
+\begin{lstlisting}[style=javastyle, caption={Entidad Outbox y publicador}]
+@Entity class OutboxEvent { @Id @GeneratedValue Long id; String type; String payload; Instant createdAt; }
+
+@Service
+class OutboxPublisher {
+  @Transactional
+  public void createAndPublish(Order order) {
+    // 1) Persistir dominio
+    // 2) Persistir evento outbox en la misma TX
+  }
+}
+\end{lstlisting}
+
+\appendix
+\section{Comandos CLI y propiedades clave}
+\begin{itemize}[leftmargin=*]
+  \item \texttt{mvn spring-boot:run} \quad \texttt{./mvnw}\, disponible en proyectos generados.
+  \item \texttt{mvn -DskipTests package} \quad empaqueta JAR.
+  \item \texttt{mvn spring-boot:build-image} \quad imagen OCI con Buildpacks.
+  \item Perfiles: \texttt{--spring.profiles.active=prod}. Variables: \texttt{SPRING\_APPLICATION\_NAME}.
+\end{itemize}
+
+\section{Cadena de filtros y flujo MVC (internals)}
+\begin{itemize}[leftmargin=*]
+  \item Servlet Container \textrightarrow{} FilterChain \textrightarrow{} DispatcherServlet \textrightarrow{} HandlerMapping \textrightarrow{} HandlerAdapter \textrightarrow{} Controller/Handler \textrightarrow{} ReturnValueHandlers \textrightarrow{} ViewResolver.
+  \item Transacciones y proxies: \texttt{@Transactional} crea \emph{proxies} (JDK/CGLIB); fuga si se llama internamente al método desde la misma instancia.
+  \item Post-procesadores: \texttt{BeanFactoryPostProcessor} y \texttt{BeanPostProcessor} permiten modificar definiciones/instancias en el ciclo de vida.
+\end{itemize}
+
+% ------------------------------------------------------
+% Certificación Java SE 17 Developer (OCP)
+% ------------------------------------------------------
+\section{Certificación Java SE 17 Developer (OCP) \textemdash{} Guía práctica}
+Esta guía resume los objetivos clave de OCP Java 17 (1Z0-829) y añade ejemplos y ejercicios.
+
+\subsection{Temario esencial}
+\begin{itemize}[leftmargin=*]
+  \item Lenguaje: tipos, operadores, control de flujo, alcance, \texttt{var}, \texttt{record}, \texttt{sealed}, \texttt{switch expression}.
+  \item POO: herencia, interfaces, clases anidadas, inmutabilidad, \texttt{equals/hashCode/compareTo}.
+  \item Genéricos y colecciones: listas, conjuntos, mapas, comparadores, utilidades de \texttt{Collections}.
+  \item Streams y funcional: pipelines, \texttt{Optional}, \texttt{Collectors}.
+  \item Concurrencia: hilos, \texttt{ExecutorService}, colecciones concurrentes, \texttt{CompletableFuture}.
+  \item Excepciones: jerarquía, \texttt{try-with-resources}, multi-\texttt{catch}.
+  \item I/O y NIO.2: \texttt{Path}, \texttt{Files}, \texttt{WatchService}.
+  \item Fecha/hora y i18n: \texttt{java.time}, \texttt{Locale}, \texttt{ResourceBundle}.
+  \item Módulos (JPMS): \texttt{module-info.java}.
+  \item JVM y herramientas: empaquetado, JAR, JFR/JCMD básico.
+\end{itemize}
+
+\subsection{Novedades relevantes y sintaxis moderna}
+\begin{lstlisting}[style=javastyle, caption={Record, pattern matching y switch expression}]
+public record Point(int x, int y) {}
+
+static String typeOf(Object o) {
+  if (o instanceof String s) return "str:" + s.length();
+  if (o instanceof Number n) return "num:" + n.intValue();
+  return "other";
+}
+
+static int dayToNum(String d) {
+  return switch (d) {
+    case "MON", "TUE", "WED", "THU", "FRI" -> 1;
+    case "SAT", "SUN" -> 2;
+    default -> throw new IllegalArgumentException();
+  };
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=javastyle, caption={Clases selladas (sealed) y jerarquías cerradas}]
+public sealed interface Shape permits Circle, Rect {}
+public final class Circle implements Shape {}
+public non-sealed class Rect implements Shape {}
+\end{lstlisting}
+
+\subsection{POO sólida}
+\begin{lstlisting}[style=javastyle, caption={equals/hashCode/compareTo correctos}]
+public final class User implements Comparable<User> {
+  private final String id; private final String email;
+  public User(String id, String email) { this.id = id; this.email = email; }
+  @Override public boolean equals(Object o) {
+    if (this == o) return true; if (!(o instanceof User u)) return false;
+    return id.equals(u.id);
+  }
+  @Override public int hashCode() { return id.hashCode(); }
+  @Override public int compareTo(User o) { return this.id.compareTo(o.id); }
+}
+\end{lstlisting}
+
+\subsection{Genéricos y colecciones}
+\begin{lstlisting}[style=javastyle, caption={PECS: Producer Extends, Consumer Super}]
+static <T> void copy(List<? extends T> src, List<? super T> dst) {
+  for (T t : src) dst.add(t);
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=javastyle, caption={Operaciones de Map y ordenación}]
+var m = new java.util.HashMap<String,Integer>();
+m.merge("a",1,Integer::sum);
+m.merge("a",1,Integer::sum); // {a=2}
+var sorted = m.entrySet().stream()
+  .sorted(java.util.Map.Entry.<String,Integer>comparingByValue().reversed())
+  .toList();
+\end{lstlisting}
+
+\subsection{Streams, Optional y Collectors}
+\begin{lstlisting}[style=javastyle, caption={Pipeline típico y colecciones inmutables}]
+var list = java.util.List.of(1,2,3,4,5);
+var evensSquared = list.stream()
+  .filter(i -> i % 2 == 0)
+  .map(i -> i * i)
+  .collect(java.util.stream.Collectors.toUnmodifiableList());
+\end{lstlisting}
+
+\begin{lstlisting}[style=javastyle, caption={Collectors avanzados}]
+var byParity = list.stream().collect(java.util.stream.Collectors.partitioningBy(i -> i % 2 == 0));
+var stats = list.stream().collect(java.util.stream.Collectors.summarizingInt(Integer::intValue));
+\end{lstlisting}
+
+\subsection{Concurrencia y paralelismo}
+\begin{lstlisting}[style=javastyle, caption={ExecutorService y CompletableFuture}]
+var pool = java.util.concurrent.Executors.newFixedThreadPool(4);
+try {
+  var f = java.util.concurrent.CompletableFuture.supplyAsync(() -> 40 + 2, pool)
+    .thenApply(x -> x * 2)
+    .orTimeout(1, java.util.concurrent.TimeUnit.SECONDS);
+  System.out.println(f.join());
+} finally { pool.shutdown(); }
+\end{lstlisting}
+
+\subsection{Excepciones y TWR}
+\begin{lstlisting}[style=javastyle, caption={Try-with-resources y supresión}]
+try (var in = java.nio.file.Files.newBufferedReader(java.nio.file.Path.of("data.txt"))) {
+  System.out.println(in.readLine());
+} catch (java.io.IOException e) {
+  e.printStackTrace();
+}
+\end{lstlisting}
+
+\subsection{I/O, NIO.2 e i18n}
+\begin{lstlisting}[style=javastyle, caption={Path/Files y WatchService}]
+var path = java.nio.file.Path.of("/tmp");
+try (var s = java.nio.file.Files.walk(path)) {
+  s.filter(java.nio.file.Files::isRegularFile).forEach(System.out::println);
+}
+var ws = java.nio.file.FileSystems.getDefault().newWatchService();
+path.register(ws, java.nio.file.StandardWatchEventKinds.ENTRY_CREATE);
+\end{lstlisting}
+
+\begin{lstlisting}[style=javastyle, caption={java.time y ResourceBundle}]
+var now = java.time.ZonedDateTime.now();
+var fmt = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z", java.util.Locale.US);
+System.out.println(now.format(fmt));
+var b = java.util.ResourceBundle.getBundle("messages", new java.util.Locale("es","ES"));
+System.out.println(b.getString("hello"));
+\end{lstlisting}
+
+\subsection{JPMS y herramientas}
+\begin{lstlisting}[style=javastyle, caption={module-info.java mínimo}]
+module com.example.app {
+  requires java.logging;
+  exports com.example.api;
+}
+\end{lstlisting}
+
+\subsection{Trampas típicas y ejercicios}
+\begin{lstlisting}[style=javastyle, caption={Autoboxing y cache de Integer}]
+Integer a = 128, b = 128; System.out.println(a == b); // false
+Integer x = 127, y = 127; System.out.println(x == y); // true
+\end{lstlisting}
+
+\begin{itemize}[leftmargin=*]
+  \item Identifica salida de código: orden de inicialización, sobrecarga vs sobreescritura.
+  \item Corrige genéricos: comodines y límites múltiples; PECS.
+  \item Completa TWR, \texttt{Files.walk} y \texttt{Collectors.groupingBy}.
+\end{itemize}
+
+\subsection{Plan de estudio (8 semanas)}
+\begin{enumerate}[leftmargin=*]
+  \item Sintaxis base y POO.  \item Genéricos y colecciones.
+  \item Streams/Optional. \item Excepciones, I/O y NIO.2.
+  \item Concurrencia: hilos, locks, ExecutorService, CompletableFuture.
+  \item Fecha/hora e i18n; módulos JPMS.
+  \item Simulacros de examen y repasos.
+  \item JFR/JCMD básico y último simulacro.
+\end{enumerate}
+
+\begin{tipbox}
+Practica con bancos de preguntas y escribe micro-programas que demuestren cada objetivo. Prioriza la lectura de preguntas con trampas de tipos y promoción numérica.
+\end{tipbox}
+
+\end{document}

@@ -1,0 +1,1362 @@
+\documentclass[11pt,a4paper]{article}
+
+% Paquetes
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{titlesec}
+
+% Configuración de página
+\geometry{
+    a4paper,
+    left=2.5cm,
+    right=2.5cm,
+    top=3cm,
+    bottom=3cm
+}
+
+% Configuración de encabezados y pies de página
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Guía Completa de Nginx}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Configuración de colores
+\definecolor{codebackground}{RGB}{248,248,248}
+\definecolor{codekeyword}{RGB}{0,0,255}
+\definecolor{codecomment}{RGB}{0,128,0}
+\definecolor{codestring}{RGB}{163,21,21}
+
+% Configuración de listings para código
+\lstdefinestyle{nginx}{
+    language=bash,
+    backgroundcolor=\color{codebackground},
+    commentstyle=\color{codecomment},
+    keywordstyle=\color{codekeyword},
+    stringstyle=\color{codestring},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2,
+    frame=single,
+    rulecolor=\color{black!30}
+}
+
+\lstset{style=nginx}
+
+% Configuración de hyperref
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    pdftitle={Guía Completa de Nginx},
+    pdfauthor={AlexSilvaa9},
+}
+
+% Título del documento
+\title{
+    \Huge\textbf{Guía Completa de Nginx} \\
+    \Large Todo lo que necesitas saber sobre Nginx y Virtual Hosts
+}
+\author{AlexSilvaa9}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\tableofcontents
+\newpage
+
+% ===================================
+% SECCIÓN 1: INTRODUCCIÓN
+% ===================================
+\section{Introducción a Nginx}
+
+Nginx (pronunciado "engine-x") es un servidor web de código abierto, conocido por su alto rendimiento, estabilidad, configuración simple y bajo consumo de recursos.
+
+\subsection{Características principales}
+
+\begin{itemize}[leftmargin=*]
+    \item Servidor web HTTP de alto rendimiento
+    \item Proxy reverso para HTTP, HTTPS, SMTP, POP3 e IMAP
+    \item Balanceador de carga
+    \item Caché HTTP
+    \item Manejo eficiente de archivos estáticos
+    \item Soporte para FastCGI, uWSGI, SCGI
+\end{itemize}
+
+% ===================================
+% SECCIÓN 2: VIRTUAL HOSTS
+% ===================================
+\section{Virtual Hosts (vhosts)}
+
+\subsection{¿Qué es un Virtual Host?}
+
+Un \textbf{virtual host} es una configuración que permite que un \textbf{mismo servidor web} (una sola máquina con una IP) sirva \textbf{múltiples sitios web o aplicaciones diferentes}.
+
+\subsubsection{Analogía}
+Imagina un edificio de apartamentos (el servidor):
+\begin{itemize}
+    \item \textbf{Una dirección} (una IP)
+    \item \textbf{Múltiples apartamentos} (diferentes sitios web)
+    \item \textbf{El portero} (Nginx) dirige a cada visitante al apartamento correcto según el nombre que pida
+\end{itemize}
+
+\subsection{Tipos de Virtual Hosts}
+
+\subsubsection{Basados en nombre (Name-based)}
+El más común. Usa el \textbf{nombre de dominio} para distinguir sitios:
+\begin{itemize}
+    \item \texttt{ejemplo1.com} → Sitio A
+    \item \texttt{ejemplo2.com} → Sitio B
+    \item \textbf{Misma IP}, diferentes dominios
+\end{itemize}
+
+\subsubsection{Basados en IP (IP-based)}
+Cada sitio tiene su propia IP:
+\begin{itemize}
+    \item \texttt{192.168.1.10} → Sitio A
+    \item \texttt{192.168.1.11} → Sitio B
+\end{itemize}
+
+\subsubsection{Basados en puerto (Port-based)}
+Mismo dominio/IP, diferentes puertos:
+\begin{itemize}
+    \item \texttt{ejemplo.com:80} → Sitio A
+    \item \texttt{ejemplo.com:8080} → Sitio B
+\end{itemize}
+
+% ===================================
+% SECCIÓN 3: ARQUITECTURA
+% ===================================
+\section{Arquitectura de Nginx}
+
+\subsection{Modelo de procesos}
+
+Nginx usa un modelo \textbf{asíncrono y basado en eventos} (event-driven):
+
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=Estructura de procesos]
+\begin{verbatim}
+            ┌─────────────────┐
+            │  Master Process │  (root, gestiona workers)
+            └────────┬────────┘
+                     │
+    ┌────────────────┼────────────────┐
+    │                │                │
+┌───▼────┐      ┌────▼────┐      ┌───▼────┐
+│ Worker │      │ Worker  │      │ Worker │
+│Process │      │ Process │      │Process │
+└────────┘      └─────────┘      └────────┘
+(atiende miles de conexiones cada uno)
+\end{verbatim}
+\end{tcolorbox}
+
+\subsection{Ventajas del modelo de Nginx}
+\begin{itemize}
+    \item Un worker puede manejar miles de conexiones simultáneas
+    \item Muy eficiente en memoria
+    \item No bloquea operaciones (non-blocking I/O)
+\end{itemize}
+
+\subsection{Comparación con Apache}
+\begin{itemize}
+    \item \textbf{Apache}: Crea un proceso/thread por conexión (más pesado)
+    \item \textbf{Nginx}: Event-driven, maneja múltiples conexiones por worker
+\end{itemize}
+
+% ===================================
+% SECCIÓN 4: ESTRUCTURA DE CONFIGURACIÓN
+% ===================================
+\section{Estructura de Configuración}
+
+\subsection{Directorios principales}
+
+\begin{lstlisting}[language=bash, caption=Estructura de directorios de Nginx]
+/etc/nginx/
+├── nginx.conf              # Configuración principal
+├── sites-available/        # Configuraciones disponibles
+│   ├── sitio1.conf
+│   ├── sitio2.conf
+│   └── default
+├── sites-enabled/          # Symlinks a sitios activos
+│   ├── sitio1.conf -> ../sites-available/sitio1.conf
+│   └── default -> ../sites-available/default
+├── conf.d/                 # Configuraciones adicionales
+├── snippets/               # Fragmentos reutilizables
+└── mime.types              # Tipos MIME
+\end{lstlisting}
+
+\subsection{Niveles de contexto}
+
+\begin{lstlisting}[caption=Estructura completa de nginx.conf]
+# CONTEXTO MAIN (global)
+user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+
+events {
+    # CONTEXTO EVENTS
+    worker_connections 1024;
+    use epoll;
+}
+
+http {
+    # CONTEXTO HTTP
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+    
+    sendfile on;
+    keepalive_timeout 65;
+    
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+    
+    upstream backend {
+        server localhost:3000;
+        server localhost:3001;
+    }
+    
+    server {
+        # CONTEXTO SERVER (virtual host)
+        listen 80;
+        server_name ejemplo.com;
+        
+        location / {
+            # CONTEXTO LOCATION
+            root /var/www/html;
+            index index.html;
+        }
+    }
+    
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/sites-enabled/*;
+}
+\end{lstlisting}
+
+% ===================================
+% SECCIÓN 5: EJEMPLOS DE VIRTUAL HOSTS
+% ===================================
+\section{Ejemplos de Virtual Hosts}
+
+\subsection{Sitio web estático simple}
+
+\begin{lstlisting}[caption=sites-available/miapp.com.conf]
+server {
+    listen 80;
+    listen [::]:80;
+    
+    server_name miapp.com www.miapp.com;
+    
+    root /var/www/miapp;
+    index index.html index.htm;
+    
+    access_log /var/log/nginx/miapp-access.log;
+    error_log /var/log/nginx/miapp-error.log;
+    
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+\end{lstlisting}
+
+\subsection{Proxy reverso a aplicación}
+
+\begin{lstlisting}[caption=Proxy a Node.js/Python/etc]
+server {
+    listen 80;
+    server_name api.miapp.com;
+    
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+\end{lstlisting}
+
+\subsection{HTTPS con SSL/TLS}
+
+\begin{lstlisting}[caption=Configuración SSL completa]
+server {
+    listen 80;
+    server_name miapp.com www.miapp.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    
+    server_name miapp.com www.miapp.com;
+    
+    ssl_certificate /etc/ssl/certs/miapp.crt;
+    ssl_certificate_key /etc/ssl/private/miapp.key;
+    
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+    
+    root /var/www/miapp;
+    index index.html;
+    
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+\end{lstlisting}
+
+\subsection{Múltiples aplicaciones en subdominios}
+
+\begin{lstlisting}[caption=Multi-sitio con subdominios]
+# Aplicación principal
+server {
+    listen 80;
+    server_name miempresa.com www.miempresa.com;
+    root /var/www/principal;
+    index index.html;
+}
+
+# Blog
+server {
+    listen 80;
+    server_name blog.miempresa.com;
+    
+    location / {
+        proxy_pass http://localhost:2368;
+        proxy_set_header Host $host;
+    }
+}
+
+# API
+server {
+    listen 80;
+    server_name api.miempresa.com;
+    
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+    }
+}
+\end{lstlisting}
+
+% ===================================
+% SECCIÓN 6: TRY_FILES
+% ===================================
+\section{La directiva try\_files}
+
+\subsection{¿Qué es try\_files?}
+
+\texttt{try\_files} es una directiva que \textbf{intenta servir archivos en un orden específico} hasta encontrar uno que exista.
+
+\subsection{Sintaxis}
+\begin{lstlisting}
+try_files archivo1 archivo2 ... fallback;
+\end{lstlisting}
+
+\subsection{Funcionamiento paso a paso}
+
+Cuando llega una petición \texttt{http://miapp.com/about}:
+
+\begin{enumerate}
+    \item \textbf{Paso 1}: Nginx busca \texttt{\$uri} → \texttt{/var/www/miapp/about} (archivo)
+    \item \textbf{Paso 2}: Nginx busca \texttt{\$uri/} → \texttt{/var/www/miapp/about/} (directorio)
+    \item \textbf{Paso 3}: Nginx sirve el fallback → \texttt{/index.html}
+\end{enumerate}
+
+\subsection{Casos de uso}
+
+\subsubsection{SPA (React, Vue, Angular)}
+\begin{lstlisting}
+location / {
+    try_files $uri $uri/ /index.html;
+}
+\end{lstlisting}
+
+\subsubsection{Sitio estático}
+\begin{lstlisting}
+location / {
+    try_files $uri $uri/ =404;
+}
+\end{lstlisting}
+
+\subsubsection{WordPress/PHP}
+\begin{lstlisting}
+location / {
+    try_files $uri $uri/ /index.php?$args;
+}
+\end{lstlisting}
+
+% ===================================
+% SECCIÓN 7: DIRECTIVAS IMPORTANTES
+% ===================================
+\section{Directivas Importantes}
+
+\subsection{Listen}
+\begin{lstlisting}
+listen 80;                    # IPv4, puerto 80
+listen [::]:80;               # IPv6, puerto 80
+listen 443 ssl;               # HTTPS
+listen 8080;                  # Puerto personalizado
+\end{lstlisting}
+
+\subsection{Server Name}
+\begin{lstlisting}
+server_name ejemplo.com;
+server_name ejemplo.com www.ejemplo.com;
+server_name *.ejemplo.com;
+server_name ~^(?<subdomain>.+)\.ejemplo\.com$;
+\end{lstlisting}
+
+\subsection{Root e Index}
+\begin{lstlisting}
+root /var/www/html;
+index index.html index.php;
+\end{lstlisting}
+
+\subsection{Location - Prioridades}
+
+Las directivas \texttt{location} se evalúan en este orden:
+
+\begin{enumerate}
+    \item \texttt{location = /exacto} - Match exacto (PRIORIDAD MÁXIMA)
+    \item \texttt{location \^{}\~{} /img/} - Preferential prefix
+    \item \texttt{location \~{} \.php\$} - Regex case-sensitive
+    \item \texttt{location \~{}* \.(jpg|png)\$} - Regex case-insensitive
+    \item \texttt{location /} - Prefix match (PRIORIDAD MÍNIMA)
+\end{enumerate}
+
+\begin{lstlisting}[caption=Ejemplo de prioridades]
+server {
+    listen 80;
+    server_name test.local;
+    
+    location = / {
+        return 200 "Exacto: raiz\n";
+    }
+    
+    location / {
+        return 200 "Prefix: cualquier cosa\n";
+    }
+    
+    location /imagenes/ {
+        return 200 "Prefix: imagenes\n";
+    }
+    
+    location ~ \.png$ {
+        return 200 "Regex: archivos PNG\n";
+    }
+}
+\end{lstlisting}
+
+% ===================================
+% SECCIÓN 8: DNS Y VIRTUAL HOSTS
+% ===================================
+\section{DNS y Virtual Hosts}
+
+\subsection{Flujo completo}
+
+\subsubsection{Paso 1: Configuración DNS}
+
+En tu proveedor DNS (Cloudflare, GoDaddy, Route53):
+
+\begin{tcolorbox}[colback=green!5!white,colframe=green!75!black,title=Registros DNS]
+\begin{verbatim}
+Type    Name              Value           TTL
+A       miapp.com         203.0.113.10    3600
+A       blog.com          203.0.113.10    3600
+A       tienda.com        203.0.113.10    3600
+\end{verbatim}
+\end{tcolorbox}
+
+✅ \textbf{Múltiples dominios apuntan a la MISMA IP}
+
+\subsubsection{Paso 2: El navegador hace la petición}
+
+\begin{lstlisting}[language=html]
+GET / HTTP/1.1
+Host: miapp.com
+\end{lstlisting}
+
+\textbf{Clave:} El navegador envía el nombre del dominio en la cabecera \texttt{Host:}
+
+\subsubsection{Paso 3: Nginx elige el virtual host}
+
+Nginx compara la cabecera \texttt{Host:} con \texttt{server\_name}:
+
+\begin{itemize}
+    \item Si \texttt{Host: miapp.com} → sirve \texttt{/var/www/miapp}
+    \item Si \texttt{Host: blog.com} → sirve \texttt{/var/www/blog}
+    \item Si \texttt{Host: tienda.com} → sirve \texttt{/var/www/tienda}
+\end{itemize}
+
+% ===================================
+% SECCIÓN 9: HABILITAR SITIOS
+% ===================================
+\section{Habilitar y Deshabilitar Sitios}
+
+\subsection{Concepto}
+
+Nginx usa dos directorios:
+\begin{itemize}
+    \item \texttt{sites-available/} - Todas las configuraciones (activas o no)
+    \item \texttt{sites-enabled/} - Solo las configuraciones ACTIVAS
+\end{itemize}
+
+\subsection{Proceso completo}
+
+\subsubsection{1. Crear configuración}
+\begin{lstlisting}[language=bash]
+sudo nano /etc/nginx/sites-available/miapp.conf
+\end{lstlisting}
+
+\subsubsection{2. Habilitar el sitio (crear symlink)}
+\begin{lstlisting}[language=bash]
+sudo ln -s /etc/nginx/sites-available/miapp.conf \
+           /etc/nginx/sites-enabled/
+\end{lstlisting}
+
+\subsubsection{3. Verificar y recargar}
+\begin{lstlisting}[language=bash]
+sudo nginx -t
+sudo nginx -s reload
+\end{lstlisting}
+
+\subsubsection{4. Deshabilitar sitio}
+\begin{lstlisting}[language=bash]
+sudo rm /etc/nginx/sites-enabled/miapp.conf
+sudo nginx -s reload
+\end{lstlisting}
+
+\textbf{Importante:} Solo se borra el symlink, la configuración permanece en \texttt{sites-available/}
+
+% ===================================
+% SECCIÓN 10: PROXY REVERSO
+% ===================================
+\section{Proxy Reverso}
+
+\subsection{Headers esenciales}
+
+\begin{lstlisting}[caption=Configuración completa de proxy]
+location / {
+    proxy_pass http://backend;
+    
+    # Headers esenciales
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Port $server_port;
+    
+    # WebSockets
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    
+    # Timeouts
+    proxy_connect_timeout 60s;
+    proxy_send_timeout 60s;
+    proxy_read_timeout 60s;
+    
+    # Buffers
+    proxy_buffering on;
+    proxy_buffer_size 4k;
+    proxy_buffers 8 4k;
+    
+    proxy_cache_bypass $http_upgrade;
+}
+\end{lstlisting}
+
+\subsection{Upstream y Load Balancing}
+
+\subsubsection{Round-robin (por defecto)}
+\begin{lstlisting}
+upstream backend {
+    server backend1.com;
+    server backend2.com;
+    server backend3.com;
+}
+\end{lstlisting}
+
+\subsubsection{Least connections}
+\begin{lstlisting}
+upstream backend {
+    least_conn;
+    server backend1.com;
+    server backend2.com;
+}
+\end{lstlisting}
+
+\subsubsection{IP Hash}
+\begin{lstlisting}
+upstream backend {
+    ip_hash;
+    server backend1.com;
+    server backend2.com;
+}
+\end{lstlisting}
+
+\subsubsection{Con pesos y parámetros}
+\begin{lstlisting}
+upstream backend {
+    server backend1.com weight=3;
+    server backend2.com max_fails=3 fail_timeout=30s;
+    server backend3.com backup;
+    server backend4.com down;
+}
+\end{lstlisting}
+
+% ===================================
+% SECCIÓN 11: CACHÉ
+% ===================================
+\section{Caché en Nginx}
+
+\subsection{Caché de Proxy}
+
+\begin{lstlisting}[caption=Configuración de caché]
+http {
+    proxy_cache_path /var/cache/nginx 
+                     levels=1:2 
+                     keys_zone=my_cache:10m 
+                     max_size=1g 
+                     inactive=60m 
+                     use_temp_path=off;
+    
+    server {
+        location / {
+            proxy_pass http://backend;
+            proxy_cache my_cache;
+            proxy_cache_valid 200 10m;
+            proxy_cache_valid 404 1m;
+            
+            add_header X-Cache-Status $upstream_cache_status;
+            
+            proxy_cache_key "$scheme$request_method$host$request_uri";
+            proxy_cache_bypass $cookie_nocache $arg_nocache;
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection{Caché de archivos estáticos}
+
+\begin{lstlisting}
+location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ {
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+    access_log off;
+}
+\end{lstlisting}
+
+% ===================================
+% SECCIÓN 12: SEGURIDAD
+% ===================================
+\section{Seguridad}
+
+\subsection{Rate Limiting}
+
+\begin{lstlisting}[caption=Protección contra DDoS]
+http {
+    limit_req_zone $binary_remote_addr zone=mylimit:10m rate=10r/s;
+    
+    server {
+        location /api/ {
+            limit_req zone=mylimit burst=20 nodelay;
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection{Limit de conexiones}
+
+\begin{lstlisting}
+http {
+    limit_conn_zone $binary_remote_addr zone=addr:10m;
+    
+    server {
+        location /download/ {
+            limit_conn addr 2;
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection{Control de acceso}
+
+\begin{lstlisting}
+location /admin {
+    allow 192.168.1.0/24;
+    allow 10.0.0.1;
+    deny all;
+}
+\end{lstlisting}
+
+\subsection{Headers de seguridad}
+
+\begin{lstlisting}
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-XSS-Protection "1; mode=block" always;
+add_header Referrer-Policy "no-referrer-when-downgrade" always;
+add_header Content-Security-Policy 
+    "default-src 'self' http: https: data: blob: 'unsafe-inline'" always;
+
+server_tokens off;
+\end{lstlisting}
+
+\subsection{Autenticación básica}
+
+\begin{lstlisting}[language=bash]
+# Crear archivo de contraseñas
+sudo htpasswd -c /etc/nginx/.htpasswd usuario1
+\end{lstlisting}
+
+\begin{lstlisting}
+location /admin {
+    auth_basic "Area restringida";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+}
+\end{lstlisting}
+
+% ===================================
+% SECCIÓN 13: REDIRECTS Y REWRITES
+% ===================================
+\section{Redirects y Rewrites}
+
+\subsection{Return (más eficiente)}
+
+\begin{lstlisting}
+# Redirect permanente
+server {
+    listen 80;
+    server_name old-domain.com;
+    return 301 https://new-domain.com$request_uri;
+}
+
+# HTTP a HTTPS
+server {
+    listen 80;
+    return 301 https://$server_name$request_uri;
+}
+
+# Redirect de página
+location /old-page {
+    return 301 /new-page;
+}
+\end{lstlisting}
+
+\subsection{Rewrite}
+
+\begin{lstlisting}
+# Rewrite simple
+rewrite ^/old/(.*)$ /new/$1 permanent;
+
+# Con condiciones
+if ($host != 'www.ejemplo.com') {
+    rewrite ^/(.*)$ https://www.ejemplo.com/$1 permanent;
+}
+\end{lstlisting}
+
+\textbf{Flags de rewrite:}
+\begin{itemize}
+    \item \texttt{last} - Detiene y busca nueva location
+    \item \texttt{break} - Detiene en esta location
+    \item \texttt{redirect} - Redirect temporal (302)
+    \item \texttt{permanent} - Redirect permanente (301)
+\end{itemize}
+
+% ===================================
+% SECCIÓN 14: SSL/TLS
+% ===================================
+\section{SSL/TLS}
+
+\subsection{Configuración SSL completa}
+
+\begin{lstlisting}[caption=SSL/TLS moderno y seguro]
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name ejemplo.com;
+    
+    # Certificados
+    ssl_certificate /etc/letsencrypt/live/ejemplo.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/ejemplo.com/privkey.pem;
+    
+    # Protocolos modernos
+    ssl_protocols TLSv1.2 TLSv1.3;
+    
+    # Cifrados seguros
+    ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256';
+    ssl_prefer_server_ciphers off;
+    
+    # OCSP Stapling
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    resolver 8.8.8.8 8.8.4.4 valid=300s;
+    
+    # Sesiones SSL
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    ssl_session_tickets off;
+    
+    # HSTS
+    add_header Strict-Transport-Security 
+        "max-age=31536000; includeSubDomains; preload" always;
+    
+    # Diffie-Hellman
+    ssl_dhparam /etc/nginx/dhparam.pem;
+}
+\end{lstlisting}
+
+\subsection{Let's Encrypt}
+
+\begin{lstlisting}[language=bash]
+# Instalar certbot
+sudo apt install certbot python3-certbot-nginx
+
+# Obtener certificado
+sudo certbot --nginx -d ejemplo.com -d www.ejemplo.com
+
+# Auto-renovación
+sudo certbot renew --dry-run
+\end{lstlisting}
+
+% ===================================
+% SECCIÓN 15: LOGS
+% ===================================
+\section{Logs y Monitoring}
+
+\subsection{Formatos de log personalizados}
+
+\begin{lstlisting}
+http {
+    log_format main '$remote_addr - $remote_user [$time_local] '
+                    '"$request" $status $body_bytes_sent '
+                    '"$http_referer" "$http_user_agent" '
+                    '$request_time';
+    
+    log_format json escape=json '{'
+        '"time":"$time_local",'
+        '"remote_addr":"$remote_addr",'
+        '"request":"$request",'
+        '"status":$status,'
+        '"body_bytes_sent":$body_bytes_sent,'
+        '"request_time":$request_time'
+    '}';
+    
+    access_log /var/log/nginx/access.log main;
+    
+    server {
+        access_log /var/log/nginx/miapp-access.log json;
+        error_log /var/log/nginx/miapp-error.log warn;
+    }
+}
+\end{lstlisting}
+
+\subsection{Analizar logs}
+
+\begin{lstlisting}[language=bash]
+# Ver últimas peticiones
+tail -f /var/log/nginx/access.log
+
+# IPs con más peticiones
+awk '{print $1}' /var/log/nginx/access.log | \
+    sort | uniq -c | sort -rn | head -10
+
+# Códigos de estado
+awk '{print $9}' /var/log/nginx/access.log | \
+    sort | uniq -c | sort -rn
+
+# URLs más visitadas
+awk '{print $7}' /var/log/nginx/access.log | \
+    sort | uniq -c | sort -rn | head -10
+\end{lstlisting}
+
+% ===================================
+% SECCIÓN 16: VARIABLES
+% ===================================
+\section{Variables de Nginx}
+
+\subsection{Variables principales}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|p{8cm}|}
+\hline
+\textbf{Variable} & \textbf{Descripción} \\
+\hline
+\texttt{\$host} & Nombre del host (ejemplo.com) \\
+\texttt{\$uri} & URI de la petición (/path/to/file) \\
+\texttt{\$request\_uri} & URI completa con query string \\
+\texttt{\$args} & Query string (?id=123\&name=test) \\
+\texttt{\$remote\_addr} & IP del cliente \\
+\texttt{\$server\_addr} & IP del servidor \\
+\texttt{\$server\_port} & Puerto del servidor \\
+\texttt{\$scheme} & http o https \\
+\texttt{\$request\_method} & GET, POST, PUT, etc. \\
+\texttt{\$http\_user\_agent} & User agent del navegador \\
+\texttt{\$http\_referer} & Página de referencia \\
+\texttt{\$status} & Código de estado HTTP \\
+\texttt{\$body\_bytes\_sent} & Bytes enviados (sin headers) \\
+\texttt{\$request\_time} & Tiempo total de procesamiento \\
+\hline
+\end{tabular}
+\caption{Variables principales de Nginx}
+\end{table}
+
+% ===================================
+% SECCIÓN 17: PERFORMANCE
+% ===================================
+\section{Performance Tuning}
+
+\begin{lstlisting}[caption=Optimización de rendimiento]
+user www-data;
+worker_processes auto;
+worker_rlimit_nofile 65535;
+
+events {
+    worker_connections 4096;
+    use epoll;
+    multi_accept on;
+}
+
+http {
+    # Sendfile y TCP
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    
+    # Timeouts
+    keepalive_timeout 30;
+    keepalive_requests 100;
+    reset_timedout_connection on;
+    client_body_timeout 10;
+    send_timeout 10;
+    
+    # Buffers
+    client_body_buffer_size 128k;
+    client_max_body_size 10m;
+    client_header_buffer_size 1k;
+    large_client_header_buffers 4 4k;
+    
+    # Gzip
+    gzip on;
+    gzip_vary on;
+    gzip_comp_level 5;
+    gzip_min_length 256;
+    gzip_types
+        text/plain
+        text/css
+        text/xml
+        text/javascript
+        application/json
+        application/javascript
+        application/xml+rss;
+    
+    # File cache
+    open_file_cache max=200000 inactive=20s;
+    open_file_cache_valid 30s;
+    open_file_cache_min_uses 2;
+    open_file_cache_errors on;
+}
+\end{lstlisting}
+
+% ===================================
+% SECCIÓN 18: TROUBLESHOOTING
+% ===================================
+\section{Troubleshooting}
+
+\subsection{Comandos de diagnóstico}
+
+\begin{lstlisting}[language=bash]
+# Verificar sintaxis
+sudo nginx -t
+
+# Ver configuración completa
+sudo nginx -T
+
+# Ver versión y módulos
+nginx -V
+
+# Ver procesos
+ps aux | grep nginx
+
+# Ver puertos
+netstat -tlnp | grep nginx
+
+# Ver logs en tiempo real
+tail -f /var/log/nginx/error.log
+\end{lstlisting}
+
+\subsection{Errores comunes y soluciones}
+
+\subsubsection{Could not build server\_names\_hash}
+\begin{lstlisting}
+http {
+    server_names_hash_bucket_size 64;
+}
+\end{lstlisting}
+
+\subsubsection{413 Request Entity Too Large}
+\begin{lstlisting}
+http {
+    client_max_body_size 100M;
+}
+\end{lstlisting}
+
+\subsubsection{502 Bad Gateway}
+\begin{itemize}
+    \item Backend no está corriendo
+    \item Firewall bloqueando conexión
+    \item Socket PHP-FPM incorrecto
+\end{itemize}
+
+\begin{lstlisting}[language=bash]
+# Verificar backend
+curl http://localhost:3000
+
+# Ver logs
+tail -f /var/log/nginx/error.log
+\end{lstlisting}
+
+\subsubsection{Permission denied}
+\begin{lstlisting}[language=bash]
+# Verificar permisos
+ls -la /var/www/miapp
+
+# Cambiar dueño
+sudo chown -R www-data:www-data /var/www/miapp
+\end{lstlisting}
+
+% ===================================
+% SECCIÓN 19: COMANDOS ESENCIALES
+% ===================================
+\section{Comandos Esenciales}
+
+\subsection{Gestión del servicio}
+
+\begin{lstlisting}[language=bash]
+# Iniciar
+sudo systemctl start nginx
+
+# Detener
+sudo systemctl stop nginx
+
+# Reiniciar
+sudo systemctl restart nginx
+
+# Recargar (sin downtime)
+sudo systemctl reload nginx
+
+# Ver estado
+sudo systemctl status nginx
+
+# Auto-start en boot
+sudo systemctl enable nginx
+\end{lstlisting}
+
+\subsection{Comandos de Nginx}
+
+\begin{lstlisting}[language=bash]
+# Test de configuración
+sudo nginx -t
+
+# Dump de configuración
+sudo nginx -T
+
+# Reload
+sudo nginx -s reload
+
+# Stop
+sudo nginx -s stop
+
+# Graceful shutdown
+sudo nginx -s quit
+
+# Reabrir logs
+sudo nginx -s reopen
+\end{lstlisting}
+
+% ===================================
+% SECCIÓN 20: CASOS DE USO
+% ===================================
+\section{Casos de Uso Avanzados}
+
+\subsection{Microservicios}
+
+\begin{lstlisting}
+server {
+    listen 80;
+    server_name api.ejemplo.com;
+    
+    location /users {
+        proxy_pass http://localhost:3001;
+    }
+    
+    location /products {
+        proxy_pass http://localhost:3002;
+    }
+    
+    location /payments {
+        proxy_pass http://localhost:3003;
+    }
+}
+\end{lstlisting}
+
+\subsection{SPA con API backend}
+
+\begin{lstlisting}
+server {
+    listen 80;
+    server_name app.ejemplo.com;
+    root /var/www/frontend/dist;
+    
+    # Frontend
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+    
+    # API
+    location /api {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+    }
+    
+    # WebSocket
+    location /ws {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+    }
+    
+    # Archivos estáticos
+    location /static {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}
+\end{lstlisting}
+
+\subsection{Multi-tenant (SaaS)}
+
+\begin{lstlisting}
+map $http_host $tenant {
+    cliente1.miapp.com "cliente1";
+    cliente2.miapp.com "cliente2";
+    default "demo";
+}
+
+server {
+    listen 80;
+    server_name *.miapp.com;
+    
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_set_header X-Tenant-ID $tenant;
+        proxy_set_header Host $host;
+    }
+}
+\end{lstlisting}
+
+% ===================================
+% SECCIÓN 21: SNIPPETS REUTILIZABLES
+% ===================================
+\section{Snippets Reutilizables}
+
+\subsection{SSL Parameters}
+
+\begin{lstlisting}[caption=/etc/nginx/snippets/ssl-params.conf]
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256';
+ssl_prefer_server_ciphers off;
+ssl_session_cache shared:SSL:10m;
+add_header Strict-Transport-Security "max-age=31536000" always;
+\end{lstlisting}
+
+\subsection{Security Headers}
+
+\begin{lstlisting}[caption=/etc/nginx/snippets/security-headers.conf]
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-XSS-Protection "1; mode=block" always;
+server_tokens off;
+\end{lstlisting}
+
+\subsection{Static Cache}
+
+\begin{lstlisting}[caption=/etc/nginx/snippets/static-cache.conf]
+location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ {
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+}
+\end{lstlisting}
+
+\subsection{Uso de snippets}
+
+\begin{lstlisting}
+server {
+    listen 443 ssl http2;
+    
+    include snippets/ssl-params.conf;
+    include snippets/security-headers.conf;
+    include snippets/static-cache.conf;
+}
+\end{lstlisting}
+
+% ===================================
+% SECCIÓN 22: EJEMPLO COMPLETO
+% ===================================
+\section{Ejemplo Práctico Completo}
+
+\subsection{Escenario}
+
+Servidor en \texttt{203.0.113.50} con:
+\begin{itemize}
+    \item \texttt{empresa.com} → Sitio corporativo
+    \item \texttt{blog.empresa.com} → Blog
+    \item \texttt{api.empresa.com} → API backend
+\end{itemize}
+
+\subsection{Paso 1: Configuración DNS}
+
+\begin{tcolorbox}[colback=yellow!5!white,colframe=yellow!75!black,title=Registros DNS]
+\begin{verbatim}
+Type  Name                Value           TTL
+A     empresa.com         203.0.113.50    3600
+A     www.empresa.com     203.0.113.50    3600
+A     blog.empresa.com    203.0.113.50    3600
+A     api.empresa.com     203.0.113.50    3600
+\end{verbatim}
+\end{tcolorbox}
+
+\subsection{Paso 2: Crear directorios}
+
+\begin{lstlisting}[language=bash]
+sudo mkdir -p /var/www/empresa
+sudo mkdir -p /var/www/blog
+\end{lstlisting}
+
+\subsection{Paso 3: Configuración del sitio principal}
+
+\begin{lstlisting}[caption=/etc/nginx/sites-available/empresa.conf]
+server {
+    listen 80;
+    server_name empresa.com www.empresa.com;
+    
+    root /var/www/empresa;
+    index index.html;
+    
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+\end{lstlisting}
+
+\subsection{Paso 4: Configuración del blog}
+
+\begin{lstlisting}[caption=/etc/nginx/sites-available/blog.conf]
+server {
+    listen 80;
+    server_name blog.empresa.com;
+    
+    root /var/www/blog;
+    index index.html;
+    
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+\end{lstlisting}
+
+\subsection{Paso 5: Configuración de la API}
+
+\begin{lstlisting}[caption=/etc/nginx/sites-available/api.conf]
+server {
+    listen 80;
+    server_name api.empresa.com;
+    
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+\end{lstlisting}
+
+\subsection{Paso 6: Habilitar y verificar}
+
+\begin{lstlisting}[language=bash]
+# Habilitar sitios
+sudo ln -s /etc/nginx/sites-available/empresa.conf \
+           /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/blog.conf \
+           /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/api.conf \
+           /etc/nginx/sites-enabled/
+
+# Verificar configuración
+sudo nginx -t
+
+# Recargar Nginx
+sudo nginx -s reload
+
+# Probar
+curl http://empresa.com
+curl http://blog.empresa.com
+curl http://api.empresa.com
+\end{lstlisting}
+
+% ===================================
+% CONCLUSIÓN
+% ===================================
+\section{Conclusión}
+
+Esta guía cubre los aspectos fundamentales y avanzados de Nginx, desde la configuración básica de virtual hosts hasta optimización de rendimiento y casos de uso complejos.
+
+\subsection{Puntos clave}
+
+\begin{enumerate}
+    \item Nginx es un servidor web eficiente y versátil
+    \item Los virtual hosts permiten múltiples sitios en un servidor
+    \item La configuración es modular y reutilizable
+    \item La seguridad debe ser una prioridad
+    \item El monitoreo y los logs son esenciales
+\end{enumerate}
+
+\subsection{Recursos adicionales}
+
+\begin{itemize}
+    \item Documentación oficial: \url{https://nginx.org/en/docs/}
+    \item Nginx Admin Guide: \url{https://docs.nginx.com/nginx/admin-guide/}
+    \item DigitalOcean Tutorials: \url{https://www.digitalocean.com/community/tags/nginx}
+\end{itemize}
+
+
+\end{document}

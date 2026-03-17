@@ -1,0 +1,717 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usetikzlibrary{positioning}
+
+\geometry{margin=2.3cm}
+\setlength{\headheight}{15pt}
+\AtBeginDocument{\shorthandoff{<>}}
+
+% Paleta profesional inspirada en Ansible
+\definecolor{ansRed}{HTML}{EE0000}
+\definecolor{ansRedDark}{HTML}{B20000}
+\definecolor{ansRedLight}{HTML}{FCA5A5}
+\definecolor{ansInk}{HTML}{1F2937}
+\definecolor{ansSlate}{HTML}{4B5563}
+\definecolor{ansBg}{HTML}{FFF5F5}
+
+\titleformat{\section}{\Large\bfseries\color{ansRedDark}}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\large\bfseries\color{ansRed}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{ansInk}}{\thesubsubsection}{0.5em}{}
+\setlist[itemize]{itemsep=2pt,topsep=4pt}
+\setlist[enumerate]{itemsep=2pt,topsep=4pt}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=ansRedDark,
+  urlcolor=ansRed,
+  pdftitle={Apuntes Ansible de Cero a Master},
+  pdfauthor={DevOps Notes}
+}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  inputencoding=utf8,
+  backgroundcolor=\color{ansBg},
+  frame=single,
+  rulecolor=\color{ansRedLight},
+  breaklines=true,
+  commentstyle=\color{ansSlate},
+  keywordstyle=\color{ansRedDark},
+  stringstyle=\color{ansRed},
+  showstringspaces=false,
+  captionpos=b,
+  tabsize=2,
+  literate=
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+    {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+    {ñ}{{\~n}}1 {Ñ}{{\~N}}1 {ü}{{\"u}}1 {Ü}{{\"U}}1
+    {├}{{|--}}3 {└}{{+--}}3 {│}{{|}}1 {─}{{-}}1
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{ansRedDark}{Apuntes Ansible: De Cero a Master}}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{\textcolor{ansSlate}{Automatización y operación de sistemas en producción}}
+
+\newtcolorbox{ansnote}{
+  colback=ansBg,
+  colframe=ansRedLight,
+  arc=2mm,
+  boxrule=0.6pt,
+  left=2mm,
+  right=2mm,
+  top=1mm,
+  bottom=1mm
+}
+
+\newtcolorbox{anschecklist}{
+  colback=white,
+  colframe=ansRed,
+  arc=1.8mm,
+  boxrule=0.5pt,
+  left=2mm,
+  right=2mm,
+  top=1mm,
+  bottom=1mm,
+  title=Checklist de producción,
+  fonttitle=\bfseries,
+  coltitle=ansRedDark
+}
+
+% Logo real de Ansible (archivo local)
+\newcommand{\ansiblebrandlogo}{
+\includegraphics[width=3cm]{ansible-logo.png}
+}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+
+\begin{titlepage}
+\centering
+\vspace*{1.2cm}
+{\ansiblebrandlogo\par}
+\vspace{0.8cm}
+{\Huge\bfseries\color{ansRedDark} Apuntes Ansible: De Cero a Master\par}
+\vspace{0.35cm}
+{\Large\color{ansSlate} Guía profesional, práctica y escalable\par}
+\vspace{1.0cm}
+\begin{ansnote}
+\textbf{Objetivo:} dominar Ansible en escenarios reales: Linux, Windows, red, on-premise, cloud, Kubernetes, seguridad, CI/CD y operación enterprise.
+\end{ansnote}
+\vfill
+{\large\textbf{DevOps Notes}}\\[0.2cm]
+{\normalsize\today}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+\hypersetup{pageanchor=true}
+
+\section{Cómo usar estos apuntes (ruta recomendada)}
+
+\begin{ansnote}
+\textbf{Método de aprendizaje:} 30\% teoría + 70\% laboratorio. Ejecuta cada ejemplo en un entorno de práctica antes de llevarlo a producción.
+\end{ansnote}
+
+\subsection{Ruta por niveles}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.20\textwidth} X}
+\toprule
+Nivel & Objetivo práctico \\
+\midrule
+Inicial & Inventarios, comandos ad-hoc, playbooks simples e idempotencia. \\
+Intermedio & Roles, variables por entorno, Vault, handlers y templates. \\
+Avanzado & CI/CD, testing, seguridad, automatización híbrida y day-2 operations. \\
+Master & Plataforma automatizada con gobernanza, AWX/AAP, runbooks y compliance. \\
+\bottomrule
+\end{tabularx}
+
+\section{Qué es Ansible y por qué importa}
+
+Ansible es una plataforma de automatización \textbf{agentless} orientada a configuración, despliegue, orquestación y operación repetible.
+
+\subsection{Problemas que resuelve}
+\begin{itemize}
+  \item Eliminación de tareas manuales repetitivas e inconsistentes.
+  \item Estandarización de configuración entre entornos.
+  \item Reducción de drift operacional y errores humanos.
+  \item Trazabilidad de cambios vía Git + pipelines.
+\end{itemize}
+
+\subsection{Conceptos base}
+\begin{itemize}
+  \item \textbf{Inventory}: hosts y grupos objetivo.
+  \item \textbf{Playbook}: automatización declarativa en YAML.
+  \item \textbf{Task}: unidad mínima de acción.
+  \item \textbf{Role}: empaquetado reusable de automatización.
+  \item \textbf{Collection}: distribución modular de plugins/módulos.
+  \item \textbf{Vault}: cifrado de secretos.
+\end{itemize}
+
+\section{Ansible en on-premise, cloud e híbrido}
+
+Sí, Ansible funciona perfectamente en \textbf{on-premise}. De hecho, es uno de sus casos más fuertes.
+
+\subsection{Targets típicos}
+\begin{itemize}
+  \item Linux (Ubuntu, RHEL, Debian, Rocky, etc.).
+  \item Windows Server (WinRM).
+  \item Equipos de red (Cisco, Juniper, Arista, Fortinet, Palo Alto).
+  \item Virtualización (VMware), cloud pública y Kubernetes.
+\end{itemize}
+
+\subsection{Patrón híbrido recomendado}
+\begin{enumerate}
+  \item Terraform aprovisiona infraestructura base.
+  \item Ansible configura sistemas y operación day-2.
+  \item GitOps gestiona aplicaciones en Kubernetes.
+\end{enumerate}
+
+\begin{center}
+\begin{tikzpicture}[font=\small, node distance=0.8cm]
+  \node[draw=ansRedDark, rounded corners, minimum width=4.2cm, minimum height=1cm, fill=ansBg] (ci) {CI/CD + Quality Gates};
+  \node[draw=ansRedDark, rounded corners, minimum width=4.2cm, minimum height=1cm, fill=ansBg, below=of ci] (ans) {Ansible (roles + playbooks)};
+  \node[draw=ansRed, rounded corners, minimum width=4.0cm, minimum height=1.1cm, fill=white, left=2.3cm of ans] (onprem) {On-Prem (Linux/Windows/Red)};
+  \node[draw=ansRed, rounded corners, minimum width=4.0cm, minimum height=1.1cm, fill=white, right=2.3cm of ans] (cloud) {Cloud (AWS/Azure/GCP)};
+  \node[draw=ansRed, rounded corners, minimum width=4.2cm, minimum height=1.1cm, fill=white, below=of ans] (k8s) {Kubernetes + GitOps + Helm};
+
+  \draw[->, thick, color=ansRedDark] (ci) -- (ans);
+  \draw[->, thick, color=ansRedDark] (ans) -- (onprem);
+  \draw[->, thick, color=ansRedDark] (ans) -- (cloud);
+  \draw[->, thick, color=ansRedDark] (ans) -- (k8s);
+\end{tikzpicture}
+\end{center}
+
+\section{Instalación, estructura y ciclo de trabajo}
+
+\subsection{Instalación recomendada}
+\begin{lstlisting}[caption=Instalación con pipx]
+python3 -m pip install --user pipx
+python3 -m pipx ensurepath
+pipx install ansible
+ansible --version
+\end{lstlisting}
+
+\subsection{Flujo básico}
+\begin{lstlisting}[caption=Comandos esenciales]
+ansible-inventory -i inventories/dev/hosts.ini --graph
+ansible all -i inventories/dev/hosts.ini -m ping
+ansible-playbook -i inventories/dev/hosts.ini playbooks/site.yml
+ansible-playbook -i inventories/dev/hosts.ini playbooks/site.yml --check --diff
+\end{lstlisting}
+
+\subsection{Estructura enterprise recomendada}
+\begin{lstlisting}[caption=Blueprint de repositorio Ansible]
+ansible-platform/
+├── ansible.cfg
+├── collections/
+├── inventories/
+│   ├── dev/
+│   ├── qa/
+│   └── prod/
+├── playbooks/
+│   ├── site.yml
+│   ├── bootstrap.yml
+│   ├── patching.yml
+│   └── dr-recovery.yml
+├── roles/
+├── molecule/
+├── docs/
+└── .github/workflows/
+\end{lstlisting}
+
+\section{Inventario en profundidad}
+
+\subsection{Inventario estático INI}
+\begin{lstlisting}[caption=hosts.ini]
+[web]
+web01 ansible_host=10.10.1.11 ansible_user=ubuntu
+web02 ansible_host=10.10.1.12 ansible_user=ubuntu
+
+[db]
+db01 ansible_host=10.10.2.21 ansible_user=ubuntu
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+\end{lstlisting}
+
+\subsection{Inventario YAML}
+\begin{lstlisting}[caption=hosts.yml]
+all:
+  children:
+    web:
+      hosts:
+        web01:
+          ansible_host: 10.10.1.11
+        web02:
+          ansible_host: 10.10.1.12
+    db:
+      hosts:
+        db01:
+          ansible_host: 10.10.2.21
+\end{lstlisting}
+
+\subsection{Inventario dinámico}
+En cloud, usa inventory dinámico para evitar listas manuales. Ejemplos: \texttt{amazon.aws.aws\_ec2}, \texttt{azure.azcollection.azure\_rm}, \texttt{google.cloud.gcp\_compute}.
+
+\section{Ad-hoc commands y primeras automatizaciones}
+
+\begin{lstlisting}[caption=Comandos ad-hoc clave]
+ansible all -i inventories/dev/hosts.ini -m ping
+ansible web -i inventories/dev/hosts.ini -m shell -a "uptime"
+ansible web -i inventories/dev/hosts.ini -m apt -a "name=nginx state=present" -b
+ansible all -i inventories/dev/hosts.ini -m setup
+\end{lstlisting}
+
+\section{Playbooks y idempotencia profesional}
+
+\subsection{Playbook base}
+\begin{lstlisting}[caption=Instalación y servicio]
+- name: Configurar web servers
+  hosts: web
+  become: true
+  tasks:
+    - name: Instalar nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: true
+
+    - name: Habilitar servicio nginx
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+\end{lstlisting}
+
+\subsection{Idempotencia real}
+\begin{itemize}
+  \item Prefiere módulos declarativos sobre \texttt{shell}/\texttt{command}.
+  \item Define estados explícitos (\texttt{present}, \texttt{absent}, \texttt{started}).
+  \item Evita tareas no deterministas.
+\end{itemize}
+
+\section{Variables, precedence y modelado limpio}
+
+\subsection{Fuentes comunes de variables}
+\begin{itemize}
+  \item \texttt{defaults/main.yml} (role defaults).
+  \item \texttt{group\_vars}/\texttt{host\_vars}.
+  \item Variables en playbook/role.
+  \item Extra vars (\texttt{-e}) con prioridad alta.
+\end{itemize}
+
+\subsection{Reglas prácticas}
+\begin{enumerate}
+  \item Valores por defecto en \texttt{defaults}.
+  \item Valores por entorno en \texttt{group\_vars}.
+  \item Nunca esconder lógica crítica solo en \texttt{-e}.
+\end{enumerate}
+
+\section{Roles y colecciones: diseño enterprise}
+
+\subsection{Estructura de role}
+\begin{lstlisting}[caption=Role reusable]
+roles/
+└── nginx/
+    ├── defaults/main.yml
+    ├── vars/main.yml
+    ├── tasks/main.yml
+    ├── handlers/main.yml
+    ├── templates/nginx.conf.j2
+    ├── files/
+    └── meta/main.yml
+\end{lstlisting}
+
+\subsection{Colecciones y dependencias}
+\begin{lstlisting}[caption=requirements.yml]
+collections:
+  - name: ansible.posix
+  - name: kubernetes.core
+  - name: community.general
+  - name: amazon.aws
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Instalar colecciones]
+ansible-galaxy collection install -r requirements.yml
+\end{lstlisting}
+
+\section{Templates, handlers y control de cambios}
+
+\begin{lstlisting}[caption=Template + notify handler]
+- name: Render nginx config
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    mode: '0644'
+  notify: restart nginx
+
+handlers:
+  - name: restart nginx
+    ansible.builtin.service:
+      name: nginx
+      state: restarted
+\end{lstlisting}
+
+\subsection{Buenas prácticas}
+\begin{itemize}
+  \item Cambios config siempre con \texttt{notify}.
+  \item Handlers idempotentes y específicos.
+  \item Plantillas versionadas y testeadas.
+\end{itemize}
+
+\section{Control de flujo avanzado}
+
+\subsection{when, loop, tags, include/import}
+\begin{lstlisting}[caption=Flujo avanzado]
+- name: Instalar paquetes base
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - curl
+    - git
+    - jq
+  tags: [base, packages]
+
+- name: Ejecutar sólo en Debian
+  ansible.builtin.service:
+    name: cron
+    state: restarted
+  when: ansible_facts['os_family'] == 'Debian'
+\end{lstlisting}
+
+\subsection{Manejo robusto de errores}
+\begin{lstlisting}[caption=block/rescue/always]
+- name: Cambio crítico con rollback
+  block:
+    - name: Aplicar cambio
+      ansible.builtin.command: /usr/local/bin/apply_change
+
+  rescue:
+    - name: Ejecutar rollback
+      ansible.builtin.command: /usr/local/bin/rollback_change
+
+  always:
+    - name: Registrar estado
+      ansible.builtin.debug:
+        msg: "Cambio finalizado"
+\end{lstlisting}
+
+\section{Facts, descubrimiento y custom facts}
+
+\subsection{Uso de facts}
+\begin{itemize}
+  \item Descubrir SO, red, memoria, discos, interfaces, etc.
+  \item Adaptar tareas por contexto del host.
+\end{itemize}
+
+\begin{lstlisting}[caption=Ejemplo con facts]
+- name: Mostrar familia de SO
+  ansible.builtin.debug:
+    msg: "{{ inventory_hostname }} -> {{ ansible_facts['os_family'] }}"
+\end{lstlisting}
+
+\section{Ansible Vault y gestión de secretos}
+
+\subsection{Comandos esenciales}
+\begin{lstlisting}[caption=Vault básico]
+ansible-vault create group_vars/prod/vault.yml
+ansible-vault edit group_vars/prod/vault.yml
+ansible-vault view group_vars/prod/vault.yml
+ansible-playbook -i inventories/prod/hosts.ini playbooks/site.yml --ask-vault-pass
+\end{lstlisting}
+
+\subsection{Patrón seguro de secretos}
+\begin{itemize}
+  \item Separar secretos por entorno y dominio.
+  \item Usar vault IDs y rotación regular.
+  \item Integrar con gestores externos (Vault/Secrets Manager).
+\end{itemize}
+
+\section{Kubernetes con Ansible (EKS/AKS/GKE/on-prem)}
+
+\subsection{Módulos y enfoque recomendado}
+\begin{itemize}
+  \item Colección \texttt{kubernetes.core} para recursos K8s.
+  \item Helm vía módulos o CLI controlada.
+  \item Ansible para bootstrap y operación; GitOps para apps de alto churn.
+\end{itemize}
+
+\begin{lstlisting}[caption=Namespace + deployment simple]
+- name: Operación sobre k8s
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Crear namespace
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: plataforma
+\end{lstlisting}
+
+\subsection{Patrón Terraform + Ansible + GitOps}
+\begin{enumerate}
+  \item Terraform crea clúster y red base.
+  \item Ansible instala add-ons operativos (monitoring/logging/seguridad).
+  \item GitOps gestiona aplicaciones y releases continuas.
+\end{enumerate}
+
+\section{Windows, red y automatización heterogénea}
+
+\subsection{Windows con WinRM}
+\begin{itemize}
+  \item Usa \texttt{ansible.windows} y \texttt{community.windows}.
+  \item Asegura certificados, TLS y privilegios mínimos.
+\end{itemize}
+
+\subsection{Networking automation}
+\begin{itemize}
+  \item Backups de configuración, validaciones y despliegues controlados.
+  \item Ejecución por lotes y validación previa en entorno staging.
+\end{itemize}
+
+\section{Rendimiento y estrategia de ejecución}
+
+\subsection{Parámetros clave}
+\begin{itemize}
+  \item \texttt{forks}: paralelismo.
+  \item \texttt{serial}: rolling updates.
+  \item \texttt{strategy}: \texttt{linear} / \texttt{free}.
+  \item \texttt{throttle}: limitar concurrencia en tareas sensibles.
+\end{itemize}
+
+\begin{lstlisting}[caption=Rolling update seguro]
+- name: Deploy por lotes
+  hosts: web
+  serial: 2
+  become: true
+  tasks:
+    - name: Actualizar app
+      ansible.builtin.apt:
+        name: myapp
+        state: latest
+\end{lstlisting}
+
+\section{Testing, calidad y CI/CD}
+
+\subsection{Cadena mínima de calidad}
+\begin{lstlisting}[caption=Pipeline recomendada]
+yamllint .
+ansible-lint
+ansible-playbook -i inventories/dev/hosts.ini playbooks/site.yml --syntax-check
+ansible-playbook -i inventories/dev/hosts.ini playbooks/site.yml --check --diff
+\end{lstlisting}
+
+\subsection{Molecule para roles}
+\begin{lstlisting}[caption=Test de role con Molecule]
+pipx install molecule
+cd roles/nginx
+molecule init scenario --driver-name docker
+molecule test
+\end{lstlisting}
+
+\section{AWX / Ansible Automation Platform}
+
+\subsection{Qué aporta a escala}
+\begin{itemize}
+  \item RBAC, auditoría y ejecución centralizada.
+  \item Job templates, schedules, credenciales seguras.
+  \item Integración con Git, inventarios dinámicos y approvals.
+\end{itemize}
+
+\subsection{Modelo de operación recomendado}
+\begin{enumerate}
+  \item Proyecto en Git con PR obligatorias.
+  \item AWX/AAP ejecuta playbooks versionados.
+  \item Evidencia de ejecución almacenada para compliance.
+\end{enumerate}
+
+\section{Seguridad y compliance}
+
+\begin{itemize}
+  \item Principio de mínimo privilegio (SSH/WinRM/sudo).
+  \item Secretos solo por Vault o gestor externo.
+  \item Inventarios, playbooks y cambios siempre auditables.
+  \item Hardening automatizado (benchmarks CIS) y verificación continua.
+\end{itemize}
+
+\section{Migración desde scripts legacy a Ansible}
+
+\subsection{Plan de migración por fases}
+\begin{enumerate}
+  \item Inventariar scripts críticos y dependencias.
+  \item Convertir tareas comunes a roles reutilizables.
+  \item Añadir tests y validación en CI.
+  \item Decomisionar scripts antiguos por etapas.
+\end{enumerate}
+
+\subsection{Matriz de riesgo}
+\begin{longtable}{p{0.30\textwidth} p{0.18\textwidth} p{0.42\textwidth}}
+\toprule
+\textbf{Tipo de cambio} & \textbf{Riesgo} & \textbf{Mitigación} \\
+\midrule
+Cambios de red/firewall & Alto & Ventana controlada, validación previa, rollback probado. \\
+Parches SO en masa & Medio-Alto & \texttt{serial}, canary y monitoreo post-cambio. \\
+Deploy de app stateless & Medio & Blue/green o rolling con health checks. \\
+Hardening baseline & Medio & Entorno piloto + escaneo de cumplimiento. \\
+\bottomrule
+\end{longtable}
+
+\section{Anti-patrones que debes evitar}
+
+\begin{enumerate}
+  \item Playbooks monolíticos gigantes sin roles.
+  \item Uso excesivo de \texttt{shell}/\texttt{command} para todo.
+  \item Variables opacas y sin convención de nombres.
+  \item Secretos en texto plano en repositorio.
+  \item Ejecutar en producción sin \texttt{--check} previo en entorno similar.
+\end{enumerate}
+
+\section{Troubleshooting experto}
+
+\subsection{Errores comunes y solución}
+\begin{longtable}{p{0.34\textwidth} p{0.56\textwidth}}
+\toprule
+\textbf{Problema} & \textbf{Acción recomendada} \\
+\midrule
+UNREACHABLE por SSH & Revisar red, usuario, llaves, firewall, \texttt{ansible\_host}. \\
+Cambios en cada ejecución & Revisar idempotencia y módulos no declarativos. \\
+Error de permisos sudo & Validar \texttt{become}, \texttt{become\_user} y sudoers. \\
+Variables no aplican & Revisar precedencia y colisiones \texttt{group\_vars}/\texttt{host\_vars}. \\
+Timeouts frecuentes & Ajustar forks/serial/timeout y dividir tareas pesadas. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Comandos de depuración}
+\begin{lstlisting}[caption=Debug rápido]
+ansible-inventory -i inventories/dev/hosts.ini --graph
+ansible all -i inventories/dev/hosts.ini -m setup
+ansible-playbook -i inventories/dev/hosts.ini playbooks/site.yml -vvv
+\end{lstlisting}
+
+\section{Checklist de salida a producción (Go-Live)}
+
+\begin{anschecklist}
+\begin{itemize}
+  \item Inventarios versionados y segregados por entorno.
+  \item Secrets cifrados con Vault y rotación validada.
+  \item \texttt{yamllint}, \texttt{ansible-lint}, \texttt{--check --diff} obligatorios en PR.
+  \item Runbook de rollback documentado y probado.
+  \item Despliegue gradual por \texttt{serial} para servicios críticos.
+  \item Trazabilidad completa de ejecución (job IDs, logs, aprobaciones).
+\end{itemize}
+\end{anschecklist}
+
+\section{Laboratorios guiados (de básico a experto)}
+
+\subsection*{Lab 1: Fundamentos}
+Inventario + conectividad + playbook base sobre 3 VMs Linux.
+
+\subsection*{Lab 2: Roles y templates}
+Crear role reutilizable de NGINX con handlers, variables y validaciones.
+
+\subsection*{Lab 3: Seguridad}
+Introducir Vault, separación dev/prod y políticas mínimas de acceso.
+
+\subsection*{Lab 4: CI/CD y testing}
+Integrar yamllint + ansible-lint + check mode + Molecule.
+
+\subsection*{Lab 5: Híbrido real}
+Automatizar Linux + Windows + namespace k8s con pipeline controlada.
+
+\section{Roadmap de estudio: de 0 a master}
+
+\subsection*{Fase 1 (1-2 semanas)}
+\begin{itemize}
+  \item Inventario, ad-hoc, playbooks, idempotencia.
+  \item Objetivo: baseline Linux funcional.
+\end{itemize}
+
+\subsection*{Fase 2 (2-4 semanas)}
+\begin{itemize}
+  \item Roles, handlers, templates, variables por entorno, Vault.
+  \item Objetivo: automatización reusable y segura.
+\end{itemize}
+
+\subsection*{Fase 3 (1-2 meses)}
+\begin{itemize}
+  \item CI/CD, Molecule, estrategia de despliegue, Windows/red.
+  \item Objetivo: operación robusta en equipos.
+\end{itemize}
+
+\subsection*{Fase 4 (continuo)}
+\begin{itemize}
+  \item AWX/AAP, compliance, catálogo interno de roles, SRE runbooks.
+  \item Objetivo: plataforma de automatización enterprise.
+\end{itemize}
+
+\section{Cheat Sheet final}
+
+\begin{lstlisting}[caption=Comandos que debes dominar]
+# Inventario
+ansible-inventory -i inventories/dev/hosts.ini --graph
+ansible all -i inventories/dev/hosts.ini -m ping
+
+# Playbooks
+ansible-playbook -i inventories/dev/hosts.ini playbooks/site.yml
+ansible-playbook -i inventories/prod/hosts.ini playbooks/site.yml --check --diff
+
+# Vault
+ansible-vault create group_vars/prod/vault.yml
+ansible-playbook -i inventories/prod/hosts.ini playbooks/site.yml --ask-vault-pass
+
+# Calidad
+yamllint .
+ansible-lint
+\end{lstlisting}
+
+\section{Glosario rápido}
+
+\begin{longtable}{p{0.28\textwidth} p{0.64\textwidth}}
+\toprule
+\textbf{Término} & \textbf{Definición práctica} \\
+\midrule
+\texttt{Inventory} & Lista de hosts y grupos objetivo. \\
+\texttt{Playbook} & Archivo YAML con automatización declarativa. \\
+\texttt{Role} & Componente reusable con tareas, vars y handlers. \\
+\texttt{Collection} & Paquete de contenido Ansible (módulos/plugins/roles). \\
+\texttt{Vault} & Cifrado de secretos para uso seguro en playbooks. \\
+\texttt{Idempotencia} & Ejecutar múltiples veces sin producir drift no deseado. \\
+\texttt{Handler} & Tarea disparada por \texttt{notify}, normalmente para reinicios. \\
+\texttt{AWX/AAP} & Plataforma de ejecución centralizada y gobernada de Ansible. \\
+\bottomrule
+\end{longtable}
+
+\section{Conclusión}
+
+Ansible alcanza su nivel \textit{master} cuando se combina:
+\begin{itemize}
+  \item diseño limpio de roles y variables,
+  \item seguridad de secretos y acceso,
+  \item pruebas y automatización CI/CD,
+  \item y operación con trazabilidad en producción.
+\end{itemize}
+
+Si aplicas este contenido con laboratorios y revisión técnica en equipo, tendrás dominio profesional de Ansible para entornos reales.
+
+\end{document}

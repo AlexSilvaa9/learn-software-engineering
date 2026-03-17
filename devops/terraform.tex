@@ -1,0 +1,1081 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{titlesec}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+
+\geometry{margin=2.3cm}
+\setlength{\headheight}{15pt}
+\AtBeginDocument{\shorthandoff{<>}}
+
+% Paleta profesional inspirada en Terraform
+\definecolor{tfPurple}{HTML}{7B42BC}
+\definecolor{tfPurpleDark}{HTML}{5C2D91}
+\definecolor{tfPurpleLight}{HTML}{BFA4EA}
+\definecolor{tfLogoDark}{HTML}{4040B2}
+\definecolor{tfLogoLight}{HTML}{5C4EE5}
+\definecolor{tfInk}{HTML}{1F2937}
+\definecolor{tfSlate}{HTML}{4B5563}
+\definecolor{tfBg}{HTML}{F5F3FF}
+
+\titleformat{\section}{\Large\bfseries\color{tfPurpleDark}}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\large\bfseries\color{tfPurple}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{tfInk}}{\thesubsubsection}{0.5em}{}
+\setlist[itemize]{itemsep=2pt,topsep=4pt}
+\setlist[enumerate]{itemsep=2pt,topsep=4pt}
+
+\hypersetup{
+		colorlinks=true,
+		linkcolor=tfPurpleDark,
+		urlcolor=tfPurple,
+		pdftitle={Apuntes Terraform de Cero a Master},
+		pdfauthor={Alex}
+}
+
+% Configuración de listings para código
+\lstset{
+		basicstyle=\ttfamily\small,
+		inputencoding=utf8,
+		backgroundcolor=\color{tfBg},
+		frame=single,
+		rulecolor=\color{tfPurpleLight},
+		breaklines=true,
+		commentstyle=\color{tfSlate},
+		keywordstyle=\color{tfPurpleDark},
+		stringstyle=\color{tfPurple},
+		showstringspaces=false,
+		captionpos=b,
+		tabsize=2,
+		literate=
+		{á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+		{Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+		{ñ}{{\~n}}1 {Ñ}{{\~N}}1 {ü}{{\"u}}1 {Ü}{{\"U}}1
+		{├}{{|--}}3 {└}{{+--}}3 {│}{{|}}1 {─}{{-}}1
+}
+
+% Encabezados y pies
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{tfPurpleDark}{Apuntes Terraform: De Cero a Master}}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{\textcolor{tfSlate}{Infraestructura como Código en producción}}
+
+\newtcolorbox{tfnote}{
+	colback=tfBg,
+	colframe=tfPurpleLight,
+	arc=2mm,
+	boxrule=0.6pt,
+	left=2mm,
+	right=2mm,
+	top=1mm,
+	bottom=1mm
+}
+
+\newtcolorbox{tfchecklist}{
+	colback=white,
+	colframe=tfPurple,
+	arc=1.8mm,
+	boxrule=0.5pt,
+	left=2mm,
+	right=2mm,
+	top=1mm,
+	bottom=1mm,
+	title=Checklist de producción,
+	fonttitle=\bfseries,
+	coltitle=tfPurpleDark
+}
+
+% Logo vectorial fiel al isotipo de Terraform (sin imagen externa)
+\newcommand{\terraformbrandlogo}{
+\begin{tikzpicture}[x=0.11cm,y=-0.11cm]
+	% Basado en las proporciones del SVG público del logo (orientación corregida)
+	\fill[tfLogoDark] (36.4,20.2) -- (36.4,39.13) -- (52.8,29.67) -- (52.8,10.72) -- cycle;
+	\fill[tfLogoLight] (18.2,10.72) -- (34.6,20.2) -- (34.6,39.13) -- (18.2,29.66) -- cycle;
+	\fill[tfLogoLight] (0,0.15) -- (0,19.09) -- (16.4,28.56) -- (16.4,9.62) -- cycle;
+	\fill[tfLogoLight] (18.2,50.68) -- (34.6,60.15) -- (34.6,41.21) -- (18.2,31.74) -- cycle;
+\end{tikzpicture}
+}
+
+\title{{\Huge \textbf{Apuntes Terraform: De Cero a Master}}\\
+			 {\Large Guía profesional, práctica y escalable}}
+\author{DevOps Notes}
+\date{\today}
+
+\begin{document}
+
+\hypersetup{pageanchor=false}
+
+\begin{titlepage}
+\centering
+\vspace*{1.5cm}
+{\terraformbrandlogo\par}
+\vspace{0.7cm}
+{\Huge\bfseries\color{tfPurpleDark} Apuntes Terraform: De Cero a Master\par}
+\vspace{0.4cm}
+{\Large\color{tfSlate} Guía profesional, práctica y escalable\par}
+\vspace{1.2cm}
+\begin{tfnote}
+\textbf{Objetivo:} dominar Terraform en escenarios reales: cloud, on-premise, Kubernetes, CI/CD, seguridad, gobernanza y operación enterprise.
+\end{tfnote}
+\vfill
+{\large\textbf{DevOps Notes}}\\[0.2cm]
+{\normalsize\today}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+\hypersetup{pageanchor=true}
+
+\section{Cómo usar estos apuntes (ruta recomendada)}
+
+\begin{tfnote}
+\textbf{Modo de estudio sugerido:} cada sección debe ir acompañada de práctica real. Regla simple: \textit{leer 30\%, practicar 70\%}.
+\end{tfnote}
+
+\subsection{Ruta por niveles}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.20\textwidth} X}
+\toprule
+Nivel & Objetivo práctico \\
+\midrule
+Inicial & Crear infra mínima, entender state, usar \texttt{plan/apply/destroy} sin errores. \\
+Intermedio & Diseñar módulos reutilizables, backend remoto, CI con \texttt{plan} en PR. \\
+Avanzado & Operar multi-entorno/multi-cuenta, seguridad IaC y políticas obligatorias. \\
+Master & Diseñar plataforma completa (cloud + on-prem + Kubernetes) con gobernanza y observabilidad. \\
+\bottomrule
+\end{tabularx}
+
+\subsection{Competencias que debes dominar}
+\begin{itemize}
+	\item Modelado declarativo y diseño de módulos mantenibles.
+	\item Operación segura del state y migraciones sin downtime.
+	\item Integración con Kubernetes y GitOps en entornos reales.
+	\item Automatización enterprise (CI/CD, policy as code, FinOps, DR).
+\end{itemize}
+
+\section{Qué es Terraform y por qué importa}
+
+Terraform es una herramienta de \textbf{Infraestructura como Código (IaC)} creada por HashiCorp.
+Permite describir infraestructura en archivos declarativos y aplicarla de forma reproducible.
+
+\subsection{Problemas que resuelve}
+\begin{itemize}
+		\item Evita cambios manuales no trazables (\textit{clickops}).
+		\item Estandariza despliegues entre entornos (dev, qa, prod).
+		\item Facilita revisión por \textit{pull request} y auditoría.
+		\item Reduce errores humanos y acelera entregas.
+\end{itemize}
+
+\subsection{Conceptos base}
+\begin{itemize}
+		\item \textbf{Provider}: plugin que traduce Terraform a API cloud (AWS, Azure, GCP, Kubernetes, etc.).
+		\item \textbf{Resource}: bloque que crea/modifica/elimina un objeto real.
+		\item \textbf{Data source}: lee objetos existentes sin crearlos.
+		\item \textbf{State}: archivo que guarda el mapeo entre código y recursos reales.
+		\item \textbf{Plan}: diferencia entre estado actual y estado deseado.
+\end{itemize}
+
+\section{Terraform en on-premise y entornos híbridos}
+
+Sí, Terraform se puede usar \textbf{perfectamente en on-premise}. No está limitado a nube pública.
+Terraform funciona contra cualquier plataforma con provider compatible o API integrable.
+
+\subsection{Casos on-premise frecuentes}
+\begin{itemize}
+		\item \textbf{VMware vSphere}: VMs, datastores, redes virtuales.
+		\item \textbf{OpenStack}: redes, compute, volúmenes.
+		\item \textbf{Proxmox}: virtualización y recursos de clúster.
+		\item \textbf{Kubernetes on-prem}: namespaces, RBAC, Helm, add-ons.
+		\item \textbf{DNS/IPAM/firewall}: Infoblox, F5, Palo Alto, Fortinet, etc.
+\end{itemize}
+
+\begin{lstlisting}[caption=Ejemplo básico on-prem con vSphere]
+terraform {
+	required_providers {
+		vsphere = {
+			source  = "hashicorp/vsphere"
+			version = "~> 2.5"
+		}
+	}
+}
+
+provider "vsphere" {
+	user                 = var.vsphere_user
+	password             = var.vsphere_password
+	vsphere_server       = var.vsphere_server
+	allow_unverified_ssl = true
+}
+
+resource "vsphere_virtual_machine" "app01" {
+	name             = "app01"
+	resource_pool_id = data.vsphere_resource_pool.pool.id
+	datastore_id      = data.vsphere_datastore.datastore.id
+	num_cpus         = 2
+	memory           = 4096
+	guest_id         = "ubuntu64Guest"
+}
+\end{lstlisting}
+
+\subsection{On-prem + cloud (híbrido) bien diseñado}
+\begin{enumerate}
+		\item Estados separados por dominio (on-prem network, cloud network, k8s, apps-bootstrap).
+		\item Conectividad explícita (VPN/Direct Connect/ExpressRoute + routing + DNS).
+		\item Mismos estándares de tags, naming, políticas y revisiones.
+		\item Pipeline única con aprobaciones por entorno.
+\end{enumerate}
+
+\subsection{Blueprint visual de arquitectura híbrida}
+\begin{center}
+\begin{tikzpicture}[font=\small, node distance=0.8cm]
+	\node[draw=tfPurpleDark, rounded corners, minimum width=4.2cm, minimum height=1cm, fill=tfBg] (ci) {CI/CD + Policy Checks};
+	\node[draw=tfPurpleDark, rounded corners, minimum width=4.2cm, minimum height=1cm, fill=tfBg, below=of ci] (tf) {Terraform (stacks separados)};
+
+	\node[draw=tfPurple, rounded corners, minimum width=4.2cm, minimum height=1.1cm, fill=white, left=2.2cm of tf] (onprem) {On-Prem (vSphere/OpenStack)};
+	\node[draw=tfPurple, rounded corners, minimum width=4.2cm, minimum height=1.1cm, fill=white, right=2.2cm of tf] (cloud) {Cloud (AWS/Azure/GCP)};
+	\node[draw=tfPurple, rounded corners, minimum width=4.2cm, minimum height=1.1cm, fill=white, below=of tf] (k8s) {Kubernetes + Helm + GitOps};
+
+	\draw[->, thick, color=tfPurpleDark] (ci) -- (tf);
+	\draw[->, thick, color=tfPurpleDark] (tf) -- (onprem);
+	\draw[->, thick, color=tfPurpleDark] (tf) -- (cloud);
+	\draw[->, thick, color=tfPurpleDark] (tf) -- (k8s);
+\end{tikzpicture}
+\end{center}
+
+\begin{tfnote}
+\textbf{Regla práctica:} Terraform provisiona la plataforma (infra), mientras GitOps y herramientas de configuración gestionan el ciclo de vida dinámico de aplicaciones.
+\end{tfnote}
+
+\section{Instalación, estructura mínima y flujo de trabajo}
+
+\subsection{Instalación rápida}
+\begin{lstlisting}[caption=Instalación y verificación]
+# Linux (ejemplo con apt y repositorio oficial)
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+sudo apt-get update && sudo apt-get install terraform
+
+terraform -version
+\end{lstlisting}
+
+\subsection{Ciclo de vida básico (imprescindible)}
+\begin{lstlisting}[caption=Comandos esenciales]
+terraform init      # Descarga providers y prepara backend
+terraform fmt       # Formatea el código
+terraform validate  # Valida sintaxis y coherencia
+terraform plan      # Muestra cambios previstos
+terraform apply     # Aplica los cambios
+terraform destroy   # Elimina lo gestionado
+\end{lstlisting}
+
+\subsection{Estructura mínima recomendada}
+\begin{lstlisting}[caption=Estructura de proyecto]
+terraform-project/
+├── main.tf
+├── variables.tf
+├── outputs.tf
+├── providers.tf
+├── versions.tf
+└── terraform.tfvars
+\end{lstlisting}
+
+\section{HCL a fondo (HashiCorp Configuration Language)}
+
+\subsection{Bloques y atributos}
+\begin{lstlisting}[caption=Ejemplo base en HCL]
+terraform {
+	required_version = ">= 1.6.0"
+	required_providers {
+		aws = {
+			source  = "hashicorp/aws"
+			version = "~> 5.0"
+		}
+	}
+}
+
+provider "aws" {
+	region = var.aws_region
+}
+
+resource "aws_s3_bucket" "logs" {
+	bucket = "mi-bucket-logs-unico-12345"
+	tags = {
+		Project = "plataforma"
+		Owner   = "devops"
+	}
+}
+\end{lstlisting}
+
+\subsection{Variables, tipos y validaciones}
+\begin{lstlisting}[caption=Variables tipadas y validadas]
+variable "aws_region" {
+	description = "Región de AWS"
+	type        = string
+	default     = "eu-west-1"
+}
+
+variable "instance_count" {
+	description = "Número de instancias"
+	type        = number
+	default     = 2
+
+	validation {
+		condition     = var.instance_count >= 1 && var.instance_count <= 10
+		error_message = "instance_count debe estar entre 1 y 10."
+	}
+}
+
+variable "common_tags" {
+	type = map(string)
+	default = {
+		Environment = "dev"
+		Team        = "platform"
+	}
+}
+\end{lstlisting}
+
+\subsection{Locals y funciones}
+\begin{lstlisting}[caption=Locals para evitar duplicación]
+locals {
+	name_prefix = "${var.project}-${var.environment}"
+	merged_tags = merge(var.common_tags, {
+		ManagedBy = "terraform"
+	})
+}
+
+# Ejemplos de funciones útiles
+# lower(), upper(), format(), join(), split(), lookup(), try(), can(), coalesce()
+\end{lstlisting}
+
+\section{State: el corazón de Terraform}
+
+\subsection{Qué contiene el state}
+El \texttt{terraform.tfstate} guarda IDs reales, dependencias y metadatos. Si se pierde o corrompe, Terraform puede intentar recrear recursos que ya existen.
+
+\subsection{Buenas prácticas críticas}
+\begin{itemize}
+		\item Nunca comitear state local en Git.
+		\item Usar backend remoto con bloqueo (S3 + DynamoDB, Azure Storage, GCS, Terraform Cloud).
+		\item Hacer copias de seguridad y control de acceso estricto.
+\end{itemize}
+
+\subsection{Backend remoto en AWS (ejemplo de producción)}
+\begin{lstlisting}[caption=Backend S3 con locking en DynamoDB]
+terraform {
+	backend "s3" {
+		bucket         = "tfstate-company-prod"
+		key            = "network/prod/terraform.tfstate"
+		region         = "eu-west-1"
+		dynamodb_table = "terraform-locks"
+		encrypt        = true
+	}
+}
+\end{lstlisting}
+
+\section{Dependencias, meta-argumentos y control avanzado}
+
+\subsection{count vs for\_each}
+\begin{itemize}
+		\item \textbf{count}: útil para colecciones indexadas simples.
+		\item \textbf{for\_each}: preferido para colecciones con clave estable (menos drift al cambiar orden).
+\end{itemize}
+
+\begin{lstlisting}[caption=for\_each recomendado]
+variable "subnets" {
+	type = map(object({
+		cidr = string
+		az   = string
+	}))
+}
+
+resource "aws_subnet" "this" {
+	for_each          = var.subnets
+	vpc_id            = aws_vpc.main.id
+	cidr_block        = each.value.cidr
+	availability_zone = each.value.az
+
+	tags = {
+		Name = "subnet-${each.key}"
+	}
+}
+\end{lstlisting}
+
+\subsection{Meta-argumentos clave}
+\begin{longtable}{p{0.22\textwidth} p{0.70\textwidth}}
+\toprule
+\textbf{Meta-argumento} & \textbf{Uso principal} \\
+\midrule
+\texttt{depends\_on} & Fuerza dependencia explícita cuando Terraform no la infiere. \\
+\texttt{lifecycle} & Controla creación/destrucción y evita borrados accidentales. \\
+\texttt{provider} & Permite seleccionar provider/alias específico. \\
+\texttt{count} & Repite recurso por número. \\
+\texttt{for\_each} & Repite recurso por claves de mapa/set. \\
+\bottomrule
+\end{longtable}
+
+\begin{lstlisting}[caption=lifecycle para minimizar downtime]
+resource "aws_launch_template" "app" {
+	name_prefix   = "app-"
+	image_id      = data.aws_ami.ubuntu.id
+	instance_type = "t3.micro"
+
+	lifecycle {
+		create_before_destroy = true
+	}
+}
+\end{lstlisting}
+
+\section{Módulos: de básico a diseño enterprise}
+
+\subsection{Qué es un módulo}
+Un módulo es una unidad reutilizable de infraestructura. Todo código Terraform está en un módulo; el directorio raíz es el \textit{root module}.
+
+\subsection{Estructura recomendada de módulo}
+\begin{lstlisting}[caption=Estructura de módulo reutilizable]
+modules/
+└── vpc/
+		├── main.tf
+		├── variables.tf
+		├── outputs.tf
+		└── README.md
+\end{lstlisting}
+
+\subsection{Consumo de módulo}
+\begin{lstlisting}[caption=Uso de módulo local]
+module "network" {
+	source       = "./modules/vpc"
+	project      = var.project
+	environment  = var.environment
+	vpc_cidr     = "10.20.0.0/16"
+	subnet_cidrs = ["10.20.1.0/24", "10.20.2.0/24"]
+}
+
+output "vpc_id" {
+	value = module.network.vpc_id
+}
+\end{lstlisting}
+
+\subsection{Principios de módulos de calidad}
+\begin{enumerate}[label=\arabic*.]
+		\item Interfaz clara (variables y outputs mínimos).
+		\item Encapsulación (sin exponer detalles internos innecesarios).
+		\item Versionado semántico y changelog.
+		\item Tests y ejemplos de uso.
+		\item Compatibilidad retroactiva en releases mayores/menores.
+\end{enumerate}
+
+\section{Workspaces, entornos y estrategia multi-ambiente}
+
+\subsection{Cuándo usar workspaces}
+Útiles para diferencias ligeras entre entornos. Para diferencias estructurales grandes, preferir directorios/separación por stacks.
+
+\begin{lstlisting}[caption=Comandos de workspaces]
+terraform workspace list
+terraform workspace new dev
+terraform workspace new prod
+terraform workspace select prod
+\end{lstlisting}
+
+\subsection{Patrón recomendado en equipos grandes}
+\begin{itemize}
+		\item Separar por capas: \texttt{network}, \texttt{security}, \texttt{data}, \texttt{apps}.
+		\item Un state por stack y entorno.
+		\item Promoción por PR y pipeline, nunca cambios manuales en prod.
+\end{itemize}
+
+\section{Seguridad real en Terraform}
+
+\subsection{Gestión de secretos}
+\begin{itemize}
+		\item No guardar secretos en variables planas ni en \texttt{.tfvars} versionados.
+		\item Integrar con Secrets Manager, Vault o SSM Parameter Store.
+		\item Marcar outputs sensibles.
+\end{itemize}
+
+\begin{lstlisting}[caption=Output sensible]
+output "db_password" {
+	value     = random_password.db.result
+	sensitive = true
+}
+\end{lstlisting}
+
+\subsection{Políticas y compliance}
+\begin{itemize}
+		\item \textbf{tflint}: calidad y convenciones.
+		\item \textbf{tfsec}/\textbf{checkov}: seguridad estática IaC.
+		\item \textbf{OPA/Conftest} o Sentinel: políticas obligatorias (guardrails).
+\end{itemize}
+
+\section{Testing y calidad profesional}
+
+\subsection{Niveles de validación}
+\begin{enumerate}
+		\item \textbf{Formato y sintaxis}: \texttt{terraform fmt -check}, \texttt{terraform validate}.
+		\item \textbf{Análisis estático}: \texttt{tflint}, \texttt{tfsec}, \texttt{checkov}.
+		\item \textbf{Tests de integración}: Terratest (Go) o pipelines efímeros.
+\end{enumerate}
+
+\begin{lstlisting}[caption=Pipeline mínima de calidad]
+terraform fmt -check -recursive
+terraform init -backend=false
+terraform validate
+tflint
+tfsec .
+\end{lstlisting}
+
+\section{Import, refactor y migraciones sin downtime}
+
+\subsection{Importar recursos existentes}
+\begin{lstlisting}[caption=Import básico]
+# Declaras primero el bloque resource
+resource "aws_s3_bucket" "legacy" {
+	bucket = "bucket-existente"
+}
+
+# Luego importas su estado
+terraform import aws_s3_bucket.legacy bucket-existente
+\end{lstlisting}
+
+\subsection{Refactor seguro con moved blocks}
+\begin{lstlisting}[caption=Renombrado sin recrear recursos]
+moved {
+	from = aws_instance.web
+	to   = aws_instance.frontend
+}
+\end{lstlisting}
+
+\section{CI/CD con Terraform (modelo recomendado)}
+
+\subsection{Flujo empresarial}
+\begin{enumerate}
+		\item Pull Request ejecuta \texttt{fmt}, \texttt{validate}, seguridad y \texttt{plan}.
+		\item Aprobación obligatoria de al menos un revisor.
+		\item \texttt{apply} solo en rama protegida y con credenciales de corta duración.
+		\item Registro de artefacto \texttt{plan} y auditoría de cambios.
+\end{enumerate}
+
+\begin{lstlisting}[caption=Esqueleto CI (pseudo-pipeline)]
+stages:
+	- lint
+	- validate
+	- plan
+	- apply
+
+plan:
+	script:
+		- terraform init
+		- terraform plan -out=tfplan
+
+apply:
+	when: manual
+	script:
+		- terraform apply -auto-approve tfplan
+\end{lstlisting}
+
+\section{Integración profunda con Kubernetes (EKS, AKS, GKE)}
+
+\subsection{Enfoque recomendado: Terraform para plataforma, GitOps para apps}
+Terraform destaca creando \textbf{infraestructura de clúster} (red, nodos, IAM, políticas, ingress base, observabilidad base).
+Para despliegue continuo de aplicaciones, suele ser mejor GitOps (Argo CD / Flux) para evitar planes gigantes y drift frecuente.
+
+\subsection{Providers típicos en ecosistema Kubernetes}
+\begin{itemize}
+		\item \textbf{hashicorp/kubernetes}: gestiona recursos Kubernetes desde Terraform.
+		\item \textbf{hashicorp/helm}: instala charts Helm de forma declarativa.
+		\item \textbf{hashicorp/aws}, \textbf{hashicorp/azurerm}, \textbf{hashicorp/google}: crean clúster administrado y recursos cloud.
+\end{itemize}
+
+\begin{lstlisting}[caption=Ejemplo mínimo: EKS + provider kubernetes]
+provider "aws" {
+	region = var.aws_region
+}
+
+data "aws_eks_cluster" "this" {
+	name = module.eks.cluster_name
+}
+
+data "aws_eks_cluster_auth" "this" {
+	name = module.eks.cluster_name
+}
+
+provider "kubernetes" {
+	host                   = data.aws_eks_cluster.this.endpoint
+	cluster_ca_certificate = base64decode(data.aws_eks_cluster.this.certificate_authority[0].data)
+	token                  = data.aws_eks_cluster_auth.this.token
+}
+
+resource "kubernetes_namespace" "platform" {
+	metadata {
+		name = "platform"
+	}
+}
+\end{lstlisting}
+
+\subsection{Instalación de add-ons con Helm provider}
+\begin{lstlisting}[caption=Ingress NGINX con Helm]
+resource "helm_release" "ingress_nginx" {
+	name       = "ingress-nginx"
+	repository = "https://kubernetes.github.io/ingress-nginx"
+	chart      = "ingress-nginx"
+	namespace  = "ingress-nginx"
+
+	create_namespace = true
+	atomic           = true
+	timeout          = 900
+
+	set {
+		name  = "controller.replicaCount"
+		value = "2"
+	}
+}
+\end{lstlisting}
+
+\subsection{Patrones avanzados en Kubernetes + Terraform}
+\begin{enumerate}
+		\item Crear clúster y networking con Terraform.
+		\item Instalar add-ons base (ingress, cert-manager, external-dns, metrics-server).
+		\item Delegar aplicaciones al flujo GitOps.
+		\item Separar states: \texttt{cluster}, \texttt{addons}, \texttt{apps-bootstrap}.
+\end{enumerate}
+
+\subsection{Errores típicos en k8s con Terraform}
+\begin{itemize}
+		\item \textbf{Race conditions}: el API server aún no está listo tras crear clúster.
+		\item \textbf{Token expirado}: providers que usan auth temporal en pipelines largos.
+		\item \textbf{Diff infinito en helm}: valores no deterministas o charts con defaults variables.
+		\item \textbf{Drift alto}: si alguien aplica con kubectl/helm fuera de Terraform.
+\end{itemize}
+
+\subsection{Kubernetes on-prem (RKE2, K3s, OpenShift, vanilla)}
+\begin{itemize}
+	\item Terraform puede aprovisionar VMs/red on-prem y bootstrap del clúster.
+	\item Para OpenShift, suele coexistir con instaladores nativos + Terraform para infraestructura periférica.
+	\item El patrón ganador sigue siendo: \textbf{Terraform para base}, \textbf{GitOps para workloads}.
+\end{itemize}
+
+\begin{lstlisting}[caption=Patrón on-prem k8s: namespaces base + helm add-ons]
+provider "kubernetes" {
+	config_path = "~/.kube/config"
+}
+
+resource "kubernetes_namespace" "observability" {
+	metadata { name = "observability" }
+}
+
+resource "helm_release" "kube_prometheus_stack" {
+	name       = "kube-prometheus-stack"
+	repository = "https://prometheus-community.github.io/helm-charts"
+	chart      = "kube-prometheus-stack"
+	namespace  = kubernetes_namespace.observability.metadata[0].name
+}
+\end{lstlisting}
+
+\section{Arquitectura de plataforma: landing zone y multi-cuenta}
+
+\subsection{Modelo de referencia en cloud pública}
+\begin{itemize}
+		\item Cuenta/suscripción de \textbf{seguridad} (logs, auditoría, KMS/HSM).
+		\item Cuenta/suscripción de \textbf{red compartida} (transit gateway, firewall, DNS).
+		\item Cuentas por \textbf{entorno} (dev/qa/prod) y por dominio de negocio.
+		\item Identity centralizada con roles de acceso temporal.
+\end{itemize}
+
+\subsection{Estrategia por stacks}
+\begin{lstlisting}[caption=Separación por stacks y estados]
+live/
+├── prod/
+│   ├── org-security/
+│   ├── shared-network/
+│   ├── eks-platform/
+│   └── apps-bootstrap/
+└── dev/
+    ├── org-security/
+    ├── shared-network/
+    ├── eks-platform/
+    └── apps-bootstrap/
+\end{lstlisting}
+
+\subsection{Terragrunt (opcional, muy usado en enterprise)}
+Terragrunt ayuda a reducir duplicación (backend/provider/inputs repetidos), pero añade una capa operativa adicional. Úsalo si tu organización ya tiene muchos stacks y necesidad de DRY extremo.
+
+\subsection{Blueprint de repositorio enterprise}
+\begin{lstlisting}[caption=Estructura recomendada para equipos grandes]
+platform-iac/
+├── modules/
+│   ├── network/
+│   ├── kubernetes/
+│   ├── observability/
+│   └── security-baseline/
+├── live/
+│   ├── prod/
+│   │   ├── shared-network/
+│   │   ├── eks-platform/
+│   │   └── addons/
+│   └── dev/
+├── policies/
+│   ├── opa/
+│   └── sentinel/
+├── scripts/
+├── docs/
+└── .github/workflows/
+\end{lstlisting}
+
+\section{Patrones de seguridad avanzados}
+
+\subsection{Identidades efímeras en CI/CD}
+Evita claves estáticas. Usa OIDC entre tu plataforma CI y cloud provider.
+
+\begin{lstlisting}[caption=Idea de flujo seguro con OIDC]
+# 1) CI obtiene token OIDC firmado
+# 2) Cloud IAM valida token y emite credenciales temporales
+# 3) Terraform usa esas credenciales para plan/apply
+\end{lstlisting}
+
+\subsection{Cifrado, secretos y datos sensibles}
+\begin{itemize}
+		\item Cifrar backend y snapshots de state.
+		\item Restringir acceso al state por principio de mínimo privilegio.
+		\item Enmascarar variables sensibles en logs de pipeline.
+		\item Rotación periódica de secretos y llaves KMS.
+\end{itemize}
+
+\subsection{Policy as Code obligatoria}
+\begin{itemize}
+		\item Reglas de seguridad: no permitir buckets públicos, puertos críticos abiertos, etc.
+		\item Reglas de gobierno: naming, tags, regiones permitidas.
+		\item Reglas de coste: tamaños máximos de instancias o límites por entorno.
+\end{itemize}
+
+\section{Optimización de costes con Terraform}
+
+\subsection{Prácticas de FinOps aplicadas a IaC}
+\begin{enumerate}
+		\item Etiquetado obligatorio para \texttt{cost-center}, \texttt{owner}, \texttt{environment}.
+		\item Ambientes efímeros con TTL automático.
+		\item Apagado programado de recursos no productivos.
+		\item Revisión continua de derechos de cómputo (rightsizing).
+\end{enumerate}
+
+\subsection{Ejemplo de etiquetas obligatorias por variable}
+\begin{lstlisting}[caption=Mapa de tags obligatorio]
+variable "mandatory_tags" {
+	type = map(string)
+	validation {
+		condition = alltrue([
+			contains(keys(var.mandatory_tags), "owner"),
+			contains(keys(var.mandatory_tags), "cost-center"),
+			contains(keys(var.mandatory_tags), "environment")
+		])
+		error_message = "Faltan tags obligatorias: owner, cost-center, environment"
+	}
+}
+\end{lstlisting}
+
+\section{Rendimiento y escalabilidad de Terraform}
+
+\subsection{Cuellos de botella habituales}
+\begin{itemize}
+		\item States gigantes con miles de recursos en un único stack.
+		\item Dependencias en cadena que serializan operaciones.
+		\item Provider con límites de API y throttling.
+\end{itemize}
+
+\subsection{Cómo escalar sin dolor}
+\begin{itemize}
+		\item Dividir en stacks con ownership claro.
+		\item Ejecutar planes en paralelo por dominio cuando sea seguro.
+		\item Cachear plugins/providers en runners CI.
+		\item Evitar data sources excesivos que consultan APIs en cada plan.
+\end{itemize}
+
+\section{Gestión avanzada del state (operaciones delicadas)}
+
+\subsection{Comandos de state que debes dominar con cuidado}
+\begin{lstlisting}[caption=State operations]
+terraform state list
+terraform state show module.network.aws_vpc.main
+terraform state mv old.address new.address
+terraform state rm aws_s3_bucket.temp
+terraform state pull
+\end{lstlisting}
+
+\subsection{Reglas de oro antes de tocar state manualmente}
+\begin{enumerate}
+		\item Haz backup del state.
+		\item Ejecuta en ventana controlada y con revisión por pares.
+		\item Documenta el cambio en PR/incidencia.
+		\item Lanza \texttt{plan} inmediatamente después para validar coherencia.
+\end{enumerate}
+
+\section{Provisioners y alternativas modernas}
+
+\subsection{Por qué evitar provisioners cuando puedas}
+\texttt{remote-exec} y \texttt{local-exec} son útiles en casos excepcionales, pero aumentan acoplamiento y fragilidad.
+
+\subsection{Alternativas preferibles}
+\begin{itemize}
+		\item \textbf{Cloud-init}/user-data para bootstrap de máquinas.
+		\item Imágenes inmutables (Packer).
+		\item Configuración con Ansible/SSM después del aprovisionamiento.
+		\item Operadores/controladores en Kubernetes para configuración runtime.
+\end{itemize}
+
+\section{Estrategias de migración a Terraform desde infra existente}
+
+\subsection{Plan de migración por fases}
+\begin{enumerate}
+		\item Inventario de recursos críticos y dependencias.
+		\item Import por dominios pequeños (network primero, luego compute/data).
+		\item Normalización de naming/tags sin recreación.
+		\item Establecer pipeline obligatoria antes de ampliar alcance.
+\end{enumerate}
+
+\subsection{Matriz de riesgo recomendada}
+\begin{longtable}{p{0.28\textwidth} p{0.22\textwidth} p{0.40\textwidth}}
+\toprule
+\textbf{Tipo de recurso} & \textbf{Riesgo} & \textbf{Mitigación} \\
+\midrule
+Red core (VPC/VNet, rutas) & Alto & Entorno réplica, revisión senior, ventana de cambio. \\
+Bases de datos & Alto & Backups, réplica, pruebas restore, plan de rollback. \\
+Compute stateless & Medio & Despliegue blue/green y health checks. \\
+Buckets/objetos & Medio & Versioning, bloqueo de borrado, políticas de retención. \\
+\bottomrule
+\end{longtable}
+
+\section{Terraform Cloud/Enterprise y operación colaborativa}
+
+\subsection{Cuándo usar Terraform Cloud}
+\begin{itemize}
+		\item Equipos grandes que requieren ejecución remota centralizada.
+		\item Política de aprobación, colas de ejecución y control RBAC unificado.
+		\item Integración nativa con policy checks y run tasks.
+\end{itemize}
+
+\subsection{Conceptos clave}
+\begin{itemize}
+		\item \textbf{Workspace}: unidad de ejecución y state.
+		\item \textbf{Run}: pipeline de plan/apply.
+		\item \textbf{Variable sets}: variables compartidas por múltiples workspaces.
+		\item \textbf{Policy checks}: bloqueo de cambios que violen reglas.
+\end{itemize}
+
+\section{Patrones multi-cloud y disaster recovery}
+
+\subsection{Multi-cloud realista}
+No todo debe ser multi-cloud activo-activo. Suele funcionar mejor:
+\begin{itemize}
+		\item Cloud principal para producción.
+		\item Cloud secundaria para servicios concretos o contingencia.
+		\item Abstracción por módulos para evitar lock-in excesivo sin perder eficiencia.
+\end{itemize}
+
+\subsection{DR como código}
+\begin{enumerate}
+		\item Definir RTO/RPO por servicio.
+		\item Versionar infraestructura de failover.
+		\item Ejecutar simulacros periódicos (\textit{game days}).
+		\item Medir tiempos reales de recuperación y ajustar diseño.
+\end{enumerate}
+
+\section{Observabilidad de la infraestructura gestionada por Terraform}
+
+\subsection{Qué observar}
+\begin{itemize}
+		\item Cambios de recursos por despliegue (auditoría de plan/apply).
+		\item Eventos de seguridad y cambios de IAM/políticas.
+		\item Coste incremental por release.
+		\item SLO de plataforma (latencia API, errores, saturación).
+\end{itemize}
+
+\subsection{Stack típico}
+\begin{itemize}
+		\item Logs/auditoría cloud nativos (CloudTrail, Activity Logs, Audit Logs).
+		\item Métricas y alertas (Prometheus/Grafana o servicios gestionados).
+		\item Trazabilidad de cambios vía PR + run IDs de Terraform.
+\end{itemize}
+
+\section{Anti-patrones que debes evitar}
+
+\begin{enumerate}
+		\item Un único state para toda la empresa.
+		\item Mezclar infraestructura crítica y apps volátiles en el mismo stack.
+		\item Variables sin tipo ni validación.
+		\item Uso indiscriminado de \texttt{-target} en producción.
+		\item Aplicar en local sin trazabilidad ni aprobación.
+		\item Confiar solo en \texttt{terraform destroy} sin políticas de protección.
+\end{enumerate}
+
+\section{Laboratorios guiados (de básico a experto)}
+
+\subsection*{Lab 1: Fundamentos}
+Crear VPC/VNet + instancia + bucket con tags, outputs y variables tipadas.
+
+\subsection*{Lab 2: Módulos y backend remoto}
+Extraer red a módulo, configurar backend remoto con locking, y separar dev/prod.
+
+\subsection*{Lab 3: Kubernetes plataforma}
+Levantar EKS/AKS/GKE, instalar ingress + cert-manager con Helm provider.
+
+\subsection*{Lab 4: Seguridad y políticas}
+Integrar tflint + tfsec + checkov + OPA en PR, bloquear merges inseguros.
+
+\subsection*{Lab 5: Migración controlada}
+Importar infraestructura existente y refactorizar con \texttt{moved} sin downtime.
+
+\section{Checklist de salida a producción (Go-Live)}
+
+\begin{tfchecklist}
+\begin{itemize}
+	\item Backend remoto cifrado, con locking y backups verificados.
+	\item \texttt{fmt}, \texttt{validate}, \texttt{tflint}, \texttt{tfsec/checkov} en PR obligatorios.
+	\item Política de aprobaciones activa (mínimo 1--2 revisores según criticidad).
+	\item Credenciales efímeras (OIDC), sin secretos estáticos en CI.
+	\item Runbook de rollback documentado y probado.
+	\item Monitorización/alertas activas para recursos críticos.
+	\item Matriz de ownership clara por stack (quién aprueba, quién opera, quién responde).
+\end{itemize}
+\end{tfchecklist}
+
+\subsection{Runbook mínimo de incidente IaC}
+\begin{enumerate}
+	\item Congelar applies no urgentes.
+	\item Ejecutar \texttt{plan} contra estado actual y capturar evidencia.
+	\item Identificar si el problema es drift, permisos, dependencia o provider.
+	\item Aplicar mitigación segura (rollback, \texttt{state mv/rm}, import, hotfix en módulo).
+	\item Publicar postmortem con acciones preventivas.
+\end{enumerate}
+
+\section{Troubleshooting experto}
+
+\subsection{Errores comunes y solución}
+\begin{longtable}{p{0.36\textwidth} p{0.56\textwidth}}
+\toprule
+\textbf{Problema} & \textbf{Acción recomendada} \\
+\midrule
+Drift entre cloud y código & Ejecutar \texttt{plan}, revisar cambios manuales, reimportar si procede. \\
+State bloqueado & Verificar proceso activo y liberar lock de forma segura. \\
+Recreación inesperada de recurso & Revisar atributos \textit{ForceNew}, usar \texttt{lifecycle} o rediseñar módulo. \\
+Dependencias cíclicas & Romper ciclo con outputs intermedios o separación de stacks. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Comandos de diagnóstico}
+\begin{lstlisting}[caption=Comandos útiles de depuración]
+terraform state list
+terraform state show aws_instance.web
+terraform providers
+terraform graph
+TF_LOG=INFO terraform plan
+\end{lstlisting}
+
+\section{Buenas prácticas ``de senior a master''}
+
+\begin{enumerate}
+		\item Diseña módulos pequeños, versionados y bien documentados.
+		\item Evita monolitos Terraform: divide por dominios y ownership.
+		\item Usa naming conventions estrictas y etiquetas obligatorias.
+		\item Separa identidad/seguridad de workloads.
+		\item Automatiza revisiones de seguridad y coste antes del apply.
+		\item Minimiza privilegios de credenciales CI/CD (principio de menor privilegio).
+		\item Implementa estrategias de rollback y recovery de state.
+\end{enumerate}
+
+\section{Roadmap de estudio: de 0 a master}
+
+\subsection*{Fase 1 (Fundamentos, 1-2 semanas)}
+\begin{itemize}
+		\item HCL, variables, outputs, providers.
+		\item \texttt{init/fmt/validate/plan/apply/destroy}.
+		\item Proyecto simple: VPC + 1 instancia + bucket.
+\end{itemize}
+
+\subsection*{Fase 2 (Intermedio, 2-4 semanas)}
+\begin{itemize}
+		\item Módulos, \texttt{for\_each}, data sources.
+		\item Backend remoto y locking.
+		\item Pipeline con plan en PR.
+\end{itemize}
+
+\subsection*{Fase 3 (Avanzado, 1-2 meses)}
+\begin{itemize}
+		\item Diseño multi-cuenta / multi-región.
+		\item Seguridad IaC, políticas y compliance.
+		\item Terratest, importaciones y migraciones complejas.
+\end{itemize}
+
+\subsection*{Fase 4 (Master, continuo)}
+\begin{itemize}
+		\item Arquitectura de plataforma interna reusable.
+		\item Golden modules, guardrails y catálogo de patrones.
+		\item Observabilidad de cambios y optimización de coste cloud.
+\end{itemize}
+
+\section{Cheat Sheet final}
+
+\begin{lstlisting}[caption=Comandos que debes dominar]
+# Inicialización y validación
+terraform init
+terraform fmt -recursive
+terraform validate
+
+# Plan y apply
+terraform plan -out=tfplan
+terraform apply tfplan
+
+# Estado
+terraform state list
+terraform state show <address>
+
+# Workspaces
+terraform workspace list
+terraform workspace select dev
+
+# Limpieza
+terraform destroy
+\end{lstlisting}
+
+\section{Glosario rápido (términos clave)}
+
+\begin{longtable}{p{0.28\textwidth} p{0.64\textwidth}}
+\toprule
+\textbf{Término} & \textbf{Definición práctica} \\
+\midrule
+\texttt{Provider} & Plugin que conecta Terraform con APIs externas. \\
+\texttt{Resource} & Objeto gestionado por Terraform (VM, red, bucket, namespace, etc.). \\
+\texttt{Data Source} & Lectura de recursos existentes sin crearlos. \\
+\texttt{State} & Base de verdad operativa de Terraform sobre recursos desplegados. \\
+\texttt{Plan} & Vista previa exacta de cambios antes de aplicar. \\
+\texttt{Module} & Componente reutilizable de infraestructura. \\
+\texttt{Workspace} & Contexto de estado aislado dentro de una misma configuración. \\
+\texttt{Drift} & Desviación entre lo declarado y lo que realmente existe. \\
+\texttt{GitOps} & Operación declarativa continua desde Git para workloads en Kubernetes. \\
+\bottomrule
+\end{longtable}
+
+\section{Conclusión}
+
+Terraform no es solo una herramienta, es una disciplina de ingeniería.
+El nivel \textit{master} se alcanza cuando combinas:
+\begin{itemize}
+		\item diseño modular sólido,
+		\item operaciones seguras en equipo,
+		\item automatización con CI/CD,
+		\item y gobernanza de infraestructura a escala.
+\end{itemize}
+
+Si conviertes estos apuntes en práctica real con proyectos y revisiones técnicas, tendrás un dominio profesional de Terraform.
+
+\end{document}
